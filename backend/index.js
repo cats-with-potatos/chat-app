@@ -1,10 +1,14 @@
 const express = require("express")
-, app = express()
-, routes = require("./routes.js");
+, bodyParser = require("body-parser")
+, routes = require("./routes.js")
+, app = express();
 
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 app.get("/getAllMessages", routes.getAllMessages);
 app.get("/getChannelMessages", routes.getChannelMessages);
-app.post("/login", routes.login);
+app.post("/signin", routes.signin);
+app.post("/signup", routes.signup);
 
 app.listen(8888);
