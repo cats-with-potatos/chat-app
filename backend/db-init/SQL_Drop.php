@@ -1,7 +1,7 @@
 <?php
 
 // Initializing DB login variables -- compliant with the login information decided on by the team
-$database_host = 'localhost';
+$database_host = '127.0.0.1';
 $database_uname = 'root';
 $database_pword = '';
 $database_name = 'chatdb';
