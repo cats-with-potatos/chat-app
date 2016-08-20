@@ -1,0 +1,25 @@
+{
+  "name": "chat-app",
+  "scripts": {
+    "IMPORTANT_DO_NOT_IGNORE": "If you remove --production, the source code will not be minified.",
+    "start": "./node_modules/.bin/bower install && ./node_modules/.bin/brunch build --production"
+  },
+  "engines": {
+    "node": "5.2.0"
+  },
+  "dependencies": {
+    "angular-hint": "0.3.4",
+    "assetsmanager-brunch": "1.8.1",
+    "auto-reload-brunch": ">= 1.0 < 1.9",
+    "bower": "1.4.1",
+    "brunch": "2.1.1",
+    "clean-css-brunch": ">= 1.0 < 1.9",
+    "css-brunch": ">= 1.0 < 1.9",
+    "express": "4.13.3",
+    "javascript-brunch": ">= 1.0 < 1.9",
+    "less-brunch": "2.6.0",
+    "replace-brunch": "1.0.0",
+    "sass-brunch": "1.9.2",
+    "uglify-js-brunch": ">= 1.0 < 1.9"
+  }
+}
