@@ -13,6 +13,13 @@ A chat application. For chatting
 Project under construction. Still in planning phases.
 
 ### Dependencies
+Bootstrap 3
+
+
+Angular.JS
+
+
+Node.JS
 
 
 
@@ -20,10 +27,10 @@ Project under construction. Still in planning phases.
 
 ## Contributing
 
-## Front End
+### Front End
 To do:
 
-## Back End
+### Back End
 To do:
 
 
