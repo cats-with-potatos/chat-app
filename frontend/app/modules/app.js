@@ -17,7 +17,7 @@
       $locationProvider.html5Mode(true);
       $stateProvider.state('chat-app', {
           url: '',
-          templateUrl: 'standard-layout.html',
+          templateUrl: 'standard-layout.html'
       })
       .state('chat-app-home_if_no_slash', { //[JG] Fixes blank screen when refreshing on home page
           url: '/',
