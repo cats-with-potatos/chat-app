@@ -12,6 +12,12 @@ A chat application. For chatting
 
 Project under construction. Still in planning phases.
 
+### Developing  
+* `brunch watch` in `/frontend` (you will need to have [brunch](http://brunch.io) globally installed)  
+* `npm start` in `/backend`  
+* Application available at `localhost:8080`.  
+
+
 ### Dependencies
 Bootstrap 3
 
