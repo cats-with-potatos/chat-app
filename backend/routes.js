@@ -1,15 +1,6 @@
-const crypto = require("crypto")
-, mysql = require("mysql")
+const authFunctions = require("./lib/auth.js")
 , routes = {};
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'chatdb'
-});
-
-connection.connect();
 
 /*
 Will get all the messages from all the channels.
@@ -43,61 +34,48 @@ res.json({"response": "success"});
 }
 
 routes.signup = (req, res) => {
+  //Get username and password from body
   const username = req.body.username;
   const password = req.body.password;
 
-  //Checks to see if user didn't input username or password
-  if (typeof username === "undefined" || typeof password === "undefined") {
-    res.json({"response": "error", "errorType": "paramUndefined"})
+  const credentials = {
+    username: username,
+    password: password
+  };
+
+  const signUpError = authFunctions.signUpError(credentials);
+
+  if (signUpError) {
+    res.json({"response": "error", "errorType": signUpError});
     return;
   }
 
-  //If the user inputted nothing e.g. "   " or ""
-  if (username.trim() === "" || password.trim() === "") {
-    res.json({"response": "error", "errorType": "whitespace"});
-    return;
-  }
+  //Checks if user exists, if not then resolve, else reject
+  authFunctions.checkUserExists(username)
+  .then(() => {
+    //Create hash and salt
+    const hashAndSalt = authFunctions.createHashAndSalt(password)
+    const hash = hashAndSalt.hash;
+    const salt = hashAndSalt.salt;
 
-  //If the username or pass is over 30 characters long
-  if (username.length > 30 || password.length > 30) {
-    res.json({"response": "error", "errorType": "tooLong"});
-    return;
-  }
 
-  //Creates a rando salt. Length of salt is 32 chars
-  const salt = crypto.randomBytes(16).toString("hex");
-  //Creates a sha1 hash of salt + password e.g. sha1(salt + password)
-  const hash = crypto.createHash('sha1').update(salt + password).digest('hex');
+    const fullCredentials = {
+      username: username,
+      hash: hash,
+      salt: salt,
+    };
 
-  //Check to see if username already exists (NOT CASE SENSITIVE)
-  connection.query("SELECT user_id FROM UserTable WHERE username = ?", [username], (err, results) => {
-    if (err) {
-      res.json({"response": "error", "errorType": "serverError"});
-      return;
-    }
-    //Ff it does then respond with error
-    if (results.length !== 0) {
-      res.json({"response": "error", "errorType": "accountExists"});
-      return;
-    }
-    //If not instead into database
-    connection.query("INSERT INTO UserTable (user_id, username, password, salt) VALUES (DEFAULT, ?, ?, ?)", [
-      username,
-      hash,
-      salt,
-    ], (err, results) => {
-      if (err) {
-        res.json({"response": "error", "errorType": "serverError"});
-        return;
-      }
-      //If there are no errors, send success message
-      res.json({"response": "success"});
-    });
+    //Insert user to db
+    return authFunctions.insertUserToDb(fullCredentials);
+  })
+  .then(() => {
+    res.json({"response": "success"});
+  })
+  .catch((e) => {
+    console.log(e);
+    res.json({"response": "error", "errorType": e})
   });
 };
-
-
-
 
 routes.getChannelMessages = (req, res) => { // TYPE: "GET"
 const channelId = req.query.channelId;
