@@ -1,1 +1,12 @@
-backend/node_modules
+.idea
+public
+prod_dist
+frontend/app/modules/**/*.min.js
+frontend/app/*.min.js
+backend/npm-debug.log
+node_modules
+grunt_temp
+.DS_Store
+bower_components
+*.swp
+*.swo
