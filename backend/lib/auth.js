@@ -164,7 +164,10 @@ auth.checkPass = (cred) => {
   return new Promise((resolve, reject) => {
     const newHash = crypto.createHash('sha1').update(cred.salt + cred.password).digest('hex');
     if (newHash === cred.hash) {
-      resolve();
+      resolve({
+        id: cred.id,
+        username: cred.username
+      });
     }
     else {
       reject("wrongCred");

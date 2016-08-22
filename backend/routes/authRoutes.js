@@ -11,9 +11,20 @@ authRoutes.signin = (req, res) => { // TYPE: POST
   //Check if user exists to get hash
   authFunctions.checkUserExists(username)
   .then((user) => {
-    return authFunctions.checkPass({password: password, hash: user.password, salt: user.salt})
+    return authFunctions.checkPass(
+      {
+        password: password,
+        hash: user.password,
+        salt: user.salt,
+        username: user.username,
+        id: user.user_id,
+      })
   })
-  .then(() => {
+  .then((jwtPayload) => {
+    return authFunctions.createJwt(jwtPayload);
+  })
+  .then((jwt) => {
+    res.cookie("auth", jwt, {maxAge: 604800, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
   .catch((e) => {
@@ -66,7 +77,7 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   })
   .then((token) => {
     res.cookie("auth", token, {maxAge: 604800, httpOnly: false});
-    res.status(200).json({"response": "success", "data": {"jwt": token}});
+    res.status(200).json({"response": "success"});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
