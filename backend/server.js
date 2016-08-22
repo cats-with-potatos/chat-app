@@ -1,8 +1,14 @@
 const express = require("express")
 , app = express()
 , routes = require("./routes.js")
-, router = express.Router();
+, router = express.Router()
+, bodyParser = require("body-parser")
 
+//parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.use('/api', router);
 router.get('/', (req, res) => {
@@ -12,7 +18,7 @@ router.get('/', (req, res) => {
 });
 router.get("/getAllMessages", routes.getAllMessages);
 router.get("/getChannelMessages", routes.getChannelMessages);
-router.post("/login", routes.login);
+router.post("/signup", routes.signup);
 
 app.use('/', express.static('public'));
 app.get('/*', (req, res, next) => {

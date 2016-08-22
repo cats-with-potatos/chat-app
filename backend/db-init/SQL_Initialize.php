@@ -35,7 +35,7 @@ else
 // Query to create the Users table. Using unsigned integers for ids, as a negative ID should never occur for any reason
 $ut_create_query = "CREATE TABLE IF NOT EXISTS UserTable (
 user_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-username VARCHAR(32) NOT NULL UNIQUE,
+username VARCHAR(32) BINARY NOT NULL UNIQUE,
 password VARCHAR (128) NOT NULL,
 salt VARCHAR (32) NOT NULL,
 PRIMARY KEY (user_id));";
@@ -70,4 +70,3 @@ foreach ($query_array as $item)
 }
 
 die("SCHEMA SUCCESSFULLY BUILT");
-
