@@ -1,5 +1,7 @@
 const bluebird = require("bluebird")
 , crypto = require("crypto")
+, jwt = require("jsonwebtoken")
+, config = require("../config.js")
 , mysqlWrap = require("./db.js")
 , auth = {};
 
@@ -30,11 +32,11 @@ auth.signUpError = (cred) => {
   a lowercase char, and a number, it fails.
   */
   if (!/[a-z]/.test(cred.password) ||
-      !/[A-Z]/.test(cred.password) ||
-      !/[0-9]/.test(cred.password)){
+  !/[A-Z]/.test(cred.password) ||
+  !/[0-9]/.test(cred.password)){
     return "badPassword";
   }
-  if (cred.password != cred.validationPassword){
+  if (cred.password !== cred.validationPassword){
     return "passNoMatch";
   }
   return null;
@@ -60,8 +62,6 @@ auth.checkUserExists = (username) => {
         mclient.query("SELECT user_id FROM UserTable WHERE username like binary ?", [username], (err, results) => {
           mclient.release();
           if (err) {
-            console.log("I AM EHRE");
-            console.log(err.message);
             reject("serverError");
           }
           else if (results.length !== 0) {
@@ -92,17 +92,38 @@ auth.insertUserToDb = (fullCreds) => {
         ], (err, results) => {
           mclient.release();
           if (err) {
-            console.log("do i reach here", err);
             reject("serverError");
           }
           else {
-            resolve();
+            console.log(results.insertId);
+            resolve(results.insertId);
           }
         });
       }
     });
   });
 };
+
+//Gets a user's id and username and returns a JWT
+auth.createJwt = (user) => {
+  return new Promise((resolve, reject) => {
+    if (typeof user === "undefined" || typeof config.JWT_PASSWORD === "undefined") {
+      reject("serverError");
+    }
+    else {
+      jwt.sign(user, config.JWT_PASSWORD, {
+        expiresIn: 604800,
+      }, (err, token) => {
+        if (err) {
+          reject("serverError");
+        }
+        else {
+          resolve(token);
+        }
+      })
+    }
+  });
+}
 
 
 
