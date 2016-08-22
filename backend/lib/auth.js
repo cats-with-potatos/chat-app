@@ -22,19 +22,19 @@ auth.signUpError = (cred) => {
     return "tooLong";
   }
   // Regular expression to match a username. Can only have upper/lowercase, numbers, and _ or -
-  if (!/[^a-zA-Z0-9_-]/.test(cred.username)){
+  if (/[^a-zA-Z0-9_-]/.test(cred.username)){
     return "badUsername";
   }
   /*
   Uses 3 regular expressions tested in order. If pass doesn't have an uppercase char,
-  a lowercase char, and a number, it fails. 
+  a lowercase char, and a number, it fails.
   */
-  if (!/[a-z]/.test(cred.password) || 
+  if (!/[a-z]/.test(cred.password) ||
       !/[A-Z]/.test(cred.password) ||
       !/[0-9]/.test(cred.password)){
     return "badPassword";
   }
-  if (cred.password != cred.validation_password){
+  if (cred.password != cred.validationPassword){
     return "passNoMatch";
   }
   return null;
@@ -57,9 +57,11 @@ auth.checkUserExists = (username) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT user_id FROM UserTable WHERE username = ?", [username], (err, results) => {
+        mclient.query("SELECT user_id FROM UserTable WHERE username like binary ?", [username], (err, results) => {
           mclient.release();
           if (err) {
+            console.log("I AM EHRE");
+            console.log(err.message);
             reject("serverError");
           }
           else if (results.length !== 0) {

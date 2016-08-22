@@ -37,10 +37,12 @@ routes.signup = (req, res) => {
   //Get username and password from body
   const username = req.body.username;
   const password = req.body.password;
+  const validationPassword = req.body.validationPassword;
 
   const credentials = {
     username: username,
-    password: password
+    password: password,
+    validationPassword: validationPassword,
   };
 
   const signUpError = authFunctions.signUpError(credentials);
