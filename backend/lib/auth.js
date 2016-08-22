@@ -5,6 +5,7 @@ const bluebird = require("bluebird")
 , mysqlWrap = require("./db.js")
 , auth = {};
 
+
 /*
 Checks if the username and password are valid,
 If there is an error, the error will be returns
@@ -47,12 +48,14 @@ auth.createHashAndSalt = (password) => {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.createHash('sha1').update(salt + password).digest('hex');
 
-  return {hash, salt: salt};
+  return {hash: hash, salt: salt};
 };
 
 
-//Checks to see if user is already in Db
-auth.checkUserExists = (username) => {
+
+
+//Checks to see if user if the user does not exist
+auth.checkUserDoesNotExist = (username) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
@@ -76,6 +79,8 @@ auth.checkUserExists = (username) => {
   });
 };
 
+
+
 //Inserts users to Db
 auth.insertUserToDb = (fullCreds) => {
   return new Promise((resolve, reject) => {
@@ -84,7 +89,6 @@ auth.insertUserToDb = (fullCreds) => {
         reject("serverError");
       }
       else {
-        console.log(fullCreds);
         mclient.query("INSERT INTO UserTable (user_id, username, password, salt) VALUES (DEFAULT, ?, ?, ?)", [
           fullCreds.username,
           fullCreds.hash,
@@ -95,7 +99,6 @@ auth.insertUserToDb = (fullCreds) => {
             reject("serverError");
           }
           else {
-            console.log(results.insertId);
             resolve(results.insertId);
           }
         });
@@ -123,7 +126,55 @@ auth.createJwt = (user) => {
       })
     }
   });
-}
+};
+
+
+auth.checkUserExists = (username) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT * FROM UserTable WHERE username like binary ?", [username], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else if (results.length === 0) {
+            reject("wrongCred");
+          }
+          else {
+            resolve(results[0]);
+          }
+        });
+      }
+    });
+  });
+};
+
+
+/*Cred argument is an object that stores:
+password - Inputted password
+hash - The hashed value from db
+salt - the salt from db
+*/
+
+auth.checkPass = (cred) => {
+  return new Promise((resolve, reject) => {
+    const newHash = crypto.createHash('sha1').update(cred.salt + cred.password).digest('hex');
+    if (newHash === cred.hash) {
+      resolve();
+    }
+    else {
+      reject("wrongCred");
+    }
+  });
+};
+
+
+
+
 
 
 

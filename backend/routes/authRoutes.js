@@ -7,7 +7,19 @@ const authFunctions = require("../lib/auth.js")
 authRoutes.signin = (req, res) => { // TYPE: POST
   const username = req.body.username;
   const password = req.body.password;
-  res.status(200).json({"response": "success"});
+
+  //Check if user exists to get hash
+  authFunctions.checkUserExists(username)
+  .then((user) => {
+    return authFunctions.checkPass({password: password, hash: user.password, salt: user.salt})
+  })
+  .then(() => {
+    res.status(200).json({"response": "success"});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
+    res.status(status).json({"response": "error", "errorType": e})
+  })
 }
 
 authRoutes.signup = (req, res) => { //TYPE: POST
@@ -31,7 +43,7 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   }
 
   //Checks if user exists
-  authFunctions.checkUserExists(username)
+  authFunctions.checkUserDoesNotExist(username)
   .then(() => {
     //Create hash and salt
     const hashAndSalt = authFunctions.createHashAndSalt(password)
