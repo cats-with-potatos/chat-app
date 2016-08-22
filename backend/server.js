@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 });
 router.get("/getAllMessages", routes.getAllMessages);
 router.get("/getChannelMessages", routes.getChannelMessages);
-router.post("/login", routes.login);
+router.post("/signup", routes.signup);
 
 app.use('/', express.static('public'));
 app.get('/*', (req, res, next) => {
