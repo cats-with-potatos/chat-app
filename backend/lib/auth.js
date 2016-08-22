@@ -34,7 +34,7 @@ auth.signUpError = (cred) => {
       !/[0-9]/.test(cred.password)){
     return "badPassword";
   }
-  if (cred.password != cred.validation_password){
+  if (cred.password != cred.validationPassword){
     return "passNoMatch";
   }
   return null;
