@@ -21,6 +21,22 @@ auth.signUpError = (cred) => {
   if (cred.username.length > 30 || cred.password.length > 30) {
     return "tooLong";
   }
+  // Regular expression to match a username. Can only have upper/lowercase, numbers, and _ or -
+  if (!/[^a-zA-Z0-9_-]/.test(cred.username)){
+    return "badUsername";
+  }
+  /*
+  Uses 3 regular expressions tested in order. If pass doesn't have an uppercase char,
+  a lowercase char, and a number, it fails. 
+  */
+  if (!/[a-z]/.test(cred.password) || 
+      !/[A-Z]/.test(cred.password) ||
+      !/[0-9]/.test(cred.password)){
+    return "badPassword";
+  }
+  if (cred.password != cred.validation_password){
+    return "passNoMatch";
+  }
   return null;
 };
 
