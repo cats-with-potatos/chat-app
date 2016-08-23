@@ -3,6 +3,7 @@ const express = require("express")
 , routes = require("./routes/routes.js")
 , router = express.Router()
 , bodyParser = require("body-parser")
+, io = require('./lib/socketio.js')
 
 //Middleware
 app.use('/', express.static('public'));
