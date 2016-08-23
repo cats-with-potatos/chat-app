@@ -1,7 +1,10 @@
 const bluebird = require("bluebird")
 , crypto = require("crypto")
+, jwt = require("jsonwebtoken")
+, config = require("../config.js")
 , mysqlWrap = require("./db.js")
 , auth = {};
+
 
 /*
 Checks if the username and password are valid,
@@ -30,11 +33,11 @@ auth.signUpError = (cred) => {
   a lowercase char, and a number, it fails.
   */
   if (!/[a-z]/.test(cred.password) ||
-      !/[A-Z]/.test(cred.password) ||
-      !/[0-9]/.test(cred.password)){
+  !/[A-Z]/.test(cred.password) ||
+  !/[0-9]/.test(cred.password)){
     return "badPassword";
   }
-  if (cred.password != cred.validationPassword){
+  if (cred.password !== cred.validationPassword){
     return "passNoMatch";
   }
   return null;
@@ -45,12 +48,14 @@ auth.createHashAndSalt = (password) => {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto.createHash('sha1').update(salt + password).digest('hex');
 
-  return {hash, salt: salt};
+  return {hash: hash, salt: salt};
 };
 
 
-//Checks to see if user is already in Db
-auth.checkUserExists = (username) => {
+
+
+//Checks to see if user if the user does not exist
+auth.checkUserDoesNotExist = (username) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
@@ -60,8 +65,6 @@ auth.checkUserExists = (username) => {
         mclient.query("SELECT user_id FROM UserTable WHERE username like binary ?", [username], (err, results) => {
           mclient.release();
           if (err) {
-            console.log("I AM EHRE");
-            console.log(err.message);
             reject("serverError");
           }
           else if (results.length !== 0) {
@@ -76,6 +79,8 @@ auth.checkUserExists = (username) => {
   });
 };
 
+
+
 //Inserts users to Db
 auth.insertUserToDb = (fullCreds) => {
   return new Promise((resolve, reject) => {
@@ -84,7 +89,6 @@ auth.insertUserToDb = (fullCreds) => {
         reject("serverError");
       }
       else {
-        console.log(fullCreds);
         mclient.query("INSERT INTO UserTable (user_id, username, password, salt) VALUES (DEFAULT, ?, ?, ?)", [
           fullCreds.username,
           fullCreds.hash,
@@ -92,17 +96,88 @@ auth.insertUserToDb = (fullCreds) => {
         ], (err, results) => {
           mclient.release();
           if (err) {
-            console.log("do i reach here", err);
             reject("serverError");
           }
           else {
-            resolve();
+            resolve(results.insertId);
           }
         });
       }
     });
   });
 };
+
+//Gets a user's id and username and returns a JWT
+auth.createJwt = (user) => {
+  return new Promise((resolve, reject) => {
+    if (typeof user === "undefined" || typeof config.JWT_PASSWORD === "undefined") {
+      reject("serverError");
+    }
+    else {
+      jwt.sign(user, config.JWT_PASSWORD, {
+        expiresIn: 604800,
+      }, (err, token) => {
+        if (err) {
+          reject("serverError");
+        }
+        else {
+          resolve(token);
+        }
+      })
+    }
+  });
+};
+
+
+auth.checkUserExists = (username) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT * FROM UserTable WHERE username like binary ?", [username], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else if (results.length === 0) {
+            reject("wrongCred");
+          }
+          else {
+            resolve(results[0]);
+          }
+        });
+      }
+    });
+  });
+};
+
+
+/*Cred argument is an object that stores:
+password - Inputted password
+hash - The hashed value from db
+salt - the salt from db
+*/
+
+auth.checkPass = (cred) => {
+  return new Promise((resolve, reject) => {
+    const newHash = crypto.createHash('sha1').update(cred.salt + cred.password).digest('hex');
+    if (newHash === cred.hash) {
+      resolve({
+        id: cred.id,
+        username: cred.username
+      });
+    }
+    else {
+      reject("wrongCred");
+    }
+  });
+};
+
+
+
+
 
 
 
