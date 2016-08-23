@@ -8,6 +8,10 @@
       $stateProvider.state('chat-app.signup', {
           url: '/signup',
           templateUrl: 'signup.html'
+      }),
+      $stateProvider.state('chat-app.login', {
+          url: '/login',
+          templateUrl: 'login.html'
       });
     }
 })();
