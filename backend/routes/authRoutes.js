@@ -31,7 +31,7 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
     res.status(status).json({"response": "error", "errorType": e})
   })
-}
+};
 
 authRoutes.signup = (req, res) => { //TYPE: POST
   //Get username and password and validationPassword from body
