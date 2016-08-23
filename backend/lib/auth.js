@@ -128,6 +128,24 @@ auth.createJwt = (user) => {
   });
 };
 
+auth.checkJwt = (token) => {
+  return new Promise((resolve, reject) => {
+    if (typeof token === "undefined") {
+      reject("serverError");
+    }
+    else {
+      jwt.verify(token, config.JWT_PASSWORD, (err, decoded) => {
+        if (err) {
+          reject("serverError");
+        }
+        else {
+          resolve(decoded);
+        }
+      })
+    }
+  });
+};
+
 
 auth.checkUserExists = (username) => {
   return new Promise((resolve, reject) => {
