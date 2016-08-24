@@ -7,7 +7,7 @@ middleware.checkToken = (req, res, next) => {
 
   authFunctions.checkJwt(token)
   .then((decoded) => {
-    req.decoded = token;
+    req.decoded = decoded;
     next();
   })
   .catch((e) => {
