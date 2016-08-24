@@ -1,7 +1,7 @@
 const socketio = require("socket.io")
 
 exports.listen = (app) => {
-	io = socketio(app)
+	const io = socketio(app)
 
 	// Defining the connection behavior
 	io.on('connection', (socket) => {
