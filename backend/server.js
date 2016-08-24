@@ -5,6 +5,7 @@ const express = require("express")
 , server = require("http").Server(app)
 , io = require('./lib/socketio.js').listen(server)
 , routes = require("./routes/routes.js")
+, middleware = require("./lib/middleware.js");
 
 //Middleware
 app.use('/', express.static('public'));
@@ -16,9 +17,12 @@ app.use('/api', router);
 router.post("/signup", routes.authRoutes.signup);
 router.post("/signin", routes.authRoutes.signin);
 
+
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", routes.chatRoutes.getChannelMessages);
+router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
+
 
 app.get('/*', routes.angularRoutes.serveIndex);
 

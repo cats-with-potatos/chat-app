@@ -24,6 +24,7 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     return authFunctions.createJwt(jwtPayload);
   })
   .then((jwt) => {
+    console.log(jwt);
     res.cookie("auth", jwt, {maxAge: 604800, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
@@ -72,10 +73,13 @@ authRoutes.signup = (req, res) => { //TYPE: POST
     return authFunctions.insertUserToDb(fullCredentials);
   })
   .then((id) => {
-    //Create JSON web token
+    return authFunctions.addToGenChannel(id);
+  })
+  .then((id) => {
     return authFunctions.createJwt({username: username, id: id});
   })
   .then((token) => {
+    console.log(token);
     res.cookie("auth", token, {maxAge: 604800, httpOnly: false});
     res.status(200).json({"response": "success"});
   })

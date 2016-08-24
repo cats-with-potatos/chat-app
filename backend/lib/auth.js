@@ -193,6 +193,27 @@ auth.checkPass = (cred) => {
   });
 };
 
+auth.addToGenChannel = (id) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("INSERT INTO UserInChannel (inchan_id, inchan_userid, inchan_channel_id) VALUES (DEFAULT, ?, ?)", [id, 1], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve(id);
+          }
+        });
+      }
+    })
+  });
+};
+
 
 
 
