@@ -3,6 +3,8 @@ const express = require("express")
 , routes = require("./routes/routes.js")
 , router = express.Router()
 , bodyParser = require("body-parser")
+, server = require("http").Server(app)
+, io = require('./lib/socketio.js').listen(server)
 
 //Middleware
 app.use('/', express.static('public'));
@@ -20,4 +22,4 @@ router.get("/getChannelMessages", routes.chatRoutes.getChannelMessages);
 
 app.get('/*', routes.angularRoutes.serveIndex);
 
-app.listen(8080);
+server.listen(8080);
