@@ -49,8 +49,8 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   //Validate credentials
   const signUpError = authFunctions.signUpError(credentials);
 
-  if (signUpError) {
-    res.status(400).json({"response": "error", "errorType": signUpError});
+  if (signUpError.length !== 0) {
+    res.status(400).json({"response": "error", "data": signUpError});
     return;
   }
 
@@ -85,7 +85,7 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
-    res.status(status).json({"response": "error", "errorType": e})
+    res.status(status).json({"response": "error", "data": [e]})
   });
 };
 
