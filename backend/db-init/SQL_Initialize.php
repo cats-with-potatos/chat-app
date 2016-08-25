@@ -48,7 +48,7 @@ PRIMARY KEY (chan_id));";
 
 // Query to create Messages table
 $mt_create_query = "CREATE TABLE IF NOT EXISTS MessagesTable (
-message_id MEDIUMINT UNSIGNED NOT sNULL AUTO_INCREMENT,
+message_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
 contents VARCHAR(256) NOT NULL,
 sender VARCHAR(32) NOT NULL,
 chan_link_id TINYINT UNSIGNED NOT NULL,
