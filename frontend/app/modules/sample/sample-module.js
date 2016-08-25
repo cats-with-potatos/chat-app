@@ -17,14 +17,13 @@
           controllerAs: 'vm'
       }).state('chat-app.landing', {
         url: '/landing',
-        templateUrl: '/landingPage.html',
+        templateUrl: 'landingPage.html',
         controller: 'SampleController',
         controllerAs: 'vm'
-      }).state('chat-app',
-        url: /'landingPage.html',
-        templateUrl:'/landingPage.html',
+      }).state('chat-app', {
+        url: '/landingPage',
+        templateUrl:'landingPage.html',
         controller: 'SampleController',
         controllerAs: 'vm'
-      );
-    }
+      });
 })();

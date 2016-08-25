@@ -17,11 +17,11 @@
       $locationProvider.html5Mode(true);
       $stateProvider.state('chat-app', {
           url: '',
-          templateUrl: 'standard-layout.html'
+          templateUrl: 'landingPage.html'
       })
       .state('chat-app-home_if_no_slash', { //[JG] Fixes blank screen when refreshing on home page
           url: '/',
-          templateUrl: 'standard-layout.html'
+          templateUrl: 'landingPage.html'
       });
     }])
     .controller('ApplicationController', ['$rootScope', '$state', '$anchorScroll', ApplicationController]);
