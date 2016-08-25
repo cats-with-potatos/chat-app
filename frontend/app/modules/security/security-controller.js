@@ -32,7 +32,7 @@
           else {
             //Iterate through the error messages and add them to array
             vm.errorMessage = [];
-            res.data.data.forEach((val) => {
+            res.data.data.forEach(function(val) {
               switch (val) {
                 case "paramUndefined":
                   //Please change this error message, it is truly cancer..
