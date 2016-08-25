@@ -7,7 +7,7 @@ const Promise = require("bluebird")
 chat.checkMessageError = (messageDet) => {
   //Checks if any of the params are undefined
   if (typeof messageDet.userid === "undefined" || isNaN(messageDet.channelId) || typeof messageDet.message === "undefined") {
-    return "paramUndefined";
+    return "paramError";
   }
 
   //Will do some error checking here later in regards to message error checking
@@ -87,6 +87,28 @@ chat.emitMessageToChannel = (channelId) => {
         }
       });
     }
+  });
+};
+
+//Gets all messages from channel
+chat.getAllChannelMessages = (channel) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id", (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve(results);
+          }
+        })
+      }
+    });
   });
 };
 

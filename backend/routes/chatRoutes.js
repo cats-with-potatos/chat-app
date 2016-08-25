@@ -24,9 +24,30 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 };
 
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
-  const channelId = req.query.channelId;
-  //Logic goes here
-  res.status(200).json({"response": "success"});
+  const userId = req.decoded.id;
+  const channelId = Number(req.query.channelId);
+
+  if (isNaN(channelId)) {
+    res.status(400).json({"response": "error", "errorType": "paramError"});
+    return;
+  }
+
+
+  //Getting all the channels messages
+  chat.checkUserInChannel({
+    userid: userId,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.getAllChannelMessages(channelId)
+  })
+  .then((data) => {
+    res.status(200).json({"response": "success", "data": data});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({"response": "error", "errorType": e});
+  });
 };
 
 //Called by users to send chat messages
@@ -44,14 +65,11 @@ chatRoutes.sendChatMessage = (req, res) => {
   });
 
 
-
-
   //Checks if user input errors were there
   if (chatError) {
     res.status(400).json({"response": "error", "errorType": chatError});
     return;
   }
-
 
 
 

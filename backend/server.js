@@ -20,7 +20,7 @@ router.post("/signin", routes.authRoutes.signin);
 
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
-router.get("/getChannelMessages", routes.chatRoutes.getChannelMessages);
+router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
 
 
