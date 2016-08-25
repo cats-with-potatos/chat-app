@@ -2,7 +2,9 @@
   'use strict';
   angular
   .module('chat-app.security')
-  .controller('SecurityController', ['$state', 'SecurityService', Controller]);
+  .controller('SecurityController', ['$state' ,'SecurityService', Controller]);
+
+
   function Controller($state, SecurityService) {
     var vm = this;
     vm.buttonDisabled = false;
@@ -27,7 +29,7 @@
           if (res.data.response === "success") {
             //Show no error messages
             vm.errorMessage = false;
-
+            $state.go('chat-app.sample');
           }
           else {
             //Iterate through the error messages and add them to array
@@ -60,7 +62,7 @@
           }
         })
         .catch(function(e) {
-          fm.buttonDisabled = false;
+          vm.buttonDisabled = false;
         });
       }
     };
