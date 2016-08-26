@@ -16,7 +16,14 @@
           }
         })
         .then(function(res) {
-          return res.data.data // Returns data in an array
+          const messagesArray = [];
+
+          res.data.data.forEach(function(val) {
+            val.contents = JSON.parse(val.contents); //Parses the stringified string
+            messagesArray.push(val);
+          });
+
+          return messagesArray; // Returns data in an array
         })
         };
 

@@ -93,7 +93,7 @@ chatRoutes.sendChatMessage = (req, res) => {
   })
   .then(() => {
     //Emits the message to all the people in that channel that are online
-    return chat.emitMessageToChannel()
+    return chat.emitMessageToChannel(channelId)
   })
   .then(() => {
     res.status(200).json({"response": "success"});

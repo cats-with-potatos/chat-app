@@ -1,5 +1,6 @@
 const Promise = require("bluebird")
 , io = require("./socketio.js").listen()
+, clients = require("./socketio.js").clients
 , mysqlWrap = require("./db.js")
 , chat = {};
 
@@ -65,7 +66,7 @@ chat.insertMessageToDb = (messageDet) => {
 };
 
 //Emits message to all the people in the specific channel
-chat.emitMessageToChannel = (channelId) => {
+chat.emitMessageToChannel = (messageInfo) => {
   //Get all the user id's so we can emit socket.io events to them
 
   mysqlWrap.getConnection((err, mclient) => {
@@ -80,9 +81,13 @@ chat.emitMessageToChannel = (channelId) => {
         }
         else {
           results.forEach((val) => {
-            io.sockets.connected[clients[val.inchan_userid].socket].emit("newChannelMessage", {
-              channelId: channelId,
-            });
+            if (typeof clients[val.inchan_userid] !== "undefined") {
+                io.sockets.connected[clients[val.inchan_userid].socket].emit("newChannelMessage", {
+                channelId: messageInfo.channelId,
+                message: messageInfo.message,
+
+              });
+            }
           });
         }
       });
