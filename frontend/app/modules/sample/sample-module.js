@@ -17,7 +17,7 @@
           controllerAs: 'vm'
       }).state('chat-app.landing', {
         url: '/',
-        templateUrl: 'landingPage/landingPage.html',
+        templateUrl: 'landingPage.html',
         controller: 'SampleController',
         controllerAs: 'vm',
       });
