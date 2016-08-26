@@ -3,7 +3,7 @@
     <h1>Chat Messages</h1>
     <div class="panel panel-default" id="messagePanel">
       <ul>
-        <li id="message" ng-repeat="message in vm.messages">{{message.contents}}</li>
+        <li id="message" ng-repeat="message in vm.messages">{{message.contents}} - <b>{{message.username}}</b></li>
       </ul>
     </div>
   </div>

@@ -28,30 +28,30 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 };
 
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
-  const userId = req.decoded.id;
-  const channelId = Number(req.query.channelId);
+const userId = req.decoded.id;
+const channelId = Number(req.query.channelId);
 
-  if (isNaN(channelId)) {
-    res.status(400).json({"response": "error", "errorType": "paramError"});
-    return;
-  }
+if (isNaN(channelId)) {
+  res.status(400).json({"response": "error", "errorType": "paramError"});
+  return;
+}
 
 
-  //Getting all the channels messages
-  chat.checkUserInChannel({
-    userid: userId,
-    channelId: channelId,
-  })
-  .then(() => {
-    return chat.getAllChannelMessages(channelId)
-  })
-  .then((data) => {
-    res.status(200).json({"response": "success", "data": data});
-  })
-  .catch((e) => {
-    const status = e === "serverError" ? 500 : 400;
-    res.status(status).json({"response": "error", "errorType": e});
-  });
+//Getting all the channels messages
+chat.checkUserInChannel({
+  userid: userId,
+  channelId: channelId,
+})
+.then(() => {
+  return chat.getAllChannelMessages(channelId)
+})
+.then((data) => {
+  res.status(200).json({"response": "success", "data": data});
+})
+.catch((e) => {
+  const status = e === "serverError" ? 500 : 400;
+  res.status(status).json({"response": "error", "errorType": e});
+});
 };
 
 //Called by users to send chat messages
@@ -59,7 +59,6 @@ chatRoutes.sendChatMessage = (req, res) => {
   const userid = req.decoded.id;
   const channelId = Number(req.body.channelId); //Will return "NaN" if not present
   const message = req.body.message;
-
 
   //Checks for errors with user input
   const chatError = chat.checkMessageError({
@@ -91,9 +90,12 @@ chatRoutes.sendChatMessage = (req, res) => {
       message: message,
     });
   })
-  .then(() => {
+  .then((messageId) => {
+    return chat.getMessagesInfo(messageId);
     //Emits the message to all the people in that channel that are online
-    return chat.emitMessageToChannel(channelId)
+  })
+  .then((messageInfo) => {
+    return chat.emitMessageToChannel(messageInfo);
   })
   .then(() => {
     res.status(200).json({"response": "success"});

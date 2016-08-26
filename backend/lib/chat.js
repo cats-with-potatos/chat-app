@@ -51,13 +51,13 @@ chat.insertMessageToDb = (messageDet) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id) VALUES (DEFAULT, ?, ?, ?)", [messageDet.message, messageDet.userid, messageDet.channelId], (err, resuts) => {
+        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id) VALUES (DEFAULT, ?, ?, ?)", [messageDet.message, messageDet.userid, messageDet.channelId], (err, results) => {
           mclient.release();
           if (err) {
             reject("serverError");
           }
           else {
-            resolve();
+            resolve(results.insertId);
           }
         });
       }
@@ -68,30 +68,51 @@ chat.insertMessageToDb = (messageDet) => {
 //Emits message to all the people in the specific channel
 chat.emitMessageToChannel = (messageInfo) => {
   //Get all the user id's so we can emit socket.io events to them
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ?", [messageInfo.chan_id], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            results.forEach((val) => {
+              if (typeof clients[val.inchan_userid] !== "undefined") {
+                console.log(clients[val.inchan_userid]);
+                io.sockets.connected[clients[val.inchan_userid].socket].emit("newChannelMessage", messageInfo);
+              }
+            });
+            resolve();
+          }
+        });
+      }
+    });
+  })
+};
 
-  mysqlWrap.getConnection((err, mclient) => {
-    if (err) {
-      reject("serverError");
-    }
-    else {
-      mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ?", [channelId], (err, results) => {
-        mclient.release();
-        if (err) {
-          reject("serverError");
-        }
-        else {
-          results.forEach((val) => {
-            if (typeof clients[val.inchan_userid] !== "undefined") {
-                io.sockets.connected[clients[val.inchan_userid].socket].emit("newChannelMessage", {
-                channelId: messageInfo.channelId,
-                message: messageInfo.message,
+chat.getMessagesInfo = (messageId) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.message_id = ?", [messageId], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve(results[0]);
+          }
+        });
 
-              });
-            }
-          });
-        }
-      });
-    }
+      }
+    });
   });
 };
 
