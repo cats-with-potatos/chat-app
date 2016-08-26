@@ -82,7 +82,7 @@ chat.emitMessageToChannel = (messageInfo) => {
           else {
             results.forEach((val) => {
               if (typeof clients[val.inchan_userid] !== "undefined") {
-                console.log(clients[val.inchan_userid]);
+                console.log(val.inchan_userid);
                 io.sockets.connected[clients[val.inchan_userid].socket].emit("newChannelMessage", messageInfo);
               }
             });
