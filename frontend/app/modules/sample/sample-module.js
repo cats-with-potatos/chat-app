@@ -6,10 +6,10 @@
 
     function Routes($stateProvider) {
       $stateProvider.state('chat-app.sample', {
-          url: '/',
+          url: '/sample-1',
           templateUrl: 'sample.html',
           controller: 'SampleController',
-          controllerAs: 'vm'
+          controllerAs: 'vm',
       }).state('chat-app.sample-2', {
           url: '/sample-2',
           templateUrl: 'sample-2.html',
@@ -20,6 +20,11 @@
           templateUrl: 'sample-3.html',
           controller: 'SampleController',
           controllerAs: 'vm'
+      }).state('chat-app.landing', {
+        url: '/',
+        templateUrl: 'landingPage/landingPage.html',
+        controller: 'SampleController',
+        controllerAs: 'vm',
       });
     }
 })();

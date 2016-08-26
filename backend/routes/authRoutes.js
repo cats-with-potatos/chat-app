@@ -24,6 +24,7 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     return authFunctions.createJwt(jwtPayload);
   })
   .then((jwt) => {
+    console.log(jwt);
     res.cookie("auth", jwt, {maxAge: 604800, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
@@ -48,8 +49,8 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   //Validate credentials
   const signUpError = authFunctions.signUpError(credentials);
 
-  if (signUpError) {
-    res.status(400).json({"response": "error", "errorType": signUpError});
+  if (signUpError.length !== 0) {
+    res.status(400).json({"response": "error", "data": signUpError});
     return;
   }
 
@@ -72,16 +73,19 @@ authRoutes.signup = (req, res) => { //TYPE: POST
     return authFunctions.insertUserToDb(fullCredentials);
   })
   .then((id) => {
-    //Create JSON web token
+    return authFunctions.addToGenChannel(id);
+  })
+  .then((id) => {
     return authFunctions.createJwt({username: username, id: id});
   })
   .then((token) => {
+    console.log(token);
     res.cookie("auth", token, {maxAge: 604800, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
-    res.status(status).json({"response": "error", "errorType": e})
+    res.status(status).json({"response": "error", "data": [e]})
   });
 };
 

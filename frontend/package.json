@@ -8,6 +8,7 @@
     "node": "5.2.0"
   },
   "dependencies": {
+    "angular-cookies": "^1.5.8",
     "angular-hint": "0.3.4",
     "assetsmanager-brunch": "1.8.1",
     "auto-reload-brunch": ">= 1.0 < 1.9",
