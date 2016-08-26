@@ -49,13 +49,19 @@ PRIMARY KEY (chan_id));";
 // Query to create Messages table
 $mt_create_query = "CREATE TABLE IF NOT EXISTS MessagesTable (
 message_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-contents VARCHAR(256),
-sender VARCHAR(32),
-chan_link_id TINYINT UNSIGNED,
+contents VARCHAR(256) NOT NULL,
+sender VARCHAR(32) NOT NULL,
+chan_link_id TINYINT UNSIGNED NOT NULL,
 PRIMARY KEY (message_id));";
 
+$uic_create_query = "CREATE TABLE IF NOT EXISTS UserInChannel (
+  inchan_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  inchan_userid TINYINT UNSIGNED NOT NULL,
+  inchan_channel_id TINYINT UNSIGNED NOT NULL,
+  PRIMARY KEY (inchan_id));";
+
 // MySQLi multi-query functionality is buggy at best. Workaround -- create an array of queries, an iterate over them, die if errors occur.
-$query_array = array($ut_create_query, $ct_create_query, $mt_create_query);
+$query_array = array($ut_create_query, $ct_create_query, $mt_create_query, $uic_create_query);
 
 // Iterating over each query in the array, dying if errors occur -- stops bad tables from being created.
 foreach ($query_array as $item)

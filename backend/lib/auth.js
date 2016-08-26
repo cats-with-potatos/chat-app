@@ -12,21 +12,19 @@ If there is an error, the error will be returns
 If not, null will be returned
 */
 auth.signUpError = (cred) => {
+  const errorArray = [];
+
   //Checks to see if user didn't input username or password
-  if (typeof cred.username === "undefined" || typeof cred.password === "undefined") {
-    return "paramUndefined";
+  if (typeof cred.username === "undefined" || typeof cred.password === "undefined" || typeof cred.validationPassword === "undefined" || cred.username.trim() === "" || cred.password.trim() === "" || cred.validationPassword.trim() === "") {
+    return ["paramUndefined"];
   }
-  //If the user inputted nothing e.g. "   " or ""
-  if (cred.username.trim() === "" || cred.password.trim() === "") {
-    return "whitespace";
-  }
-  //If the username or pass is over 30 characters long
+    //If the username or pass is over 30 characters long
   if (cred.username.length > 30 || cred.password.length > 30) {
-    return "tooLong";
+    errorArray.push("tooLong");
   }
   // Regular expression to match a username. Can only have upper/lowercase, numbers, and _ or -
   if (/[^a-zA-Z0-9_-]/.test(cred.username)){
-    return "badUsername";
+    errorArray.push("badUsername");
   }
   /*
   Uses 3 regular expressions tested in order. If pass doesn't have an uppercase char,
@@ -35,12 +33,12 @@ auth.signUpError = (cred) => {
   if (!/[a-z]/.test(cred.password) ||
   !/[A-Z]/.test(cred.password) ||
   !/[0-9]/.test(cred.password)){
-    return "badPassword";
+    errorArray.push("badPassword");
   }
   if (cred.password !== cred.validationPassword){
-    return "passNoMatch";
+    errorArray.push("passNoMatch");
   }
-  return null;
+  return errorArray;
 };
 
 //A randomly generated salt is prepended to the password and then sha1 hashed.
@@ -190,6 +188,27 @@ auth.checkPass = (cred) => {
     else {
       reject("wrongCred");
     }
+  });
+};
+
+auth.addToGenChannel = (id) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("INSERT INTO UserInChannel (inchan_id, inchan_userid, inchan_channel_id) VALUES (DEFAULT, ?, ?)", [id, 1], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve(id);
+          }
+        });
+      }
+    })
   });
 };
 
