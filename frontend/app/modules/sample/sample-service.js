@@ -16,6 +16,13 @@
         return response.data;
       });
     };
+
+    service.makeChatMessage = function () {
+      return $http.get('/api/getAllMessages').then(function(response) {
+        return response.data;
+      });
+    };
+
     return service;
   }
 })();

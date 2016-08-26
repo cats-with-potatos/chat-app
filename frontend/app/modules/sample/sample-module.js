@@ -15,6 +15,11 @@
           templateUrl: 'sample-2.html',
           controller: 'SampleController',
           controllerAs: 'vm'
+      }).state('chat-app.sample-3', {
+          url: '/sample-3',
+          templateUrl: 'sample-3.html',
+          controller: 'SampleController',
+          controllerAs: 'vm'
       });
     }
 })();

@@ -1,0 +1,7 @@
+<div>
+  <h1>Chat Messages</h1>
+  <button data-ng-click="vm.showChatMessage();">Load Messages</button>
+  <ul>
+    <li ng-repeat="message in vm.messages">{{message.message}}</li>
+  </ul>
+</div>

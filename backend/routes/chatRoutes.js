@@ -19,7 +19,9 @@ data: {
 */
 chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
   //Logic goes here
-  res.json({"response": "success"});
+  res.json([{"message": "hello"},
+            {"message": "hello again"},
+            {"message": "hello again x 2"}]);
 };
 
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
