@@ -19,6 +19,19 @@
           return res.data.data // Returns data in an array
         })
         };
+
+      service.sendMessage = function(data) {
+        return $http({
+          method: "POST",
+          url: "/api/sendChatMessage",
+          data: $.param({channelId: data.channelId, message: data.message}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
+        })
+      }
+
         return service;
       }
     })();

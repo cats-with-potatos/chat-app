@@ -25,7 +25,7 @@ authRoutes.signin = (req, res) => { // TYPE: POST
   })
   .then((jwt) => {
     console.log(jwt);
-    res.cookie("auth", jwt, {maxAge: 604800, httpOnly: false});
+    res.cookie("auth", jwt, {maxAge: 604800000, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
   .catch((e) => {
@@ -80,7 +80,7 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   })
   .then((token) => {
     console.log(token);
-    res.cookie("auth", token, {maxAge: 604800, httpOnly: false});
+    res.cookie("auth", token, {maxAge: 604800000, httpOnly: false});
     res.status(200).json({"response": "success"});
   })
   .catch((e) => {

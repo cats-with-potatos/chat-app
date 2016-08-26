@@ -11,9 +11,29 @@
       ChatService.getChatMessages({channelId: 1})
       .then(function(messages) {
         vm.messages = messages;
-        console.log(vm.messages);
+        console.log(messages);
       })
     };
+
+    vm.loadChatMessages();
+    //Loads all the messages
+
+    vm.sendMessage = function(event) {
+      //If only enter key is pressed
+        event.preventDefault();
+
+      else if (event.key === "Enter" && !event.shiftKey) {
+        ChatService.sendMessage({
+          channelId: 1,
+          message: JSON.stringify(vm.message)
+        })
+      }
+
+
+    }
+
+
+
   }
 
 }());
