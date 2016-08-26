@@ -8,8 +8,7 @@
     [
         'ui.router',
         'chat-app.sample',
-        'chat-app.security',
-        require("angular-cookies"),
+        'chat-app.security'
     ])
     .constant('baseImagePath', '/images/')
     .constant('config', {apiHost: apiHost})
