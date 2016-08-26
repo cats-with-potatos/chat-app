@@ -16,14 +16,10 @@
           controller: 'SampleController',
           controllerAs: 'vm'
       }).state('chat-app.landing', {
-        url: '/landing',
+        url: '/',
         templateUrl: 'landingPage.html',
         controller: 'SampleController',
         controllerAs: 'vm'
-      }).state('chat-app', {
-        url: '/landingPage',
-        templateUrl:'landingPage.html',
-        controller: 'SampleController',
-        controllerAs: 'vm'
       });
+    }
 })();
