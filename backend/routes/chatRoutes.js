@@ -20,9 +20,10 @@ data: {
 */
 chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
   //Logic goes here
-  res.json([{"message": "hello"},
-            {"message": "hello again"},
-            {"message": "hello again x 2"}]);
+
+
+  //This will get the messages from ALL the channels. Most likely only getChannelMessages should be used
+  res.json({"response": "success"});
   res.status(200).json({"response": "success"});
 };
 

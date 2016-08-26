@@ -2,14 +2,17 @@
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['SampleService', Controller]);
+  .controller('ChatController', ['ChatService', Controller]);
 
-  function Controller(SampleService) {
+  function Controller(ChatService) {
     var vm = this;
-    vm.showChatMessage = function() {
-      SampleService.makeChatMessage().then(function(messages) {
-          vm.messages = messages;
-      });
+
+    vm.loadChatMessages = function() {
+      ChatService.getChatMessages({channelId: 1})
+      .then(function(messages) {
+        vm.messages = messages;
+        console.log(vm.messages);
+      })
     };
   }
 
