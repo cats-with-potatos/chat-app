@@ -2,9 +2,9 @@
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['ChatService', Controller]);
+  .controller('ChatController', ['$rootScope', 'ChatService', Controller]);
 
-  function Controller(ChatService) {
+  function Controller($rootScope, ChatService) {
     var vm = this;
 
 
@@ -12,10 +12,13 @@
     socket.emit("newUser", Cookies.get("auth"))
 
     socket.on("newChannelMessage", function(message) {
-      message.contents = JSON.parse(message.contents);
-      document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
-      vm.messages.push(message);
-  });
+      $rootScope.$applyAsync(function() {
+        message.contents = JSON.parse(message.contents);
+        console.log(message);
+        vm.messages.push(message);
+        document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+      });
+    });
 
     vm.loadChatMessages = function() {
       ChatService.getChatMessages({channelId: 1})
