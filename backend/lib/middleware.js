@@ -3,8 +3,7 @@ const authFunctions = require("./auth.js")
 
 
 middleware.checkToken = (req, res, next) => {
-  const token = req.get("Authorization");
-
+  const token = req.get("Authorization").split(" ")[1];
   authFunctions.checkJwt(token)
   .then((decoded) => {
     req.decoded = decoded;

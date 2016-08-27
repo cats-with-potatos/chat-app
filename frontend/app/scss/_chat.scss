@@ -1,0 +1,13 @@
+#message {
+  list-style: none;
+}
+
+#messagePanel {
+  overflow: auto;
+  height: 300px;
+  padding-bottom: 10px;
+}
+
+#messageBox {
+  white-space: pre-wrap;
+}
