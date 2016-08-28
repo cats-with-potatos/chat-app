@@ -1,23 +1,7 @@
 const chat = require("../lib/chat.js")
 , chatRoutes = {};
 
-/*
-Will get all the messages from all the channels.
-
-"1" and "2" mark the channel id's
-
-Example output
----------------
-{
-"response: "success",
-data: {
-"1": [{from:{user_id: 1, user_name: "raf"}, message: "This is my message!"},
-{from:{user_id: 2, user_name: "jp"}, message: "This is jp's message message!"}]
-"2": [{from:{user_id: 1, user_name: "raf"}, message: "This is my message!"},
-{from:{user_id: 2, user_name: "jp"}, message: "This is jp's message message!"}]
-}
-}
-*/
+//Will get all the messages from all the channels.
 chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
   //Logic goes here
 
@@ -28,34 +12,35 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 };
 
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
-const userId = req.decoded.id;
-const channelId = Number(req.query.channelId);
+  const userId = req.decoded.id;
+  const channelId = Number(req.query.channelId);
 
-if (isNaN(channelId)) {
-  res.status(400).json({"response": "error", "errorType": "paramError"});
-  return;
-}
+  //Checks to see of the channel is not a number
+  if (isNaN(channelId)) {
+    res.status(400).json({"response": "error", "errorType": "paramError"});
+    return;
+  }
 
-
-//Getting all the channels messages
-chat.checkUserInChannel({
-  userid: userId,
-  channelId: channelId,
-})
-.then(() => {
-  return chat.getAllChannelMessages(channelId)
-})
-.then((data) => {
-  res.status(200).json({"response": "success", "data": data});
-})
-.catch((e) => {
-  const status = e === "serverError" ? 500 : 400;
-  res.status(status).json({"response": "error", "errorType": e});
-});
+  //Checks to see if the user is in the channel
+  chat.checkUserInChannel({
+    userid: userId,
+    channelId: channelId,
+  })
+  .then(() => {
+    //Getting all the channels messages
+    return chat.getAllChannelMessages(channelId)
+  })
+  .then((data) => {
+    res.status(200).json({"response": "success", "data": data});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({"response": "error", "errorType": e});
+  });
 };
 
 //Called by users to send chat messages
-chatRoutes.sendChatMessage = (req, res) => {
+chatRoutes.sendChatMessage = (req, res) => { // TYPE POST
   const userid = req.decoded.id;
   const channelId = Number(req.body.channelId); //Will return "NaN" if not present
   const message = req.body.message;
@@ -91,10 +76,11 @@ chatRoutes.sendChatMessage = (req, res) => {
     });
   })
   .then((messageId) => {
+    //Gets the whole message info from messageId
     return chat.getMessagesInfo(messageId);
-    //Emits the message to all the people in that channel that are online
   })
   .then((messageInfo) => {
+    //Emits the message to all the people in that channel that are online
     return chat.emitMessageToChannel(messageInfo);
   })
   .then(() => {
@@ -105,8 +91,5 @@ chatRoutes.sendChatMessage = (req, res) => {
     res.status(status).json({"response": "error", "errorType": e})
   });
 };
-
-
-
 
 module.exports = chatRoutes;

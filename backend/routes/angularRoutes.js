@@ -1,7 +1,7 @@
 const path = require("path")
 , angularRoutes = {};
 
-angularRoutes.serveIndex = (req, res, next) => {
+angularRoutes.serveIndex = (req, res, next) => { // TYPE: GET
   //[JG]: Anguar routes are configured to not be hash prefixed.
 
   if (req.url.indexOf('/api') === 0) {
