@@ -25,8 +25,9 @@
 
           return messagesArray; // Returns data in an array
         })
-        };
+      };
 
+      //Sends a message to the server.
       service.sendMessage = function(data) {
         return $http({
           method: "POST",
@@ -37,8 +38,31 @@
             'Content-Type': "application/x-www-form-urlencoded",
           }
         })
-      }
+      };
 
-        return service;
-      }
-    })();
+      //Sends to the server that the user is typing
+      service.sendUserIsTyping = function() {
+        return $http({
+          method: "POST",
+          url: "/api/sendUserIsTyping",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
+        });
+      };
+
+      //Sends to the server that the user has stopped typing
+      service.sendUserStoppedTyping = function() {
+        return $http({
+          method: "POST",
+          url: "/api/sendUserStoppedTyping",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
+        });
+      };
+      return service;
+    }
+  })();

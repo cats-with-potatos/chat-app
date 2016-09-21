@@ -22,6 +22,8 @@ router.post("/signin", routes.authRoutes.signin);
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
+router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
+router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
 
 //Channel Routes
 router.post("/createNewChannel", middleware.checkToken, routes.channelRoutes.createNewChannel);

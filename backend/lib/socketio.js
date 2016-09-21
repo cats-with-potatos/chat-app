@@ -27,7 +27,6 @@ const listen = (app) => {
 					//To make sure that only properties of the clients object are iterated over
 					if (clients.hasOwnProperty(key)) {
 						if (clients[key].socket === socket.id) {
-							console.log("You are deleted of the clients");
 							delete clients[key];
 							break;
 						}

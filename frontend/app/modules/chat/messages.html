@@ -6,8 +6,17 @@
         <li id="message" ng-repeat="message in vm.messages">{{message.contents}} - <b>{{message.username}}</b></li>
       </ul>
     </div>
-  </div>
+    <div class="col-md-12">
+      <span id="userTyping" ng-repeat="message in vm.userTypingArray"> {{message}} </span> {{vm.typeOfTyping}}
+      <span ng-show="vm.userTypingArray.length !== 0">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
 
+
+      </span>
+    </div>
+  </div>
   <textarea
   type="text"
   class="form-control"
@@ -15,6 +24,7 @@
   ng-model="vm.message"
   autofocus
   ng-keydown="vm.sendMessage($event)"
+  ng-keyup="vm.sendUserIsTyping($event)"
   spellcheck="true"
   id="messageBox"
   ></textarea>

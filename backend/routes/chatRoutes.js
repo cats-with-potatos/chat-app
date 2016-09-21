@@ -12,32 +12,33 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 };
 
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
-  const userId = req.decoded.id;
-  const channelId = Number(req.query.channelId);
+const userId = req.decoded.id;
+const channelId = Number(req.query.channelId);
 
-  //Checks to see of the channel is not a number
-  if (isNaN(channelId)) {
-    res.status(400).json({"response": "error", "errorType": "paramError"});
-    return;
-  }
+//Checks to see of the channel is not a number
+if (isNaN(channelId)) {
+  res.status(400).json({"response": "error", "errorType": "paramError"});
+  return;
+}
 
-  //Checks to see if the user is in the channel
-  chat.checkUserInChannel({
-    userid: userId,
-    channelId: channelId,
-  })
-  .then(() => {
-    //Getting all the channels messages
-    return chat.getAllChannelMessages(channelId)
-  })
-  .then((data) => {
-    res.status(200).json({"response": "success", "data": data});
-  })
-  .catch((e) => {
-    const status = e === "serverError" ? 500 : 400;
-    res.status(status).json({"response": "error", "errorType": e});
-  });
+//Checks to see if the user is in the channel
+chat.checkUserInChannel({
+  userid: userId,
+  channelId: channelId,
+})
+.then(() => {
+  //Getting all the channels messages
+  return chat.getAllChannelMessages(channelId)
+})
+.then((data) => {
+  res.status(200).json({"response": "success", "data": data});
+})
+.catch((e) => {
+  const status = e === "serverError" ? 500 : 400;
+  res.status(status).json({"response": "error", "errorType": e});
+});
 };
+
 
 //Called by users to send chat messages
 chatRoutes.sendChatMessage = (req, res) => { // TYPE POST
@@ -90,6 +91,80 @@ chatRoutes.sendChatMessage = (req, res) => { // TYPE POST
     const status = e === "serverError" ? 500 : 400;
     res.status(status).json({"response": "error", "errorType": e})
   });
+};
+
+/*
+Called when a user types something in the text input.
+This route will notify all the other users in the channel that they are typing
+*/
+
+chatRoutes.sendUserIsTyping = (req, res) => {
+  const userid = req.decoded.id;
+  console.log(req.decoded);
+
+
+  if (chat.userAlreadyTyping(userid)) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "alreadyTyping",
+    });
+    return;
+  }
+  chat.addUserToMap(userid);
+
+  chat.getNameFromId(userid)
+  .then((name) => {
+    chat.emitUserTyping(name, userid, "userIsTyping");
+    res.json({"response": "success"});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+};
+
+chatRoutes.sendUserStoppedTyping = (req, res) => {
+  const userid = req.decoded.id;
+
+
+  if (chat.userIsNotTyping(userid)) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "User is not even typing",
+    });
+    return;
+  }
+
+  chat.deleteUserFromMap(userid);
+
+  chat.getNameFromId(userid)
+  .then((name) => {
+    chat.emitUserTyping(name, userid, "userIsNotTyping");
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(400).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+
+
+  res.json({"response": "success"});
+};
+
+
+chatRoutes.getPeopleTyping = (req, res) => {
+  const userid = req.decoded.id;
+  res.json({
+    "response": "success",
+    "data": "dothislaters",
+  });
+
+
 };
 
 module.exports = chatRoutes;
