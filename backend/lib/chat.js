@@ -2,7 +2,12 @@ const Promise = require("bluebird")
 , io = require("./socketio.js").listen()
 , clients = require("./socketio.js").clients
 , mysqlWrap = require("./db.js")
-, chat = {};
+, chat = {}
+// userTypingMap is a dictionary that defines who is currently typing
+, userTypingMap = {}
+
+
+
 
 
 chat.checkMessageError = (messageDet) => {
@@ -137,5 +142,95 @@ chat.getAllChannelMessages = (channel) => {
     });
   });
 };
+
+//Checks to see if user is already in typing dictionary
+chat.userAlreadyTyping = (userid) => {
+  if (typeof userTypingMap[userid] !== "undefined") {
+    return true;
+  }
+  return false;
+};
+
+//Adds the currently typing user to the map
+chat.addUserToMap = (userid) => {
+  userTypingMap[userid] = true;
+};
+
+//Emits that the current user is typing to everone but him/herself
+chat.emitUserTyping = (name, userid, eventname) => {
+  Object.keys(clients).forEach((val) => {
+    if (val !== String(userid)) {
+      io.sockets.connected[clients[val].socket].emit(eventname, name);
+    }
+  });
+};
+
+//Returns true if the user is not currently in the map
+chat.userIsNotTyping = (userid) => {
+  if (typeof userTypingMap[userid] === "undefined") {
+    return true;
+  }
+  return false;
+};
+
+chat.deleteUserFromMap = (userid) => {
+  delete userTypingMap[userid];
+};
+
+//Gets the user's name from their id
+chat.getNameFromId = (userid) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT username FROM UserTable WHERE user_id = ?", [userid], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("userDoesNotExist");
+            }
+            else {
+              resolve(data[0].username);
+            }
+          }
+        });
+      }
+    })
+  });
+};
+
+
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    for (key in clients) {
+      //To make sure that only properties of the clients object are iterated over
+      if (clients.hasOwnProperty(key)) {
+        if (clients[key].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
+          if (chat.userAlreadyTyping(key)) { //Checks to see if the user is already typing
+            chat.deleteUserFromMap(key) //Deletes a user from the map
+
+            chat.getNameFromId(Number(key))
+            .then((name) => {
+              //Emits that the user has stopped typing if they are currently typing
+              chat.emitUserTyping(name, Number(key), "userIsNotTyping");
+            })
+          }
+          delete clients[key];
+          break;
+        }
+      }
+    }
+  });
+});
+
+
+
+
+
 
 module.exports = chat;

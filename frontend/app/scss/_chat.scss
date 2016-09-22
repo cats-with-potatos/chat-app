@@ -11,3 +11,37 @@
 #messageBox {
   white-space: pre-wrap;
 }
+
+@keyframes flash {
+    from  {
+        background: black;
+    }
+    to {
+        background: #CCC;
+    }
+}
+
+.dot {
+    display: inline-block;
+    background: #CCC;
+    height: 4px;
+    width: 4px;
+    border-radius: 8px;
+    margin-right: 5px;
+
+
+    animation-name: flash;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation: flash 1000ms infinite;
+}
+.dot:first-child {
+    background: black;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 250ms;
+}
+.dot:nth-child(3) {
+    animation-delay: 500ms;
+}

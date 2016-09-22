@@ -21,19 +21,6 @@ const listen = (app) => {
 					console.log("Invalid token");
 				})
 			});
-
-			socket.on('disconnect', () => {
-				for (key in clients) {
-					//To make sure that only properties of the clients object are iterated over
-					if (clients.hasOwnProperty(key)) {
-						if (clients[key].socket === socket.id) {
-							console.log("You are deleted of the clients");
-							delete clients[key];
-							break;
-						}
-					}
-				}
-			});
 		});
 	}
 	return io;

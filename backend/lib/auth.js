@@ -65,6 +65,7 @@ auth.checkUserDoesNotExist = (username) => {
           if (err) {
             reject("serverError");
           }
+          //If results array is not 0, then someone has the same name
           else if (results.length !== 0) {
             reject("accountExists");
           }
@@ -108,10 +109,12 @@ auth.insertUserToDb = (fullCreds) => {
 //Gets a user's id and username and returns a JWT
 auth.createJwt = (user) => {
   return new Promise((resolve, reject) => {
+    //If any params are undefined, return serverError
     if (typeof user === "undefined" || typeof config.JWT_PASSWORD === "undefined") {
       reject("serverError");
     }
     else {
+      //Makes the jwt with the payload being the user object and password being the JWT_PASSWORD
       jwt.sign(user, config.JWT_PASSWORD, {
         expiresIn: 604800,
       }, (err, token) => {
@@ -128,10 +131,12 @@ auth.createJwt = (user) => {
 
 auth.checkJwt = (token) => {
   return new Promise((resolve, reject) => {
+    //Checks if token param was undefined
     if (typeof token === "undefined") {
       reject("serverError");
     }
     else {
+      //Verifies the token against the JWT_PASSWORD
       jwt.verify(token, config.JWT_PASSWORD, (err, decoded) => {
         if (err) {
           reject("serverError");
@@ -144,7 +149,7 @@ auth.checkJwt = (token) => {
   });
 };
 
-
+//Checks if user is already in database
 auth.checkUserExists = (username) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
@@ -170,12 +175,7 @@ auth.checkUserExists = (username) => {
 };
 
 
-/*Cred argument is an object that stores:
-password - Inputted password
-hash - The hashed value from db
-salt - the salt from db
-*/
-
+//Checks if the hash(salt + inputtedPassword) is equal to the hash in db
 auth.checkPass = (cred) => {
   return new Promise((resolve, reject) => {
     const newHash = crypto.createHash('sha1').update(cred.salt + cred.password).digest('hex');
@@ -191,6 +191,7 @@ auth.checkPass = (cred) => {
   });
 };
 
+//Adds the user to the general channel
 auth.addToGenChannel = (id) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
@@ -211,11 +212,6 @@ auth.addToGenChannel = (id) => {
     })
   });
 };
-
-
-
-
-
 
 
 module.exports = auth;
