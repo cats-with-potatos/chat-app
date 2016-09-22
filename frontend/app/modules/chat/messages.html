@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="col-md-8 col-md-offset-2">
+    <h1>Chat Messages</h1>
+    <div class="panel panel-default" id="messagePanel">
+      <ul>
+        <li id="message" ng-repeat="message in vm.messages"><strong><em>{{message.username}}</em></strong> - {{message.contents}}</li>
+      </ul>
+    </div>
+    <div class="col-md-12">
+      <span id="userTyping" ng-repeat="message in vm.userTypingArray"> {{message}} </span> {{vm.typeOfTyping}}
+      <span ng-show="vm.userTypingArray.length !== 0">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+
+
+      </span>
+    </div>
+  </div>
+  <textarea
+  type="text"
+  class="form-control"
+  placeholder="Type your Message here and press Enter to send."
+  ng-model="vm.message"
+  autofocus
+  ng-keydown="vm.sendMessage($event)"
+  ng-keyup="vm.sendUserIsTyping($event)"
+  spellcheck="true"
+  id="messageBox"
+  ></textarea>
+
+
+</div>
