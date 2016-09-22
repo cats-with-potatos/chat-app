@@ -3,7 +3,7 @@
     <h1>Chat Messages</h1>
     <div class="panel panel-default" id="messagePanel">
       <ul>
-        <li id="message" ng-repeat="message in vm.messages">{{message.contents}} - <b>{{message.username}}</b></li>
+        <li id="message" ng-repeat="message in vm.messages"><strong><em>{{message.username}}</em></strong> - {{message.contents}}</li>
       </ul>
     </div>
     <div class="col-md-12">
@@ -20,7 +20,7 @@
   <textarea
   type="text"
   class="form-control"
-  placeholder="Message Here"
+  placeholder="Type your Message here and press Enter to send."
   ng-model="vm.message"
   autofocus
   ng-keydown="vm.sendMessage($event)"
