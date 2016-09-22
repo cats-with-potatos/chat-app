@@ -12,22 +12,18 @@
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
-
-
       </span>
     </div>
+      <textarea
+      type="text"
+      class="form-control"
+      placeholder="Type your Message here and press Enter to send."
+      ng-model="vm.message"
+      autofocus
+      ng-keydown="vm.sendMessage($event)"
+      ng-keyup="vm.sendUserIsTyping($event)"
+      spellcheck="true"
+      id="messageBox"
+      ></textarea>
   </div>
-  <textarea
-  type="text"
-  class="form-control"
-  placeholder="Type your Message here and press Enter to send."
-  ng-model="vm.message"
-  autofocus
-  ng-keydown="vm.sendMessage($event)"
-  ng-keyup="vm.sendUserIsTyping($event)"
-  spellcheck="true"
-  id="messageBox"
-  ></textarea>
-
-
 </div>
