@@ -7,6 +7,9 @@ const Promise = require("bluebird")
 , userTypingMap = {}
 
 
+
+
+
 chat.checkMessageError = (messageDet) => {
   //Checks if any of the params are undefined
   if (typeof messageDet.userid === "undefined" || isNaN(messageDet.channelId) || typeof messageDet.message === "undefined") {
@@ -200,6 +203,34 @@ chat.getNameFromId = (userid) => {
     })
   });
 };
+
+
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    for (key in clients) {
+      //To make sure that only properties of the clients object are iterated over
+      if (clients.hasOwnProperty(key)) {
+        if (clients[key].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
+          if (chat.userAlreadyTyping(key)) { //Checks to see if the user is already typing
+            chat.deleteUserFromMap(key) //Deletes a user from the map
+
+            chat.getNameFromId(Number(key))
+            .then((name) => {
+              //Emits that the user has stopped typing if they are currently typing
+              chat.emitUserTyping(name, Number(key), "userIsNotTyping");
+            })
+          }
+          delete clients[key];
+          break;
+        }
+      }
+    }
+  });
+});
+
+
+
+
 
 
 module.exports = chat;

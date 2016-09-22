@@ -9,6 +9,18 @@
     vm.userTypingArray = [];
     vm.typeOfTyping = "";
 
+
+
+  $rootScope.$on('$stateChangeSuccess',
+  function(event, toState, toParams, fromState, fromParams){
+    if (vm.message) {
+      ChatService.sendUserStoppedTyping()
+      .then(function(message) {
+        console.log("the user stopped typing");
+      });
+    }
+  });
+
     socket.emit("newUser", Cookies.get("auth"))
 
     socket.on("newChannelMessage", function(message) {
