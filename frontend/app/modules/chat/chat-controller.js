@@ -8,6 +8,7 @@
     var vm = this;
     vm.userTypingArray = [];
     vm.typeOfTyping = "";
+    vm.messages = [];
 
 
 
