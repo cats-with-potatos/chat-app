@@ -66,5 +66,54 @@
         });
       }
     };
-  }
+
+
+  //Function called when signing in
+  vm.signin = function() {
+    //Check to see if form input is not undefined
+    if (typeof vm.input !== "undefined" && typeof vm.input.username !== "undefined" && typeof vm.input.password !== "undefined") {
+      //Disable button so users can't press it too many times in a row
+      vm.buttonDisabled = true;
+
+      //Call /api/signin route.
+      SecurityService.signup({
+        username: vm.input.username,
+        password: vm.input.password
+      })
+      .then((res) => {
+        //Set the buttonDisabled to false
+        vm.buttonDisabled = false;
+
+        if (res.data.response === "success") {
+          //Show no error messages
+          vm.errorMessage = false;
+          $state.go('chat-app.messages');
+        }
+        else {
+          //Iterate through the error messages and add them to array
+          vm.errorMessage = [];
+          res.data.data.forEach(function(val) {
+            switch (val) {
+              case "paramUndefined":
+                //Please change this error message, it is truly cancer..
+                vm.errorMessage.push("Please make sure all the fields are filled in");
+                break;
+              case "tooLong":
+                vm.errorMessage.push("Please make sure your credentials are not longer than 30 characters");
+                break;
+              case "wrongCred":
+                vm.errorMessage.push("Invalid username or password");
+                break;
+              default:
+                vm.errorMessage.push("Sorry there was an error with the server");
+              }
+          });
+        }
+      })
+      .catch(function(e) {
+        vm.buttonDisabled = false;
+      });
+    }
+  };
+}
 }());
