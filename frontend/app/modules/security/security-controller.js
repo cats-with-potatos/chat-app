@@ -76,7 +76,7 @@
       vm.buttonDisabled = true;
 
       //Call /api/signin route.
-      SecurityService.signup({
+      SecurityService.signin({
         username: vm.input.username,
         password: vm.input.password
       })
