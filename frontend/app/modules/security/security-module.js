@@ -11,9 +11,9 @@
           controller: 'SecurityController',
           controllerAs: 'vm',
       }),
-      $stateProvider.state('chat-app.login', {
-          url: '/login',
-          templateUrl: 'login.html',
+      $stateProvider.state('chat-app.signin', {
+          url: '/signin',
+          templateUrl: 'signin.html',
           controller: 'SecurityController',
           controllerAs: 'vm',
       });
