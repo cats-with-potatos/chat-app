@@ -91,10 +91,10 @@
         }
         else {
           //Error message
-          vm.errorMessage = "Invalid username or password!";
-
-          // console.info("Invalid login - Incorrect username or password!");
-          // vm.errorMessage.push("Incorrect username or password!");
+          vm.errorMessage = "Invalid username or password! Please try again.";
+          //Clear the username and password fields
+          vm.input.username = "";
+          vm.input.password = "";
         }
       })
       .catch(function(e) {
