@@ -1,3 +1,4 @@
+
 #message {
   list-style: none;
 }
@@ -5,13 +6,10 @@
 #messagePanel {
   overflow: auto;
   height: 300px;
-  padding-bottom: 10px;
+  white-space: pre-line; //This is used to preseve \n in  messages
 }
 
-#messageBox {
-  white-space: pre-wrap;
-}
-
+//Flash animation that will be used on the dot class
 @keyframes flash {
     from  {
         background: black;
@@ -21,6 +19,7 @@
     }
 }
 
+
 .dot {
     display: inline-block;
     background: #CCC;
@@ -29,12 +28,16 @@
     border-radius: 8px;
     margin-right: 5px;
 
-
+    //Flashing dot animation that will transition the dots change colors everyone 1 second infinitely
     animation-name: flash;
     animation-duration: 1000ms;
     animation-iteration-count: infinite;
     animation: flash 1000ms infinite;
 }
+
+
+
+//All 3 dots will have a different animation delay so they animate at different times
 .dot:first-child {
     background: black;
 }
@@ -44,4 +47,14 @@
 }
 .dot:nth-child(3) {
     animation-delay: 500ms;
+}
+
+#channelBox {
+  height: 100%;
+  background-color: black;
+}
+
+#messageDiv {
+  margin-top: -70px;
+  max-height: 100%;
 }
