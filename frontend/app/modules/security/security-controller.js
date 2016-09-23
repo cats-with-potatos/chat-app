@@ -29,7 +29,7 @@
           if (res.data.response === "success") {
             //Show no error messages
             vm.errorMessage = false;
-            $state.go('chat-app.sample');
+            $state.go('chat-app.messages');
           }
           else {
             //Iterate through the error messages and add them to array
