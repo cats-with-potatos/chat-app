@@ -90,24 +90,11 @@
           $state.go('chat-app.messages');
         }
         else {
-          //Iterate through the error messages and add them to array
-          vm.errorMessage = [];
-          res.data.data.forEach(function(val) {
-            switch (val) {
-              case "paramUndefined":
-                //Please change this error message, it is truly cancer..
-                vm.errorMessage.push("Please make sure all the fields are filled in");
-                break;
-              case "tooLong":
-                vm.errorMessage.push("Please make sure your credentials are not longer than 30 characters");
-                break;
-              case "wrongCred":
-                vm.errorMessage.push("Invalid username or password");
-                break;
-              default:
-                vm.errorMessage.push("Sorry there was an error with the server");
-              }
-          });
+          //Error message
+          vm.errorMessage = "Invalid username or password!";
+
+          // console.info("Invalid login - Incorrect username or password!");
+          // vm.errorMessage.push("Incorrect username or password!");
         }
       })
       .catch(function(e) {
