@@ -6,6 +6,7 @@ const pool = mysql.createPool({
   database : 'chatdb'
 });
 
+//Custom wrapper for mysql to prevent boilerplate
 exports.getConnection = (callback) => {
   pool.getConnection((err, conn) => {
     if(err) {
