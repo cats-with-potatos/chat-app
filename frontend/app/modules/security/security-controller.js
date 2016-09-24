@@ -90,11 +90,8 @@
           $state.go('chat-app.messages');
         }
         else {
-          //Error message
+          //Error message - just display error, do not clear fields.
           vm.errorMessage = "Invalid username or password! Please try again.";
-          //Clear the username and password fields
-          vm.input.username = "";
-          vm.input.password = "";
         }
       })
       .catch(function(e) {
