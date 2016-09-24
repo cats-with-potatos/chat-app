@@ -2,11 +2,11 @@
   'use strict';
   angular
   .module('chat-app.security')
-  .controller('SecurityController', ['$state' ,'SecurityService', Controller]);
+  .controller('SecurityController', ['$state' , '$location', 'SecurityService', Controller]);
 
 
-  function Controller($state, SecurityService) {
-    var vm = this;
+  function Controller($state, $location, SecurityService) {
+      var vm = this;
     vm.buttonDisabled = false;
 
     //Function called when signing up
@@ -102,5 +102,18 @@
       });
     }
   };
+
+  vm.signout = function() {
+    Cookies.remove("auth")
+    setTimeout(function() {
+      $state.go("chat-app")
+    }, 2000);
+  }
+
+    //Code in if statement only runs if user is on /signout page
+    if ($location.path() === "/signout") {
+      vm.signout();
+    }
+
 }
 }());

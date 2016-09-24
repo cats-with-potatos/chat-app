@@ -1,7 +1,3 @@
-@import 'navigation';
-@import 'signup';
-@import 'chat';
-
 .loading {
   border-radius: 50%;
   margin-top: 100px;
@@ -32,4 +28,12 @@
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg);
   }
+}
+
+.middleBox {
+  margin: 0 auto;
+}
+
+.signOutBox {
+  text-align: center;
 }

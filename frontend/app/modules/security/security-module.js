@@ -16,6 +16,12 @@
           templateUrl: 'signin.html',
           controller: 'SecurityController',
           controllerAs: 'vm',
+      }),
+      $stateProvider.state('chat-app.signout', {
+          url: '/signout',
+          templateUrl: 'signout.html',
+          controller: 'SecurityController',
+          controllerAs: 'vm',
       });
     }
 })();
