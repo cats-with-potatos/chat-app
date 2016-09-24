@@ -6,17 +6,22 @@ const Promise = require("bluebird")
 // userTypingMap is a dictionary that defines who is currently typing
 , userTypingMap = {}
 
-
-
-
-
+//Checks to see if there are any problems with the message being sent or any details of the mesage
 chat.checkMessageError = (messageDet) => {
-  //Checks if any of the params are undefined
   if (typeof messageDet.userid === "undefined" || isNaN(messageDet.channelId) || typeof messageDet.message === "undefined") {
     return "paramError";
   }
 
-  //Will do some error checking here later in regards to message error checking
+  //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
+  try {
+    JSON.parse(messageDet.message);
+  }
+  catch(e) {
+    return "paramError";
+  }
+
+
+
   return null;
 };
 
@@ -99,6 +104,7 @@ chat.emitMessageToChannel = (messageInfo) => {
   })
 };
 
+//Get all the details of the message from the messageId
 chat.getMessagesInfo = (messageId) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
@@ -173,6 +179,7 @@ chat.userIsNotTyping = (userid) => {
   return false;
 };
 
+//Deletes the currently typing user from the map
 chat.deleteUserFromMap = (userid) => {
   delete userTypingMap[userid];
 };
@@ -204,33 +211,57 @@ chat.getNameFromId = (userid) => {
   });
 };
 
+//Will get all the id's that are currently typing and get the users names
+chat.getNamesFromTypingHash = (userid) => {
+  return new Promise((resolve, reject) => {
+    const promiseArray = [];
 
+    Object.keys(userTypingMap).forEach((val) => {
+      if (Number(val) !== userid) {
+        promiseArray.push(chat.getNameFromId(Number(val)));
+      }
+    });
+
+    //Asynchronously executes all the promises
+    Promise.all(promiseArray)
+    .then((names) => {
+      resolve(names);
+    })
+    .catch((e) => {
+      reject(e);
+    });
+  });
+};
+
+/*
+
+I had to move this section into the chat.js file to prevent circular dependencies
+Maybe in the future we could look into a cleaner solution
+
+
+This will emit an event to all the users if the user is currently typing.
+*/
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     for (key in clients) {
       //To make sure that only properties of the clients object are iterated over
       if (clients.hasOwnProperty(key)) {
         if (clients[key].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
-          if (chat.userAlreadyTyping(key)) { //Checks to see if the user is already typing
-            chat.deleteUserFromMap(key) //Deletes a user from the map
+        if (chat.userAlreadyTyping(key)) { //Checks to see if the user is already typing
+          chat.deleteUserFromMap(key) //Deletes a user from the map
 
-            chat.getNameFromId(Number(key))
-            .then((name) => {
-              //Emits that the user has stopped typing if they are currently typing
-              chat.emitUserTyping(name, Number(key), "userIsNotTyping");
-            })
-          }
-          delete clients[key];
-          break;
+          chat.getNameFromId(Number(key))
+          .then((name) => {
+            //Emits that the user has stopped typing if they are currently typing
+            chat.emitUserTyping(name, Number(key), "userIsNotTyping");
+          })
         }
+        delete clients[key];
+        break;
       }
     }
-  });
+  }
 });
-
-
-
-
-
+});
 
 module.exports = chat;

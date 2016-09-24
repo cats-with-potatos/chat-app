@@ -29,7 +29,7 @@ service.signin = function(creds) {
   return $http({
     method: "POST",
     url: "/api/signin",
-    data: $.param({'username': creds.username, "password": creds.password}),
+    data: $.param({'username': creds.username, "password": creds.password, checkbox: creds.checkbox}),
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     }})

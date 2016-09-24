@@ -1,22 +1,28 @@
 <div class="container">
-  <div class="col-md-8 col-md-offset-2">
+  <div class="col-md-8 col-md-offset-1">
     <h1>Chat Messages</h1>
     <div class="panel panel-default" id="messagePanel">
+      <div id="messageDiv"> <!---->
       <ul>
+        <!--Messages are repeated here-->
         <li id="message" ng-repeat="message in vm.messages"><strong><em>{{message.username}}</em></strong> - {{message.contents}}</li>
       </ul>
     </div>
+    </div>
     <div class="col-md-12">
+      <!--This will show if the user is currently typing or not-->
       <span id="userTyping" ng-repeat="message in vm.userTypingArray"> {{message}} </span> {{vm.typeOfTyping}}
+
+      <!--The dot animation which will show if atleast another user is typing-->
       <span ng-show="vm.userTypingArray.length !== 0">
         <span class="dot"></span>
         <span class="dot"></span>
         <span class="dot"></span>
-
-
       </span>
     </div>
   </div>
+
+  <!--Textarea where the user types-->
   <textarea
   type="text"
   class="form-control"
@@ -28,6 +34,4 @@
   spellcheck="true"
   id="messageBox"
   ></textarea>
-
-
 </div>

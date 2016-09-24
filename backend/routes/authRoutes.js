@@ -7,6 +7,7 @@ const authFunctions = require("../lib/auth.js")
 authRoutes.signin = (req, res) => { // TYPE: POST
   const username = req.body.username;
   const password = req.body.password;
+  const checkbox = req.body.checkbox;
 
   //Check if user exists to get hash
   authFunctions.checkUserExists(username)
@@ -24,8 +25,14 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     return authFunctions.createJwt(jwtPayload);
   })
   .then((jwt) => {
-    console.log(jwt);
-    res.cookie("auth", jwt, {maxAge: 604800000, httpOnly: false});
+    if (checkbox === "true") {
+      console.log("checkbox is true" + checkbox);
+      res.cookie("auth", jwt, {httpOnly: false});
+    }
+    else {
+      console.log("checkbox is false" + checkbox);
+      res.cookie("auth", jwt, {maxAge: 604800000, httpOnly: false});
+    }
     res.status(200).json({"response": "success"});
   })
   .catch((e) => {

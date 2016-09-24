@@ -6,8 +6,9 @@
 
 
   function Controller($state, $location, SecurityService) {
-      var vm = this;
+    var vm = this;
     vm.buttonDisabled = false;
+    vm.checkbox = false;
 
     //Function called when signing up
     vm.signup = function() {
@@ -78,7 +79,8 @@
       //Call /api/signin route.
       SecurityService.signin({
         username: vm.input.username,
-        password: vm.input.password
+        password: vm.input.password,
+        checkbox: vm.checkbox,
       })
       .then((res) => {
         //Set the buttonDisabled to false
@@ -90,11 +92,8 @@
           $state.go('chat-app.messages');
         }
         else {
-          //Error message
+          //Error message - just display error, do not clear fields.
           vm.errorMessage = "Invalid username or password! Please try again.";
-          //Clear the username and password fields
-          vm.input.username = "";
-          vm.input.password = "";
         }
       })
       .catch(function(e) {
@@ -114,6 +113,5 @@
     if ($location.path() === "/signout") {
       vm.signout();
     }
-
 }
 }());
