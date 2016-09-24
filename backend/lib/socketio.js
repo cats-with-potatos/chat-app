@@ -9,6 +9,7 @@ const listen = (app) => {
 
 		// Defining the connection behavior
 		io.on('connection', (socket) => {
+			//All users will need to be authenticated to use our websocket protocol
 			socket.on("newUser", (token) => {
 				auth.checkJwt(token)
 				.then((decoded) => {

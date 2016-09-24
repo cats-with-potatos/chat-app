@@ -6,6 +6,7 @@
   function Service($http) {
     var service = this;
 
+    //This will get all messages from the specific channel from the server
     service.getChatMessages = function(channel) {
       return $http(
         {
@@ -63,6 +64,17 @@
           }
         });
       };
+
+      //This gets all the users that are currently typing. This function will be run on controller load
+      service.getUsersCurrentlyTyping = function() {
+        return $http({
+          method: "GET",
+          url: "/api/getIntialUsersTyping",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          }
+        });
+      }
       return service;
     }
   })();
