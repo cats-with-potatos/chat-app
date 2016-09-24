@@ -7,8 +7,8 @@
     var service = this;
 
 
-
-    service.signup = function(creds) {
+//signup service
+  service.signup = function(creds) {
       return $http({
         method: "POST",
         url: "/api/signup",
@@ -23,6 +23,24 @@
           return e;
         });
       };
+
+//signin/login service
+service.signin = function(creds) {
+  return $http({
+    method: "POST",
+    url: "/api/signin",
+    data: $.param({'username': creds.username, "password": creds.password}),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }})
+    .then(function(res) {
+      return res;
+    })
+    .catch(function(e) {
+      return e;
+    });
+  };
+
 
       service.makeExpressCall = function() {
         return $http.get('/api').then(function(response) {

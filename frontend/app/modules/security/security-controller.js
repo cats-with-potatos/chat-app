@@ -29,7 +29,7 @@
           if (res.data.response === "success") {
             //Show no error messages
             vm.errorMessage = false;
-            $state.go('chat-app.sample');
+            $state.go('chat-app.messages');
           }
           else {
             //Iterate through the error messages and add them to array
@@ -66,5 +66,38 @@
         });
       }
     };
-  }
+
+
+  //Function called when signing in
+  vm.signin = function() {
+    //Check to see if form input is not undefined
+    if (typeof vm.input !== "undefined" && typeof vm.input.username !== "undefined" && typeof vm.input.password !== "undefined") {
+      //Disable button so users can't press it too many times in a row
+      vm.buttonDisabled = true;
+
+      //Call /api/signin route.
+      SecurityService.signin({
+        username: vm.input.username,
+        password: vm.input.password
+      })
+      .then((res) => {
+        //Set the buttonDisabled to false
+        vm.buttonDisabled = false;
+
+        if (res.data.response === "success") {
+          //Show no error messages
+          vm.errorMessage = false;
+          $state.go('chat-app.messages');
+        }
+        else {
+          //Error message - just display error, do not clear fields.
+          vm.errorMessage = "Invalid username or password! Please try again.";
+        }
+      })
+      .catch(function(e) {
+        vm.buttonDisabled = false;
+      });
+    }
+  };
+}
 }());
