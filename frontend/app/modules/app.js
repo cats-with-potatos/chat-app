@@ -25,9 +25,27 @@
           templateUrl: 'standard-layout.html'
       });
     }])
-    .controller('ApplicationController', ['$rootScope', '$state', '$anchorScroll', ApplicationController]);
+    .controller('ApplicationController', ['$rootScope', '$state', '$anchorScroll', '$location', 'SecurityService', ApplicationController]);
 
-    function ApplicationController($rootScope, $state, $anchorScroll) {
+    function ApplicationController($rootScope, $state, $anchorScroll, $location, SecurityService) {
       var vm = this;
+      vm.loggedIn = false;
+      vm.notLoggedIn = false;
+
+      vm.checkUserLoggedIn = function() {
+        SecurityService.checkUserLoggedIn()
+        .then(function(res) {
+          if (res.data.response === "success") {
+            vm.username = res.data.data.username;
+            vm.loggedIn = true;
+          }
+          else {
+            vm.notLoggedIn = true;
+          }
+        })
+        .catch((e) => {
+          vm.notLoggedIn = true;
+        })
+      };
     }
 })();
