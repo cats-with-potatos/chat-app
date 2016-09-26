@@ -2,10 +2,10 @@
   'use strict';
   angular
   .module('chat-app.security')
-  .controller('SecurityController', ['$state' , '$location', 'SecurityService', Controller]);
+  .controller('SecurityController', ['$state' , '$location', '$rootScope', 'SecurityService', Controller]);
 
 
-  function Controller($state, $location, SecurityService) {
+  function Controller($state, $location, $rootScope, SecurityService) {
     var vm = this;
     vm.buttonDisabled = false;
     vm.checkbox = false;
@@ -30,7 +30,8 @@
           if (res.data.response === "success") {
             //Show no error messages
             vm.errorMessage = false;
-            $state.go('chat-app.messages');
+            //$state.go('chat-app.messages');
+            window.location.href = "/messages";
           }
           else {
             //Iterate through the error messages and add them to array
@@ -89,7 +90,9 @@
           if (res.data.response === "success") {
             //Show no error messages
             vm.errorMessage = false;
-            $state.go('chat-app.messages');
+
+            //$state.go('chat-app.messages');
+            window.location.href = "/messages";
           }
           else {
             //Error message - just display error, do not clear fields.
@@ -105,11 +108,11 @@
     vm.signout = function() {
       Cookies.remove("auth")
       setTimeout(function() {
-        $state.go("chat-app")
+        window.location.href = "/";
       }, 2000);
     }
 
-    
+
     //Code in if statement only runs if user is on /signout page
     if ($location.path() === "/signout") {
       vm.signout();

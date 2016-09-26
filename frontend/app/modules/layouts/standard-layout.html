@@ -17,7 +17,7 @@
         <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
       </ul>
 
-      <div class="dropdown" id="userDropdown">
+      <div class="dropdown" id="userDropdown" ng-show="vm.loggedIn">
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{vm.username}}
           <span class="caret"></span></button>
           <ul class="dropdown-menu">
