@@ -38,27 +38,27 @@
             res.data.data.forEach(function(val) {
               switch (val) {
                 case "paramUndefined":
-                  //Please change this error message, it is truly cancer..
-                  vm.errorMessage.push("Please make sure all the fields are filled in");
-                  break;
+                //Please change this error message, it is truly cancer..
+                vm.errorMessage.push("Please make sure all the fields are filled in");
+                break;
                 case "tooLong":
-                  vm.errorMessage.push("Please make sure your credentials are not longer than 30 characters");
-                  break;
+                vm.errorMessage.push("Please make sure your credentials are not longer than 30 characters");
+                break;
                 case "badUsername":
-                  vm.errorMessage.push("Username can only have lower, upper case letter and number");
-                  break;
+                vm.errorMessage.push("Username can only have lower, upper case letter and number");
+                break;
                 case "badPassword":
-                  vm.errorMessage.push("Password must have lower, upper case letter and number");
-                  break;
+                vm.errorMessage.push("Password must have lower, upper case letter and number");
+                break;
                 case "passNoMatch":
-                  vm.errorMessage.push("Please make sure your passwords match");
-                  break;
+                vm.errorMessage.push("Please make sure your passwords match");
+                break;
                 case "accountExists":
-                  vm.errorMessage.push("Sorry.. This account name already exists");
-                  break;
+                vm.errorMessage.push("Sorry.. This account name already exists");
+                break;
                 default:
-                  vm.errorMessage.push("Sorry there was an error with the server");
-                }
+                vm.errorMessage.push("Sorry there was an error with the server");
+              }
             });
           }
         })
@@ -69,49 +69,50 @@
     };
 
 
-  //Function called when signing in
-  vm.signin = function() {
-    //Check to see if form input is not undefined
-    if (typeof vm.input !== "undefined" && typeof vm.input.username !== "undefined" && typeof vm.input.password !== "undefined") {
-      //Disable button so users can't press it too many times in a row
-      vm.buttonDisabled = true;
+    //Function called when signing in
+    vm.signin = function() {
+      //Check to see if form input is not undefined
+      if (typeof vm.input !== "undefined" && typeof vm.input.username !== "undefined" && typeof vm.input.password !== "undefined") {
+        //Disable button so users can't press it too many times in a row
+        vm.buttonDisabled = true;
 
-      //Call /api/signin route.
-      SecurityService.signin({
-        username: vm.input.username,
-        password: vm.input.password,
-        checkbox: vm.checkbox,
-      })
-      .then((res) => {
-        //Set the buttonDisabled to false
-        vm.buttonDisabled = false;
+        //Call /api/signin route.
+        SecurityService.signin({
+          username: vm.input.username,
+          password: vm.input.password,
+          checkbox: vm.checkbox,
+        })
+        .then((res) => {
+          //Set the buttonDisabled to false
+          vm.buttonDisabled = false;
 
-        if (res.data.response === "success") {
-          //Show no error messages
-          vm.errorMessage = false;
-          $state.go('chat-app.messages');
-        }
-        else {
-          //Error message - just display error, do not clear fields.
-          vm.errorMessage = "Invalid username or password! Please try again.";
-        }
-      })
-      .catch(function(e) {
-        vm.buttonDisabled = false;
-      });
+          if (res.data.response === "success") {
+            //Show no error messages
+            vm.errorMessage = false;
+            $state.go('chat-app.messages');
+          }
+          else {
+            //Error message - just display error, do not clear fields.
+            vm.errorMessage = "Invalid username or password! Please try again.";
+          }
+        })
+        .catch(function(e) {
+          vm.buttonDisabled = false;
+        });
+      }
+    };
+
+    vm.signout = function() {
+      Cookies.remove("auth")
+      setTimeout(function() {
+        $state.go("chat-app")
+      }, 2000);
     }
-  };
 
-  vm.signout = function() {
-    Cookies.remove("auth")
-    setTimeout(function() {
-      $state.go("chat-app")
-    }, 2000);
-  }
-
+    
     //Code in if statement only runs if user is on /signout page
     if ($location.path() === "/signout") {
       vm.signout();
     }
-}
+  }
 }());

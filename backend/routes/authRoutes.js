@@ -96,5 +96,12 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   });
 };
 
+authRoutes.checkUserLoggedIn = (req, res) => {
+  res.json({
+    "response": "success",
+    "data": req.decoded,
+  });
+}
+
 
 module.exports = authRoutes;
