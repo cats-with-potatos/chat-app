@@ -6,6 +6,12 @@
   list-style: none;
 }
 
+#chatMsg {
+  margin-left: 15px;
+  font-size: 12px;
+  font-weight: normal;
+}
+
 #messagePanel {
   overflow: auto;
   height: 500px;
@@ -24,7 +30,7 @@
 }
 
 #messagePanel li:hover {
-  background: #eee;
+  background: #f9f9f9;
 }
 
 #messageBox {
@@ -36,13 +42,23 @@
   padding: 15px;
 }
 
+#avatar {
+  margin-right: 10px;
+  // border: 2px solid #999;
+  font-size: 36px;
+}
+
 //Text within chat box
 #msgUser {
   font-weight: bold;
   font-size: 16px;
   color: #777;
+  margin-right: 10px;
+  margin-bottom: 0;
 }
 
+
+//Bubble styles will be used for Private Messages
 .bubble
 {
 position: relative;

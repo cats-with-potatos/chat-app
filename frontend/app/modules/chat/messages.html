@@ -3,7 +3,15 @@
     <h1>Chat Messages</h1>
     <div class="panel panel-default" id="messagePanel">
       <ul>
-        <li id="message" ng-repeat="message in vm.messages"><p id="msgUser">{{message.username}}</p> <p class="bubble">{{message.contents}}</p></li>
+        <li id="message" ng-repeat="message in vm.messages">
+          <p id="msgUser">
+            <i id="avatar" class="fa fa-user fa-3"></i>
+            {{message.username}}
+            <span id="chatMsg">
+              {{message.contents}}
+            </span>
+          </p>
+        </li>
       </ul>
     </div>
     <div class="col-md-12">
