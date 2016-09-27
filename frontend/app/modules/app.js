@@ -36,15 +36,15 @@
         SecurityService.checkUserLoggedIn()
         .then(function(res) {
           if (res.data.response === "success") {
-            vm.username = res.data.data.username;
-            vm.loggedIn = true;
+            $rootScope.username = res.data.data.username;
+            $rootScope.loggedIn = true;
           }
           else {
-            vm.notLoggedIn = true;
+            $rootScope.notLoggedIn = true;
           }
         })
         .catch((e) => {
-          vm.notLoggedIn = true;
+          $rootScope.notLoggedIn = true;
         })
       };
     }

@@ -122,9 +122,9 @@ auth.createJwt = (user) => {
           reject("serverError");
         }
         else {
-          resolve(token);
+          resolve({token: token, payload: user});
         }
-      })
+      });
     }
   });
 };

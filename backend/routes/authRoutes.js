@@ -26,14 +26,13 @@ authRoutes.signin = (req, res) => { // TYPE: POST
   })
   .then((jwt) => {
     if (checkbox === "true") {
-      console.log("checkbox is true" + checkbox);
-      res.cookie("auth", jwt, {httpOnly: false});
+      res.cookie("auth", jwt.token, {httpOnly: false});
     }
     else {
-      console.log("checkbox is false" + checkbox);
-      res.cookie("auth", jwt, {maxAge: 604800000, httpOnly: false});
+      res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
     }
-    res.status(200).json({"response": "success"});
+
+    res.status(200).json({"response": "success", data: jwt.payload});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
@@ -85,10 +84,10 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   .then((id) => {
     return authFunctions.createJwt({username: username, id: id});
   })
-  .then((token) => {
-    console.log(token);
-    res.cookie("auth", token, {maxAge: 604800000, httpOnly: false});
-    res.status(200).json({"response": "success"});
+  .then((jwt) => {
+    res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
+
+    res.status(200).json({"response": "success", data: jwt.payload});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
