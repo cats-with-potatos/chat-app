@@ -56,13 +56,13 @@ h1 {
 
 #contentDiv {
   float: right;
-  width: calc(100% - 50px);
+  width: calc(100% - 65px);
 }
 
 //Text within chat box
 #msgUser {
   font-weight: 900;
-  font-size: 16px;
+  font-size: 1.25em;
   color: #0097A7;
   margin-right: 10px;
   margin-bottom: 0;
@@ -108,6 +108,7 @@ h1 {
     -moz-transition: none;
     transition: none;
   border-radius: 0 6px 6px 0;
+
 }
 
 #userTyping {
@@ -125,14 +126,14 @@ h1 {
 #avatar {
   margin-right: 10px;
   // border: 2px solid #999;
-  font-size: 36px;
+  font-size: 40px;
   color: #546E7A;
 }
 
 #avatarDiv {
   float: left;
   width: 25px;
-  margin-left: 15px;
+  margin-left: 20px;
 }
 
 //Bubble styles will be used for Private Messages
