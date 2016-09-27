@@ -1,9 +1,16 @@
-@import url("https://fonts.googleapis.com/css?family=Lato:400,700");
+//Google Fonts
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,900");
+
+//Color scheme used
+//http://material.colorion.co/palette/689
 
 //Body and window styling
-
 body {
   font-family: "Lato", sans-serif;
+}
+
+h1 {
+  color: #546E7A;
 }
 
 .container-content {
@@ -49,6 +56,15 @@ body {
   width: calc(100% - 50px);
 }
 
+//Text within chat box
+#msgUser {
+  font-weight: 900;
+  font-size: 16px;
+  color: #0097A7;
+  margin-right: 10px;
+  margin-bottom: 0;
+}
+
 //Footer including the input box textarea and user typing
 
 #footer {
@@ -56,6 +72,7 @@ body {
   bottom: 0;
   left: 0;
   padding-bottom: 20px;
+  background-color: #E1F5FE;
 }
 
 #messageBox {
@@ -93,7 +110,7 @@ body {
   max-width: 75%;
   padding-top: 10px;
   padding-bottom: 10px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 //User avatar
@@ -102,12 +119,13 @@ body {
   margin-right: 10px;
   // border: 2px solid #999;
   font-size: 36px;
+  color: #546E7A;
 }
 
 #avatarDiv {
   float: left;
-  width: 15px;
-  margin-left: 5px;
+  width: 25px;
+  margin-left: 15px;
 }
 
 //Bubble styles will be used for Private Messages
