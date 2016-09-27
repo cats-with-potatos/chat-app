@@ -24,8 +24,9 @@ h1 {
 }
 
 #chatMsg {
-  margin-top: 10px;
+  // margin-top: 2px;
   font-weight: normal;
+  font-size: 1.25em;
 }
 
 #messagePanel {
@@ -63,6 +64,10 @@ h1 {
   color: #0097A7;
   margin-right: 10px;
   margin-bottom: 0;
+}
+
+#msgUser a {
+  color: #0097A7;
 }
 
 //Footer including the input box textarea and user typing
