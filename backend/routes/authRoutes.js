@@ -26,10 +26,10 @@ authRoutes.signin = (req, res) => { // TYPE: POST
   })
   .then((jwt) => {
     if (checkbox === "true") {
-      res.cookie("auth", jwt.token, {httpOnly: false});
+      res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
     }
     else {
-      res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
+      res.cookie("auth", jwt.token, {httpOnly: false});
     }
 
     res.status(200).json({"response": "success", data: jwt.payload});
