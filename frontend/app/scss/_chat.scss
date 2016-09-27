@@ -86,6 +86,7 @@ h1 {
   max-width: 75%;
   padding-top: 10px;
   padding-bottom: 10px;
+  font-weight: bold;
 }
 
 #avatar {
@@ -107,7 +108,7 @@ h1 {
 
 //Text within chat box
 #msgUser {
-  font-weight: bold;
+  font-weight: 700;
   font-size: 16px;
   color: #777;
   margin-right: 10px;
