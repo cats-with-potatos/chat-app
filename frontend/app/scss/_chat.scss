@@ -7,17 +7,17 @@
 }
 
 #chatMsg {
-  margin-left: 15px;
-  font-size: 12px;
+  margin-top: 10px;
   font-weight: normal;
 }
 
 #messagePanel {
-  overflow: auto;
-  height: 500px;
-  padding-bottom: 10px;
-  border: none;
+  height: 90%;
   width: 100%;
+  left: 0;
+  top: 0;
+  overflow: auto;
+  position: fixed;
 }
 
 #messagePanel ul {
@@ -35,17 +35,26 @@
 
 #messageBox {
   white-space: pre-wrap;
-  margin-bottom: 15px;
-}
-
-#sendBtn {
-  padding: 15px;
+  bottom: 0;
+  overflow: auto;
+  position: fixed;
 }
 
 #avatar {
   margin-right: 10px;
   // border: 2px solid #999;
   font-size: 36px;
+}
+
+#avatarDiv {
+  float: left;
+  width: 15px;
+  margin-left: 5px;
+}
+
+#contentDiv {
+  float: right;
+  width: calc(100% - 50px);
 }
 
 //Text within chat box
@@ -57,6 +66,10 @@
   margin-bottom: 0;
 }
 
+.isTyping {
+  bottom: 0;
+  position: fixed;
+}
 
 //Bubble styles will be used for Private Messages
 .bubble
