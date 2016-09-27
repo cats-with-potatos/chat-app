@@ -1,16 +1,16 @@
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700");
 
-body {
-  font-family: "Lato", sans-serif;
-}
+//Body and window styling
 
-h1 {
+body {
   font-family: "Lato", sans-serif;
 }
 
 .container-content {
   width: 100%;
 }
+
+//Message panel and text within
 
 #message {
   list-style: none;
@@ -43,6 +43,13 @@ h1 {
 #messagePanel li:hover {
   background: #f9f9f9;
 }
+
+#contentDiv {
+  float: right;
+  width: calc(100% - 50px);
+}
+
+//Footer including the input box textarea and user typing
 
 #footer {
   position: fixed;
@@ -89,6 +96,8 @@ h1 {
   font-weight: bold;
 }
 
+//User avatar
+
 #avatar {
   margin-right: 10px;
   // border: 2px solid #999;
@@ -100,21 +109,6 @@ h1 {
   width: 15px;
   margin-left: 5px;
 }
-
-#contentDiv {
-  float: right;
-  width: calc(100% - 50px);
-}
-
-//Text within chat box
-#msgUser {
-  font-weight: 700;
-  font-size: 16px;
-  color: #777;
-  margin-right: 10px;
-  margin-bottom: 0;
-}
-
 
 //Bubble styles will be used for Private Messages
 .bubble
