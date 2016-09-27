@@ -1,3 +1,13 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700");
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+h1 {
+  font-family: "Lato", sans-serif;
+}
+
 .container-content {
   width: 100%;
 }
@@ -34,12 +44,48 @@
   background: #f9f9f9;
 }
 
-#messageBox {
-  white-space: pre-wrap;
+#footer {
+  position: fixed;
   bottom: 0;
   left: 0;
+  padding-bottom: 20px;
+}
+
+#messageBox {
+  white-space: pre-wrap;
   overflow: auto;
-  position: fixed;
+  background: #fff;
+  width: 100%;
+  font-size: 1.9375rem;
+  line-height: 1.2rem;
+  border: 2px solid #E0E0E0;
+  background-clip: padding-box;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+  color: #3d3c40;
+    -webkit-appearance: none;
+  box-shadow: none;
+  outline: 0;
+  min-height: 2.625rem!important;
+  padding-top: .5625rem;
+  padding-bottom: .5625rem;
+  padding-left: .5rem;
+  padding-right: 2.5rem;
+  max-height: 10rem!important;
+  resize: none!important;
+    -webkit-transition: none;
+    -moz-transition: none;
+    transition: none;
+  border-radius: 0 6px 6px 0;
+}
+
+#userTyping {
+  display: inline-block;
+  font-size: 1em;
+  line-height: 1rem;
+  max-width: 75%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 #avatar {
@@ -68,10 +114,6 @@
   margin-bottom: 0;
 }
 
-.isTyping {
-  bottom: 0;
-  position: fixed;
-}
 
 //Bubble styles will be used for Private Messages
 .bubble
