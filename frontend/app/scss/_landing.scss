@@ -26,6 +26,9 @@ img.bg {
 	font-weight: 900;
 	font-size: 5em;
   color: #0097A7;
+  text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+               0px 8px 13px rgba(0,0,0,0.1),
+               0px 18px 23px rgba(0,0,0,0.1);
 }
 
 .landing-text {
@@ -61,11 +64,26 @@ hr {
   color: white;
 }
 
-#sign-up-btn {
+#sign-in-btn {
   background-color: #0097A7;
   font-family: 'Lato', sans-serif;
   color: #FFFFFF;
   border-color: #546E7A
+}
+
+#sign-in-btn:hover{
+  color: #fff;
+  background-color: #546E7A;
+  border-color: #204d74;
+}
+
+#sign-up-btn {
+  background-color: #0097A7;
+  font-family: 'Lato', sans-serif;
+  color: #FFFFFF;
+  border-color: #546E7A;
+  font-size: 24px;
+  padding: 15px 25px;
 }
 
 #sign-up-btn:hover{
