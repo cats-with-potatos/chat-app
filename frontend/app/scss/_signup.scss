@@ -5,7 +5,8 @@
 
 	#box-container {
 	margin-top: 15%;
-	width: 25%;
+	min-width: 25%;
+	max-width: 35%;
 	text-align: left;
 	padding: 20px 20px 20px 20px;
 	min-height: 400px;
@@ -15,13 +16,3 @@
 	border-radius: 25px;
 	background-color: rgba(225,245,254,0.56);
 }
-
-button {
-	background-color: #0097A7;
-}
-
-	// #box-container p {
-	//   margin-bottom: 15px;
-	//   font-size: 21px;
-	//   font-weight: 200;
-	// }
