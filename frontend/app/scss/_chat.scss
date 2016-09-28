@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //Google Fonts
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700,900");
 
@@ -18,6 +19,8 @@ h1 {
 }
 
 //Message panel and text within
+=======
+>>>>>>> dev
 
 #message {
   list-style: none;
@@ -35,6 +38,7 @@ h1 {
   left: 0;
   /* top: 0; */
   overflow: auto;
+<<<<<<< HEAD
   position: fixed;
   border: 0;
   // border: 2px solid #CFD8DC;
@@ -174,8 +178,13 @@ width: 0;
 z-index: 0;
 top: -18px;
 left: 15px;
+=======
+  height: 300px;
+  white-space: pre-line; //This is used to preseve \n in  messages
+>>>>>>> dev
 }
 
+//Flash animation that will be used on the dot class
 @keyframes flash {
     from  {
         background: black;
@@ -185,6 +194,7 @@ left: 15px;
     }
 }
 
+
 .dot {
     display: inline-block;
     background: #CCC;
@@ -193,12 +203,16 @@ left: 15px;
     border-radius: 8px;
     margin-right: 5px;
 
-
+    //Flashing dot animation that will transition the dots change colors everyone 1 second infinitely
     animation-name: flash;
     animation-duration: 1000ms;
     animation-iteration-count: infinite;
     animation: flash 1000ms infinite;
 }
+
+
+
+//All 3 dots will have a different animation delay so they animate at different times
 .dot:first-child {
     background: black;
 }
@@ -208,4 +222,14 @@ left: 15px;
 }
 .dot:nth-child(3) {
     animation-delay: 500ms;
+}
+
+#channelBox {
+  height: 100%;
+  background-color: black;
+}
+
+#messageDiv {
+  margin-top: -70px;
+  max-height: 100%;
 }

@@ -7,6 +7,7 @@ const authFunctions = require("../lib/auth.js")
 authRoutes.signin = (req, res) => { // TYPE: POST
   const username = req.body.username;
   const password = req.body.password;
+  const checkbox = req.body.checkbox;
 
   //Check if user exists to get hash
   authFunctions.checkUserExists(username)
@@ -24,9 +25,14 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     return authFunctions.createJwt(jwtPayload);
   })
   .then((jwt) => {
-    console.log(jwt);
-    res.cookie("auth", jwt, {maxAge: 604800000, httpOnly: false});
-    res.status(200).json({"response": "success"});
+    if (checkbox === "true") {
+      res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
+    }
+    else {
+      res.cookie("auth", jwt.token, {httpOnly: false});
+    }
+
+    res.status(200).json({"response": "success", data: jwt.payload});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
@@ -78,16 +84,23 @@ authRoutes.signup = (req, res) => { //TYPE: POST
   .then((id) => {
     return authFunctions.createJwt({username: username, id: id});
   })
-  .then((token) => {
-    console.log(token);
-    res.cookie("auth", token, {maxAge: 604800000, httpOnly: false});
-    res.status(200).json({"response": "success"});
+  .then((jwt) => {
+    res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
+
+    res.status(200).json({"response": "success", data: jwt.payload});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
     res.status(status).json({"response": "error", "data": [e]})
   });
 };
+
+authRoutes.checkUserLoggedIn = (req, res) => {
+  res.json({
+    "response": "success",
+    "data": req.decoded,
+  });
+}
 
 
 module.exports = authRoutes;
