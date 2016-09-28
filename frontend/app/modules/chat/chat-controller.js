@@ -1,8 +1,6 @@
 /*
 This module takes control of all the chat functionality.
-
 Some of the things this module takes care of:
-
 1. Sending messages
 2. Getting sent messages from db
 3. Getting sent messages from users in real time

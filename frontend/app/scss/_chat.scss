@@ -1,10 +1,179 @@
+//Google Fonts
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,900");
+
+//Color scheme used
+//http://material.colorion.co/palette/689
+
+//Body and window styling
+body {
+  font-family: "Lato", sans-serif;
+}
+
+h1 {
+  color: #546E7A;
+}
+
+.container-content {
+  width: 100%;
+}
+
+//Message panel and text within
 
 #message {
   list-style: none;
 }
 
+#chatMsg {
+  // margin-top: 2px;
+  font-weight: normal;
+  font-size: 1.25em;
+}
+
 #messagePanel {
+  height: 76%;
+  width: 100%;
+  left: 0;
+  /* top: 0; */
   overflow: auto;
+  position: fixed;
+  border: 0;
+  // border: 2px solid #CFD8DC;
+  padding-bottom: 0;
+}
+
+#messagePanel ul {
+  padding-left: 5px;
+}
+
+#messagePanel li {
+  padding: 10px 15px;
+  margin-bottom: -1px;
+}
+
+#messagePanel li:hover {
+  background: #f9f9f9;
+}
+
+#contentDiv {
+  float: right;
+  width: calc(100% - 65px);
+}
+
+//Text within chat box
+#msgUser {
+  font-weight: 900;
+  font-size: 1.25em;
+  color: #0097A7;
+  margin-right: 10px;
+  margin-bottom: 0;
+}
+
+#msgUser a {
+  color: #0097A7;
+}
+
+//Footer including the input box textarea and user typing
+
+#footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 15px;
+  background-color: #E1F5FE;
+}
+
+#messageBox {
+  white-space: pre-wrap;
+  overflow: auto;
+  background: #fff;
+  width: 100%;
+  height: 50px;
+  font-size: 1.9375rem;
+  line-height: 1.2rem;
+  border: 2px solid #E0E0E0;
+  background-clip: padding-box;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+  color: #3d3c40;
+    -webkit-appearance: none;
+  box-shadow: none;
+  outline: 0;
+  // padding-top: 1.5625rem;
+  // padding-bottom: 1.5625rem;
+  // padding-left: .5rem;
+  // padding-right: 2.5rem;
+  resize: none!important;
+    -webkit-transition: none;
+    -moz-transition: none;
+    transition: none;
+  border-radius: 0 6px 6px 0;
+}
+
+#userTyping {
+  display: inline-block;
+  font-size: 1em;
+  line-height: 1rem;
+  max-width: 75%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: 700;
+}
+
+//User avatar
+
+#avatar {
+  margin-right: 10px;
+  // border: 2px solid #999;
+  font-size: 40px;
+  color: #546E7A;
+}
+
+#avatarDiv {
+  float: left;
+  width: 25px;
+  margin-left: 20px;
+}
+
+//Bubble styles will be used for Private Messages
+.bubble
+{
+position: relative;
+width: 360px;
+height: 75px;
+padding: 5px;
+background: #00FFFF;
+-webkit-border-radius: 14px;
+-moz-border-radius: 14px;
+border-radius: 14px;
+border: #222 solid 2px;
+}
+
+.bubble:after
+{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 0 15px 15px;
+border-color: #00FFFF transparent;
+display: block;
+width: 0;
+z-index: 1;
+top: -15px;
+left: 16px;
+}
+
+.bubble:before
+{
+content: '';
+position: absolute;
+border-style: solid;
+border-width: 0 16px 16px;
+border-color: #222 transparent;
+display: block;
+width: 0;
+z-index: 0;
+top: -18px;
+left: 15px;
   height: 300px;
   white-space: pre-line; //This is used to preseve \n in  messages
 }

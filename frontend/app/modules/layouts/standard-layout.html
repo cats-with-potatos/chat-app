@@ -1,1 +1,30 @@
-<div data-ui-view></div>
+<div data-ui-view ng-init="vm.checkUserLoggedIn()"></div>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a>
+    </div>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="nav navbar-nav navbar-right" ng-show="notLoggedIn">
+        <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signin">Log In</a></li>
+        <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
+      </ul>
+
+      <div class="dropdown" id="userDropdown" ng-show="loggedIn">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{username}}
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a data-ui-sref="chat-app.profile">Profile</a></li>
+            <li><a data-ui-sref="chat-app.signout">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>

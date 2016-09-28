@@ -16,7 +16,7 @@ app.use('/api', router);
 //Auth Routes
 router.post("/signup", routes.authRoutes.signup);
 router.post("/signin", routes.authRoutes.signin);
-
+router.post("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);
 
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
