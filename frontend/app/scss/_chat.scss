@@ -87,6 +87,7 @@ h1 {
   overflow: auto;
   background: #fff;
   width: 100%;
+  height: 50px;
   font-size: 1.9375rem;
   line-height: 1.2rem;
   border: 2px solid #E0E0E0;
@@ -97,18 +98,15 @@ h1 {
     -webkit-appearance: none;
   box-shadow: none;
   outline: 0;
-  min-height: 2.625rem!important;
-  padding-top: .5625rem;
-  padding-bottom: .5625rem;
-  padding-left: .5rem;
-  padding-right: 2.5rem;
-  max-height: 10rem!important;
+  // padding-top: 1.5625rem;
+  // padding-bottom: 1.5625rem;
+  // padding-left: .5rem;
+  // padding-right: 2.5rem;
   resize: none!important;
     -webkit-transition: none;
     -moz-transition: none;
     transition: none;
   border-radius: 0 6px 6px 0;
-
 }
 
 #userTyping {
