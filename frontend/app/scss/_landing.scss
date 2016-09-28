@@ -1,0 +1,75 @@
+// Use image on the landingpage to set as bg
+img.bg {
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+  img.bg {
+    left: 50%;
+    margin-left: -512px;   /* 50% */
+  }
+}
+
+
+#landing-h1 {
+	font-weight: 900;
+	font-size: 5em;
+  color: #0097A7;
+}
+
+.landing-text {
+  color: #E1F5FE;
+}
+
+.landing-content{
+	padding-top: 15%;
+	text-align: center;
+    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
+                 0px 8px 13px rgba(0,0,0,0.1),
+                 0px 18px 23px rgba(0,0,0,0.1);
+}
+
+hr {
+    width: 450px;
+    border-top: 1px solid #f8f8f8;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.navbar {
+   border-width: 0px;
+   -webkit-box-shadow: 0px 0px;
+   box-shadow: 0px 0px;
+   background-color: rgba(0,0,0,0.0);
+   background-image: -webkit-gradient(linear, 50.00% 0.00%, 50.00% 100.00%, color-stop( 0% , rgba(0,0,0,0.00)),color-stop( 100% , rgba(0,0,0,0.00)));
+   background-image: -webkit-linear-gradient(270deg,rgba(0,0,0,0.00) 0%,rgba(0,0,0,0.00) 100%);
+   background-image: linear-gradient(180deg,rgba(0,0,0,0.00) 0%,rgba(0,0,0,0.00) 100%);
+}
+
+.navbar>li>a {
+  font-size: 1.5em;
+  color: white;
+}
+
+#sign-up-btn {
+  background-color: #0097A7;
+  font-family: 'Lato', sans-serif;
+  color: #FFFFFF;
+  border-color: #546E7A
+}
+
+#sign-up-btn:hover{
+  color: #fff;
+  background-color: #546E7A;
+  border-color: #204d74;
+}
