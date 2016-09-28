@@ -1,9 +1,15 @@
 .active-nav {
-  background-color: lightgray;
-  color: #000;
+  background-color: #546E7A;
+  color: #E1F5FE;
 }
 
 #app-brand {
-color: #000;
+color: #546E7A;
 font-weight: bold;
+font-size: 1.5em;
+}
+
+#nav-links {
+  font-size: 1.2em;
+  color: #fff;
 }
