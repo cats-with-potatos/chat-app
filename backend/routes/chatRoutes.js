@@ -100,7 +100,6 @@ This route will notify all the other users in the channel that they are typing
 
 chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
-  console.log(req.decoded);
 
   //Checks if the user is already typing
   if (chat.userAlreadyTyping(userid)) {
@@ -140,7 +139,7 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   if (chat.userIsNotTyping(userid)) {
     res.status(400).json({
       "response": "error",
-      "errorType": "User is not even typing",
+      "errorType": "alreadyNotTyping",
     });
     return;
   }

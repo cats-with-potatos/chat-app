@@ -16,7 +16,7 @@ app.use('/api', router);
 //Auth Routes
 router.post("/signup", routes.authRoutes.signup);
 router.post("/signin", routes.authRoutes.signin);
-router.post("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);
+router.get("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);
 
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
@@ -29,7 +29,8 @@ router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.s
 
 //Channel Routes
 router.post("/createNewChannel", middleware.checkToken, routes.channelRoutes.createNewChannel);
-
+router.get("/getAllChannels", middleware.checkToken, routes.channelRoutes.getAllChannels);
+router.get("/checkUserInChannel", middleware.checkToken, routes.channelRoutes.checkUserInChannel);
 //404 route
 router.use(middleware.NotFoundApiRoute);
 
