@@ -12,7 +12,7 @@
 
 // Use image on the landingpage to set as bg
 img.bg {
-  src: url(../backend/public/img/typing.jpg);
+  content:url(../img/typing.jpg);
   /* Set rules to fill background */
   min-height: 100%;
   min-width: 1024px;
