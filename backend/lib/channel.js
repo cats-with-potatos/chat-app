@@ -73,4 +73,26 @@ channel.insertChannelToDb = (channelName) => {
   });
 };
 
+//Gets all channels from db
+channel.getAllChannels = () => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError")
+      }
+      else {
+        mclient.query("SELECT * FROM ChannelsTable", (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve(data);
+          }
+        });
+      }
+    })
+  });
+};
+
 module.exports = channel;
