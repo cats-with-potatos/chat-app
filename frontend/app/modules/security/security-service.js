@@ -44,10 +44,9 @@
         service.checkUserLoggedIn = function() {
           return $http(
             {
-              method: "POST",
+              method: "GET",
               url: "/api/checkUserLoggedIn",
               headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': "Bearer " + Cookies.get("auth"),
               }
             }

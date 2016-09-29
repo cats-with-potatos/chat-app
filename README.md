@@ -3,9 +3,9 @@ A chat application. For chatting
 
 ## Table of Contents
 
-1. [Implementation](#implementation)
-1. [Contributing](#contributing)
-1. [License](#license)
+ [Implementation](#implementation)
+ [Contributing](#contributing)
+ [License](#license)
 
 
 ## Implementation
