@@ -30,7 +30,8 @@ router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.s
 //Channel Routes
 router.post("/createNewChannel", middleware.checkToken, routes.channelRoutes.createNewChannel);
 router.get("/getAllChannels", middleware.checkToken, routes.channelRoutes.getAllChannels);
-router.get("/checkUserInChannel", middleware.checkToken, routes.channelRoutes.checkUserInChannel);
+//router.get("/checkUserInChannel", middleware.checkToken, routes.channelRoutes.checkUserInChannel);
+
 //404 route
 router.use(middleware.NotFoundApiRoute);
 
