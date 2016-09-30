@@ -31,7 +31,7 @@ h1 {
 
 #messagePanel {
   height: 76%;
-  width: 100%;
+  width: 75%;
   left: 0;
   /* top: 0; */
   overflow: auto;
@@ -39,6 +39,7 @@ h1 {
   border: 0;
   // border: 2px solid #CFD8DC;
   padding-bottom: 0;
+  float: right;
 }
 
 #messagePanel ul {
@@ -226,4 +227,32 @@ left: 15px;
 #messageDiv {
   margin-top: -70px;
   max-height: 100%;
+}
+
+//Channels Sidebar
+#channel-sidebar {
+    background: #0097A7;
+    color: #fff;
+    position: fixed;
+    height: 100%;
+    width: 250px;
+    overflow: hidden;
+    left: 0;
+    margin: 0;
+    -moz-transition: left ease .25s;
+    -o-transition: left ease .25s;
+    -webkit-transition: left ease .25s;
+    transition: left ease .25s;
+}
+
+#channel-sidebar.hide-sidebar {
+        left: -250px;
+        -moz-transition: left ease .25s;
+        -o-transition: left ease .25s;
+        -webkit-transition: left ease .25s;
+        transition: left ease .25s;
+}
+
+#channel-sidebar h1, p, a {
+  color: #fff;
 }
