@@ -178,4 +178,86 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
   });
 };
 
+//This route will update a message
+chatRoutes.updateMessage = (req, res) => {
+  const userid = req.decoded.id;
+  const messageId = Number(req.query.messageId);
+  const channelId = Number(req.query.channelId);
+  const contents = req.query.contents;
+
+
+  if (chat.checkMessageError({
+    userid: userid,
+    channelId: channelId,
+    message: contents,
+  }) || isNaN(messageId)) {
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+    chat.checkUserOwnsMessage({
+    userid: userid,
+    messageId: messageId,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.updateMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+      contents: contents,
+    });
+  })
+  .then(() => {
+    res.json({"response": "success"});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.json({"response": "error", "errorType": e});
+  });
+};
+
+//This route will delete a message.
+chatRoutes.deleteMessage = (req, res) => {
+  const userid = req.decoded.id;
+  const messageId = Number(req.query.messageId);
+  const channelId = Number(req.query.channelId);
+
+  if (isNaN(messageId) || isNaN(channelId)) {
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+  chat.checkUserOwnsMessage({
+    userid: userid,
+    messageId: messageId,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.deleteMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+};
+
 module.exports = chatRoutes;
