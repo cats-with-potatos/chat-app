@@ -32,7 +32,8 @@ h1 {
 
 #messagePanel {
   height: 80%;
-  width: 75%;
+  min-width: 65%;
+  max-width: 75%;
   /* left: 0; */
   /* top: 0; */
   right: 0;
@@ -243,6 +244,7 @@ left: 15px;
     overflow: hidden;
     left: 0;
     margin: 0;
+    padding: 0;
     -moz-transition: left ease .25s;
     -o-transition: left ease .25s;
     -webkit-transition: left ease .25s;
@@ -259,4 +261,59 @@ left: 15px;
 
 #channel-sidebar h1, p, a {
   color: #fff;
+}
+
+
+//Channel list
+#channel-list {
+  text-align: center;
+  height: 50%;
+  padding: 0;
+  margin: 0;
+}
+
+#channel-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+#channel-list a:hover {
+  text-decoration: none;
+  width: 100%;
+}
+
+.active-channel {
+  background-color: #fff;
+  color: #546E7A;
+  width: 100%;
+  padding: 10px 0px;
+  margin: 0;
+  height: 45px;
+
+}
+
+.active-channel a {
+  color: #546E7A;
+}
+
+//Private messages
+
+#private-messages {
+  text-align: center;
+  height: 50%;
+  bottom: 0;
+}
+
+#private-messages ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+#private-messages a:hover {
+  text-decoration: none;
+  width: 100%;
 }
