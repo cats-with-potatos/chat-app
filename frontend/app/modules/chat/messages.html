@@ -1,3 +1,11 @@
+<style>
+.navbar {
+  background-color: #0097A7;
+  border: 0;
+}
+#app-brand {color: #fff;}
+</style>
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
@@ -19,12 +27,13 @@
         </ul>
     </div>
     <div id="channel-sidebar" class="col-md-2">
-      <h1>Channels</h1>
+      <h1 class="text-center">Channels</h1>
+      
     </div>
   </div>
-<div class="container">
+<div class="container" id="footer">
   <div class="row">
-    <div class="col-xs-12" id="footer">
+    <div class="col-xs-12">
       <div id="userTyping">
         <!--This will show if the user is currently typing or not-->
           <span ng-repeat="message in vm.userTypingArray"> {{message}} </span>  {{vm.typeOfTyping}}

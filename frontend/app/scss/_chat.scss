@@ -27,19 +27,20 @@ h1 {
   // margin-top: 2px;
   font-weight: normal;
   font-size: 1.25em;
+  color: #000;
 }
 
 #messagePanel {
-  height: 76%;
-  width: 75%;
-  left: 0;
+  height: 80%;
+  width: 87%;
+  /* left: 0; */
   /* top: 0; */
+  right: 0;
   overflow: auto;
   position: fixed;
   border: 0;
-  // border: 2px solid #CFD8DC;
   padding-bottom: 0;
-  float: right;
+  /* float: right; */
 }
 
 #messagePanel ul {
@@ -78,9 +79,12 @@ h1 {
 #footer {
   position: fixed;
   bottom: 0;
-  left: 0;
+  /* left: 0; */
+  right: 0;
   padding-bottom: 15px;
-  background-color: #E1F5FE;
+  background-color: #ffffff;
+  width: 85%;
+  // height: 200px;
 }
 
 #messageBox {
