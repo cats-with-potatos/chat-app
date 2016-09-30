@@ -12,20 +12,15 @@ chat.checkMessageError = (messageDet) => {
     return "paramError";
   }
 
-  if (messageDet.message.length > 100) {
-    return "messageTooLong";
-  }
-
   //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
   try {
-    JSON.parse(messageDet.message);
+    if (JSON.parse(messageDet.message).length > 100) {
+      return "messageTooLong";
+    }
   }
   catch(e) {
     return "paramError";
   }
-
-
-
   return null;
 };
 
@@ -267,5 +262,79 @@ io.on('connection', (socket) => {
   }
 });
 });
+
+//Checks if the user owns a specific message
+chat.checkUserOwnsMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        console.log(err);
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT * FROM MessagesTable WHERE message_id = ? AND sender = ? AND chan_link_id = ?", [obj.messageId, obj.userid, obj.channelId], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("paramError");
+            }
+            else {
+              resolve();
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
+//Updates a specific message
+chat.updateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("UPDATE MessagesTable SET contents = ? WHERE message_id = ? AND sender = ? AND chan_link_id = ?", [obj.contents, obj.messageId, obj.userid, obj.channelId], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            resolve();
+          }
+        })
+      }
+    });
+  });
+};
+
+//Deletes a specific message
+chat.deleteMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("DELETE FROM MessagesTable WHERE message_id = ? AND sender = ? AND chan_link_id = ?", [obj.messageId, obj.userid, obj.channelId], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError")
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
 
 module.exports = chat;

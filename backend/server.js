@@ -27,6 +27,10 @@ router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendCha
 router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
 router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
 
+router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
+router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage)
+
+
 //Channel Routes
 router.post("/createNewChannel", middleware.checkToken, routes.channelRoutes.createNewChannel);
 router.get("/getAllChannels", middleware.checkToken, routes.channelRoutes.getAllChannels);

@@ -178,4 +178,86 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
   });
 };
 
+//This route will update a message
+chatRoutes.updateMessage = (req, res) => { //TYPE: PUT
+  const userid = req.decoded.id;
+  const messageId = Number(req.body.messageId);
+  const channelId = Number(req.body.channelId);
+  const contents = req.body.contents;
+
+
+  if (chat.checkMessageError({ //Checks if there are any errors with user input
+    userid: userid,
+    channelId: channelId,
+    message: contents,
+  }) || isNaN(messageId)) {
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+    chat.checkUserOwnsMessage({ //Checks if the user owns the message
+    userid: userid,
+    messageId: messageId,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.updateMessage({ //Updates the message in db
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+      contents: contents,
+    });
+  })
+  .then(() => {
+    res.json({"response": "success"});
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({"response": "error", "errorType": e});
+  });
+};
+
+//This route will delete a message.
+chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
+  const userid = req.decoded.id;
+  const messageId = Number(req.query.messageId);
+  const channelId = Number(req.query.channelId);
+
+  if (isNaN(messageId) || isNaN(channelId)) { //Checks if user did not input params
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+  chat.checkUserOwnsMessage({ //Checks if user owns the current message
+    userid: userid,
+    messageId: messageId,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.deleteMessage({ //Deletes the message
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+};
+
 module.exports = chatRoutes;
