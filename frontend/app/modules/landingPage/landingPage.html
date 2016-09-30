@@ -18,8 +18,12 @@
       </p>
       <!-- <hr> -->
       <div class="col-md-12 text-center form-group">
-        <a href="/signup" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-user-plus fa-3"></i> Sign Up</a>
-        <a href="/signin" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-sign-in fa-3"></i> Sign In</a>
+        <div ng-show="notLoggedIn">
+          <a href="/signin" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-sign-in fa-3"></i> Sign In</a>
+          <a href="/signup" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-user-plus fa-3"></i> Sign Up</a>
+        </div>
+        <div ng-show="loggedIn">
+        </div>
       </div>
       </div>
     </div>
