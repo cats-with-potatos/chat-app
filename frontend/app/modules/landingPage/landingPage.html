@@ -1,13 +1,27 @@
+<!-- Hide the navbar on the landing page -->
+<style>
+.navbar {
+   visibility: hidden;
+}
+</style>
+<!-- Image with class bg used as the fullscreen background -->
+<img src="../img/typing.jpg" class="bg" alt="" />
 <div class="container">
   <div class="row">
-    <div class="col-md-12 text-center">
-  <h1>Chat App</h1>
-  <h2>A Great Application for Great Conversation</h2>
-  <p class="lead">
-    Chat with friends and family with our Chat App!
-    <br>
-     Made with love by the Cats-With-Potatos team.
-  </p>
+    <div id="landing-box" class="col-md-12 text-center landing-content landing-text">
+      <h1 id="landing-h1">Chat App</h1>
+      <h2>A Great Application for Great Conversation</h2>
+      <p class="lead">
+        Chat with friends and family with our Chat App!
+        <br>
+        Made with love by the Cats-With-Potatos team.
+      </p>
+      <!-- <hr> -->
+      <div class="col-md-12 text-center form-group">
+        <a href="/signup" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-user-plus fa-3"></i> Sign Up</a>
+        <a href="/signin" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-sign-in fa-3"></i> Sign In</a>
+      </div>
+      </div>
     </div>
   </div>
 </div>
