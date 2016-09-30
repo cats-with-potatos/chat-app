@@ -179,14 +179,14 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
 };
 
 //This route will update a message
-chatRoutes.updateMessage = (req, res) => {
+chatRoutes.updateMessage = (req, res) => { //TYPE: PUT
   const userid = req.decoded.id;
-  const messageId = Number(req.query.messageId);
-  const channelId = Number(req.query.channelId);
-  const contents = req.query.contents;
+  const messageId = Number(req.body.messageId);
+  const channelId = Number(req.body.channelId);
+  const contents = req.body.contents;
 
 
-  if (chat.checkMessageError({
+  if (chat.checkMessageError({ //Checks if there are any errors with user input
     userid: userid,
     channelId: channelId,
     message: contents,
@@ -198,13 +198,13 @@ chatRoutes.updateMessage = (req, res) => {
     return;
   }
 
-    chat.checkUserOwnsMessage({
+    chat.checkUserOwnsMessage({ //Checks if the user owns the message
     userid: userid,
     messageId: messageId,
     channelId: channelId,
   })
   .then(() => {
-    return chat.updateMessage({
+    return chat.updateMessage({ //Updates the message in db
       userid: userid,
       messageId: messageId,
       channelId: channelId,
@@ -216,17 +216,17 @@ chatRoutes.updateMessage = (req, res) => {
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400;
-    res.json({"response": "error", "errorType": e});
+    res.status(status).json({"response": "error", "errorType": e});
   });
 };
 
 //This route will delete a message.
-chatRoutes.deleteMessage = (req, res) => {
+chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
   const userid = req.decoded.id;
   const messageId = Number(req.query.messageId);
   const channelId = Number(req.query.channelId);
 
-  if (isNaN(messageId) || isNaN(channelId)) {
+  if (isNaN(messageId) || isNaN(channelId)) { //Checks if user did not input params
     res.json({
       "response": "error",
       "errorType": "paramError",
@@ -234,13 +234,13 @@ chatRoutes.deleteMessage = (req, res) => {
     return;
   }
 
-  chat.checkUserOwnsMessage({
+  chat.checkUserOwnsMessage({ //Checks if user owns the current message
     userid: userid,
     messageId: messageId,
     channelId: channelId,
   })
   .then(() => {
-    return chat.deleteMessage({
+    return chat.deleteMessage({ //Deletes the message
       userid: userid,
       messageId: messageId,
       channelId: channelId,
@@ -253,7 +253,7 @@ chatRoutes.deleteMessage = (req, res) => {
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400;
-    res.json({
+    res.status(status).json({
       "response": "error",
       "errorType": e,
     });

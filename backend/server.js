@@ -28,7 +28,7 @@ router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUs
 router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
 
 router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
-router.delete("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage)
+router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage)
 
 
 //Channel Routes
