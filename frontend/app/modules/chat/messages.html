@@ -1,14 +1,34 @@
 <style>
-.navbar  {
+#message-nav  {
   background-color: #0097A7;
-  width: 100%;
+  width: 81%;
   float: right !important;
   border: 0;
+  top: 0;
+  border-radius: 0;
 }
-#app-brand {color: #fff;}
 
+/*`.navbar-fixed-top {
+  float: right !important;
+  right: 0 !important;
+  width: 75%;
+}`*/
+
+.ng-scope {
+  margin: 0 !important;
+}
+
+#app-brand {
+  color: #fff;
+}
+
+.col-md-12 {
+  min-height: 0;
+}
 
 </style>
+
+
 
 <div class="container">
   <div class="row">
@@ -84,3 +104,12 @@
     </div>
   </div>
 </div>
+
+<script>
+function removeClass() {
+document.getElementById("message-nav").className =
+   document.getElementById("message-nav").className.replace
+      ( /(?:^|\s)navbar-fixed-top(?!\S)/g , '' )
+};
+document.onload = removeClass();
+</script>
