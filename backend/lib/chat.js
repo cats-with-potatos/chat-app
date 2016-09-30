@@ -12,6 +12,10 @@ chat.checkMessageError = (messageDet) => {
     return "paramError";
   }
 
+  if (messageDet.message.length > 100) {
+    return "messageTooLong";
+  }
+
   //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
   try {
     JSON.parse(messageDet.message);
