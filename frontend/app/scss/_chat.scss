@@ -313,7 +313,7 @@ left: 15px;
   font-size: 1.5em;
 }
 
-#private-messages a:hover {
+#private-messages a:hover, a:active {
   text-decoration: none;
   width: 100%;
 }
