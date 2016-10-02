@@ -18,7 +18,7 @@
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               $state.go("chat-app");
             }
@@ -27,7 +27,7 @@
             }
 
           })
-          .catch((e) => {
+          .catch(function(e) {
             defer.resolve();
           });
           return defer.promise;
@@ -47,7 +47,7 @@
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               $state.go("chat-app");
             }
@@ -56,7 +56,7 @@
             }
 
           })
-          .catch((e) => {
+          .catch(function(e) {
             defer.resolve();
           });
           return defer.promise;
@@ -76,7 +76,7 @@
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               defer.resolve();
             }
@@ -84,7 +84,7 @@
               $state.go("chat-app");
             }
           })
-          .catch((e) => {
+          .catch(function(e) {
             $state.go("chat-app");
           });
           return defer.promise;
