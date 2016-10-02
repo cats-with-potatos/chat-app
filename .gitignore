@@ -1,5 +1,4 @@
 .idea
-public
 prod_dist
 frontend/app/modules/**/*.min.js
 frontend/app/*.min.js

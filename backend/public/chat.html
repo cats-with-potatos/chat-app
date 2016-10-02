@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="col-md-8 col-md-offset-2">
+
+    <div>
+      Messages go here...
+    </div>
+
+    <textarea
+      type="text"
+      class="form-control"
+      placeholder="Message Here"
+      ng-model="vm.message"
+      autofocus
+      ng-keydown="vm.sendMessage($event)"
+      spellcheck="true"
+      id="messageBox"
+    ></textarea>
+
+
+  </div>
