@@ -29859,7 +29859,7 @@ $provide.value("$locale", {
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               defer.resolve();
             }
@@ -29867,7 +29867,7 @@ $provide.value("$locale", {
               $state.go("chat-app");
             }
           })
-          .catch((e) => {
+          .catch(function(e) {
             defer.resolve();
           });
           return defer.promise;
@@ -29929,7 +29929,7 @@ $provide.value("$locale", {
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               $state.go("chat-app");
             }
@@ -29938,7 +29938,7 @@ $provide.value("$locale", {
             }
 
           })
-          .catch((e) => {
+          .catch(function(e) {
             defer.resolve();
           });
           return defer.promise;
@@ -29958,7 +29958,7 @@ $provide.value("$locale", {
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               $state.go("chat-app");
             }
@@ -29967,7 +29967,7 @@ $provide.value("$locale", {
             }
 
           })
-          .catch((e) => {
+          .catch(function(e) {
             defer.resolve();
           });
           return defer.promise;
@@ -29987,7 +29987,7 @@ $provide.value("$locale", {
         app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then((val) => {
+          .then(function(val) {
             if (val.data.response === "success") {
               defer.resolve();
             }
@@ -29995,7 +29995,7 @@ $provide.value("$locale", {
               $state.go("chat-app");
             }
           })
-          .catch((e) => {
+          .catch(function(e) {
             $state.go("chat-app");
           });
           return defer.promise;
@@ -30038,7 +30038,7 @@ Some of the things this module takes care of:
     vm.message = "";
 
     //This boolean indicates whether the user is already typing or not
-    let sendTypingRequest = false;
+    var sendTypingRequest = false;
 
     /*This is used to tell the server that the user has stopped typing
     if the user goes to another url on the web app. */
@@ -30086,7 +30086,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(userid) {
       $rootScope.$applyAsync(function() {
-        const index = vm.userTypingArray.indexOf(userid);
+        var index = vm.userTypingArray.indexOf(userid);
         vm.userTypingArray.splice(index, 1);
 
         if (vm.userTypingArray.length === 0) {
@@ -30201,7 +30201,7 @@ Some of the things this module takes care of:
           }
         })
         .then(function(res) {
-          const messagesArray = [];
+          var messagesArray = [];
 
           res.data.data.forEach(function(val) {
             val.contents = JSON.parse(val.contents); //Parses the stringified string
@@ -30366,7 +30366,7 @@ Some of the things this module takes care of:
           password: vm.input.password,
           passwordVerif: vm.input.passwordVerif,
         })
-        .then((res) => {
+        .then(function(res) {
           //Set the buttonDisabled to false
           vm.buttonDisabled = false;
 
@@ -30428,7 +30428,7 @@ Some of the things this module takes care of:
           password: vm.input.password,
           checkbox: vm.checkbox,
         })
-        .then((res) => {
+        .then(function(res) {
           //Set the buttonDisabled to false
           vm.buttonDisabled = false;
 
@@ -47621,7 +47621,7 @@ if (typeof jQuery === 'undefined') {
             $rootScope.notLoggedIn = true;
           }
         })
-        .catch((e) => {
+        .catch(function(e) {
           $rootScope.notLoggedIn = true;
         })
       };
