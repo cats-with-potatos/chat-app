@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha",
-    "dbSetup": "node db-init/dbSetup.js"
+    "dbSetup": "node db-init/dbSetup.js",
+    "start": "NODE_ENV=development node server.js"
   },
   "author": "",
   "license": "ISC",
