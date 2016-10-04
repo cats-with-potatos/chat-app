@@ -1,7 +1,7 @@
 <div data-ui-view ng-init="vm.checkUserLoggedIn()"></div>
 
-<nav class="navbar navbar-default navbar-fixed-top" id="message-nav">
-  <div class="container" id="message-nav" id="nav-container">
+<nav class="navbar navbar-default" id="message-nav" ng-class="{'navbar-fixed-top': showFixedTopNav === undefined}">
+  <div class="container" id="nav-container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav" aria-expanded="false">
         <span class="sr-only">Toggle navigation</span>

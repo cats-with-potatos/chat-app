@@ -123,5 +123,9 @@
     if ($location.path() === "/signout") {
       vm.signout();
     }
+
+    //Hide navbar-fixed-top class on messages page
+    $rootScope.showFixedTopNav = undefined;
+
   }
 }());
