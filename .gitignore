@@ -1,9 +1,9 @@
 .idea
-public
 prod_dist
 frontend/app/modules/**/*.min.js
 frontend/app/*.min.js
 backend/npm-debug.log
+backend/public
 node_modules
 grunt_temp
 .DS_Store

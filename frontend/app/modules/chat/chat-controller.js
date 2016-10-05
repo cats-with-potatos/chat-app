@@ -30,7 +30,7 @@ Some of the things this module takes care of:
     vm.message = "";
 
     //This boolean indicates whether the user is already typing or not
-    let sendTypingRequest = false;
+    var sendTypingRequest = false;
 
     /*This is used to tell the server that the user has stopped typing
     if the user goes to another url on the web app. */
@@ -78,7 +78,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(userid) {
       $rootScope.$applyAsync(function() {
-        const index = vm.userTypingArray.indexOf(userid);
+        var index = vm.userTypingArray.indexOf(userid);
         vm.userTypingArray.splice(index, 1);
 
         if (vm.userTypingArray.length === 0) {
