@@ -13,9 +13,9 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', 'ChatService', Controller]);
+  .controller('ChatController', ['$rootScope', '$location', 'ChatService', Controller]);
 
-  function Controller($rootScope, ChatService) {
+  function Controller($rootScope, $location, ChatService) {
     var vm = this;
 
     //This is where we will store the users that are currently typing
@@ -171,5 +171,9 @@ Some of the things this module takes care of:
         }
       }
     };
+
+    if ($location.path() === "/messages") {
+      $rootScope.showFixedTopNav = true;
+    }
   }
 }());

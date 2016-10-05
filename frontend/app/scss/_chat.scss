@@ -27,18 +27,22 @@ h1 {
   // margin-top: 2px;
   font-weight: normal;
   font-size: 1.25em;
+  color: #000;
 }
 
 #messagePanel {
-  height: 76%;
-  width: 100%;
-  left: 0;
+  height: 80%;
+  min-width: 65%;
+  max-width: 81%;
+  /* left: 0; */
   /* top: 0; */
+  right: 0;
   overflow: auto;
   position: fixed;
   border: 0;
-  // border: 2px solid #CFD8DC;
   padding-bottom: 0;
+  /* float: right; */
+  margin-top: 50px;
 }
 
 #messagePanel ul {
@@ -77,9 +81,12 @@ h1 {
 #footer {
   position: fixed;
   bottom: 0;
-  left: 0;
+  /* left: 0; */
+  right: 0;
   padding-bottom: 15px;
-  background-color: #E1F5FE;
+  background-color: #ffffff;
+  width: 75%;
+  // height: 200px;
 }
 
 #messageBox {
@@ -106,7 +113,7 @@ h1 {
     -webkit-transition: none;
     -moz-transition: none;
     transition: none;
-  border-radius: 0 6px 6px 0;
+  // border-radius: 0 6px 6px 0;
 }
 
 #userTyping {
@@ -226,4 +233,92 @@ left: 15px;
 #messageDiv {
   margin-top: -70px;
   max-height: 100%;
+}
+
+//Channels Sidebar
+#channel-sidebar {
+    background: #0097A7;
+    color: #fff;
+    position: fixed;
+    height: 100%;
+    width: 19%;
+    overflow: hidden;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    -moz-transition: left ease .25s;
+    -o-transition: left ease .25s;
+    -webkit-transition: left ease .25s;
+    transition: left ease .25s;
+}
+
+#channel-sidebar.hide-sidebar {
+        left: -250px;
+        -moz-transition: left ease .25s;
+        -o-transition: left ease .25s;
+        -webkit-transition: left ease .25s;
+        transition: left ease .25s;
+}
+
+#channel-sidebar h1, p, a {
+  color: #fff;
+}
+
+
+//Channel list
+#channel-list {
+  text-align: center;
+  height: 50%;
+  padding: 0;
+  margin: 0;
+}
+
+#channel-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+#channel-list a:hover {
+  text-decoration: none;
+  width: 100%;
+}
+
+.active-channel {
+  background-color: #fff;
+  color: #546E7A;
+  width: 100%;
+  padding: 10px 0px;
+  margin: 0;
+  height: 45px;
+
+}
+
+.active-channel a {
+  color: #546E7A;
+}
+
+//Private messages
+
+#private-messages {
+  text-align: center;
+  height: 50%;
+  bottom: 0;
+}
+
+#private-messages ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1.5em;
+}
+
+#private-messages a:hover, a:active {
+  text-decoration: none;
+  width: 100%;
+}
+
+#private-messages h1 {
+  font-size: 1.75em;
 }
