@@ -1,8 +1,8 @@
 const mysql = require("mysql");
 const pool = mysql.createPool({
   host     : '127.0.0.1',
-  user     : 'root',
-  password : '',
+  user     : process.env.DB_USER || "root",
+  password : process.env.DB_PASS || "",
   database : 'chatdb'
 });
 
