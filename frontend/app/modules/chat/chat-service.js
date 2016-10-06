@@ -17,7 +17,7 @@
           }
         })
         .then(function(res) {
-          const messagesArray = [];
+          var messagesArray = [];
 
           res.data.data.forEach(function(val) {
             val.contents = JSON.parse(val.contents); //Parses the stringified string

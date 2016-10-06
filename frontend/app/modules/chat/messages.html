@@ -1,9 +1,38 @@
+<style>
+#message-nav  {
+  background-color: #0097A7;
+  width: 81%;
+  float: right !important;
+  border: 0;
+  top: 0;
+  border-radius: 0;
+}
+
+/*`.navbar-fixed-top {
+  float: right !important;
+  right: 0 !important;
+  width: 75%;
+}`*/
+
+.ng-scope {
+  margin: 0 !important;
+}
+
+#app-brand {
+  color: #fff;
+}
+
+.col-md-12 {
+  min-height: 0;
+}
+
+.container {
+  width: auto;
+}
+
+</style>
+
 <div class="container">
-  <div class="row">
-    <div class="col-lg-12 text-center">
-      <h1>Chatroom Messages</h1>
-    </div>
-  </div>
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default" id="messagePanel">
@@ -23,10 +52,30 @@
           </li>
         </ul>
     </div>
+    <div id="channel-sidebar" class="col-md-2">
+      <h1 class="text-center">Channels</h1>
+      <div id="channel-list">
+        <ul>
+          <li class="active-channel"><a href="#">General</a></li>
+          <li><a href="#">Private 1</a></li>
+          <li><a href="#">Private 2</a></li>
+          <li><a href="#">Private 3</a></li>
+        </ul>
+      </div>
+    <div id="private-messages">
+      <h1 class="text-center">Private Messages</h1>
+      <ul>
+        <li class=""><a href="#">Message 1</a></li>
+        <li><a href="#">Message 2</a></li>
+        <li><a href="#">Message 3</a></li>
+        <li><a href="#">Message 4</a></li>
+      </ul>
+    </div>
   </div>
-<div class="container">
+</div>
+<div class="container" id="footer">
   <div class="row">
-    <div class="col-xs-12" id="footer">
+    <div class="col-xs-12">
       <div id="userTyping">
         <!--This will show if the user is currently typing or not-->
           <span ng-repeat="message in vm.userTypingArray"> {{message}} </span>  {{vm.typeOfTyping}}
@@ -57,3 +106,12 @@
     </div>
   </div>
 </div>
+
+<script>
+function removeClass() {
+document.getElementById("message-nav").className =
+   document.getElementById("message-nav").className.replace
+      ( /(?:^|\s)navbar-fixed-top(?!\S)/g , '' )
+};
+document.onload = removeClass();
+</script>

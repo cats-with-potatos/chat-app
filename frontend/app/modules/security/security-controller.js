@@ -23,7 +23,7 @@
           password: vm.input.password,
           passwordVerif: vm.input.passwordVerif,
         })
-        .then((res) => {
+        .then(function(res) {
           //Set the buttonDisabled to false
           vm.buttonDisabled = false;
 
@@ -85,7 +85,7 @@
           password: vm.input.password,
           checkbox: vm.checkbox,
         })
-        .then((res) => {
+        .then(function(res) {
           //Set the buttonDisabled to false
           vm.buttonDisabled = false;
 
@@ -123,5 +123,9 @@
     if ($location.path() === "/signout") {
       vm.signout();
     }
+
+    //Hide navbar-fixed-top class on messages page
+    $rootScope.showFixedTopNav = undefined;
+
   }
 }());

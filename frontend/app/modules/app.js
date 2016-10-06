@@ -43,7 +43,7 @@
             $rootScope.notLoggedIn = true;
           }
         })
-        .catch((e) => {
+        .catch(function(e) {
           $rootScope.notLoggedIn = true;
         })
       };
