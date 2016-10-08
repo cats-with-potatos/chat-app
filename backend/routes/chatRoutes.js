@@ -13,10 +13,10 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 //This will get all the messages from a specific channel
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
   const userId = req.decoded.id;
-  const channelId = Number(req.query.channelId);
+  const channelName = Number(req.query.channelName);
 
   //Checks to see of the channel is not a number
-  if (isNaN(channelId)) {
+  if (!channelName) {
     res.status(400).json({"response": "error", "errorType": "paramError"});
     return;
   }

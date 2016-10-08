@@ -6,7 +6,7 @@
 
   function Routes($stateProvider) {
     $stateProvider.state('chat-app.messages', {
-      url: '/messages',
+      url: '/messages/:channelName',
       templateUrl: 'messages.html',
       controller: 'ChatController',
       controllerAs: 'vm',
@@ -14,11 +14,19 @@
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        app: ["SecurityService", "$q", '$state', function (SecurityService, $q, $state) {
+        app: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
-          .then(function(val) {
-            if (val.data.response === "success") {
+          .then(function(res) {
+            if (res.data.response === "success") {
+              return ChatService.checkUserInChannel($stateParams.channelName)
+            }
+            else {
+              $state.go("chat-app");
+            }
+          })
+          .then(function(res) {
+            if (res.data.response === "success") {
               defer.resolve();
             }
             else {
@@ -26,7 +34,35 @@
             }
           })
           .catch(function(e) {
-            defer.resolve();
+            if (e.data.errorType === "notInChannel") {
+              swal({
+                title: "Join Channel?",
+                type: "info",
+                text: "Would you like to join the <b>" + $stateParams.channelName + "</b> channel?",
+                html: "true",
+                showLoaderOnConfirm: true,
+                showCancelButton: true,
+                closeOnConfirm: false,
+              }, function() {
+                ChatService.addUserToChannel($stateParams.channelName)
+                .then(function(res) {
+                  if (res.data.response === "success") {
+                    swal({
+                      title: "Success!",
+                      type: "success",
+                      text: "You have successfully joined the channel!",
+                    }, function() {
+                      $state.go("chat-app.messages",{channelName: $stateParams.channelName});
+                    });
+
+                  }
+                });
+
+              });
+            }
+            else {
+              $state.go("chat-app");
+            }
           });
           return defer.promise;
         }]

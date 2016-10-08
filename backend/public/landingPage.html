@@ -8,7 +8,7 @@
 <img src="../img/typing-min.jpg" class="bg" alt="" />
 <div class="container">
   <div class="row">
-    <div id="landing-box" class="col-md-12 text-center landing-content landing-text">
+    <div id="landing-box" class="col-md-12 text-center landing-content landing-text" ng-hide="hideNavBar">
       <h1 id="landing-h1">Chat App</h1>
       <h2>A Great Application for Great Conversation</h2>
       <p class="lead">
@@ -23,7 +23,7 @@
           <a data-ui-sref="chat-app.signup" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-user-plus fa-3"></i> Sign Up</a>
         </div>
         <div ng-show="loggedIn">
-          <a data-ui-sref="chat-app.messages" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-comments-o fa-3"></i> Go To Messages</a>
+          <a data-ui-sref="chat-app.messages({channelName: 'general'})" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-comments-o fa-3"></i> Go To Messages</a>
         </div>
       </div>
       </div>

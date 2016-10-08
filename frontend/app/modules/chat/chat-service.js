@@ -74,7 +74,41 @@
             Authorization: "Bearer " + Cookies.get("auth"),
           }
         });
-      }
+      };
+
+      //Gets all the channels from the server
+      service.getAllChannels = function() {
+        return $http({
+          method: "GET",
+          url: "/api/getAllChannels",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          }
+        });
+      };
+
+      //Checks if the user is in the channel
+      service.checkUserInChannel = function(channelName) {
+        return $http({
+          method: "GET",
+          url: "/api/checkUserInChannel?channelName=" + channelName,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          }
+        });
+      };
+
+      service.addUserToChannel = function(channelName) {
+        return $http({
+          method: "POST",
+          url: "/api/addUserToChannel",
+          data: $.param({channelName: channelName}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
       return service;
     }
   })();

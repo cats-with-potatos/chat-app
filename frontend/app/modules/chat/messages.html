@@ -56,16 +56,12 @@
       <h1 class="text-center">Channels</h1>
       <div id="channel-list">
         <ul>
-          <li class="active-channel"><a href="#">General</a></li>
-          <li><a href="#">Private 1</a></li>
-          <li><a href="#">Private 2</a></li>
-          <li><a href="#">Private 3</a></li>
+          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)"> {{channel.chan_name}} </a></li>
         </ul>
       </div>
     <div id="private-messages">
       <h1 class="text-center">Private Messages</h1>
       <ul>
-        <li class=""><a href="#">Message 1</a></li>
         <li><a href="#">Message 2</a></li>
         <li><a href="#">Message 3</a></li>
         <li><a href="#">Message 4</a></li>
@@ -106,12 +102,3 @@
     </div>
   </div>
 </div>
-
-<script>
-function removeClass() {
-document.getElementById("message-nav").className =
-   document.getElementById("message-nav").className.replace
-      ( /(?:^|\s)navbar-fixed-top(?!\S)/g , '' )
-};
-document.onload = removeClass();
-</script>

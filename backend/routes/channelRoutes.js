@@ -18,7 +18,7 @@ channelRoutes.createNewChannel = (req, res) => { // TYPE: POST
   }
 
   //Checking if the channel name already exists
-  channel.checkChannelNameExists(channelName)
+  channel.checkChannelNameNotExists(channelName)
   .then(() => {
     return channel.insertChannelToDb(channelName);
   })
@@ -44,17 +44,17 @@ channelRoutes.getAllChannels = (req, res) => { // TYPE: GET
 };
 
 //Will check if the user is in the channel
-/*channelRoutes.checkUserInChannel = (req, res) => {
+channelRoutes.checkUserInChannel = (req, res) => { // TYPE: GET
   const userid = req.decoded.id;
-  const channelId = req.query.channelId;
+  const channelName = req.query.channelName;
 
-  if (!channelId) {
+  if (!channelName) {
     res.json({"response": "error", "errorType": "paramError"});
     return;
   }
 
-  channel.checkChanExistsId(channelId)
-  .then(() => {
+  channel.checkChannelNameExists(channelName)
+  .then((channelId) => {
     return chat.checkUserInChannel({
       userid: userid,
       channelId: channelId,
@@ -69,6 +69,46 @@ channelRoutes.getAllChannels = (req, res) => { // TYPE: GET
   });
 };
 
-*/
+//Adds users to channels
+channelRoutes.addUserToChannel = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const channelName = req.body.channelName;
+
+  if (!channelName) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    })
+    return;
+  }
+
+  channel.checkChannelNameExists(channelName)
+  .then((channelId) => {
+    return channel.checkUserNotInChannel({
+      userid: userid,
+      channelId: channelId,
+    });
+  })
+  .then((channelId) => {
+    return channel.addUserToChannel({
+      userid: userid,
+      channelId: channelId,
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+};
+
 
 module.exports = channelRoutes;

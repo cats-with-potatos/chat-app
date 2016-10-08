@@ -52,6 +52,35 @@ chat.checkUserInChannel = (messageDet) => {
   });
 };
 
+//Checks to see if user is in channel. If they are, then resolve, else reject.
+chat.checkUserInChannelByName = (messageDet) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        //Check to see if user is in channel
+        mclient.query("SELECT inchan_id FROM UserInChannel WHERE inchan_userid = ? AND inchan_channel_id = ?", [messageDet.userid, messageDet.channelId], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (results.length === 0) {
+              reject("notInChannel");
+            }
+            else {
+              resolve();
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
+
 //Inserts the users into a database
 chat.insertMessageToDb = (messageDet) => {
   return new Promise((resolve, reject) => {
