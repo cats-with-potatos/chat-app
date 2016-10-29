@@ -29856,7 +29856,7 @@ $provide.value("$locale", {
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        app: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -29869,7 +29869,7 @@ $provide.value("$locale", {
           })
           .then(function(res) {
             if (res.data.response === "success") {
-              defer.resolve();
+              defer.resolve(res.data.data);
             }
             else {
               $state.go("chat-app");
@@ -30057,11 +30057,10 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', Controller]);
+  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', Controller]);
 
-  function Controller($rootScope, $location, $stateParams, $state, ChatService) {
+  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q) {
     var vm = this;
-
 
     //This is where we will store the users that are currently typing
     vm.userTypingArray = [];
@@ -30099,52 +30098,55 @@ Some of the things this module takes care of:
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        message.contents = JSON.parse(message.contents);
-        vm.messages.push(message);
-
-        //Make the messages scrollbar go to the bottom
-        document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+        if (message.chan_id === channelId) {
+          message.contents = JSON.parse(message.contents);
+          vm.messages.push(message);
+          //Make the messages scrollbar go to the bottom
+          document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+        }
       });
     });
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
-    socket.on("userIsTyping", function(userid) {
+    socket.on("userIsTyping", function(obj) {
       $rootScope.$applyAsync(function() {
-        vm.userTypingArray.push(userid);
 
+        if (obj.channelId === channelId) {
+          vm.userTypingArray.push(obj.userid);
 
-        if (vm.userTypingArray.length === 1) {
-          vm.typeOfTyping = "is typing";
+          if (vm.userTypingArray.length === 1) {
+            vm.typeOfTyping = "is typing";
+          }
+          else if (vm.userTypingArray.length > 1) {
+            vm.typeOfTyping = "are typing";
+          }
         }
-        else if (vm.userTypingArray.length > 1) {
-          vm.typeOfTyping = "are typing";
-        }
-
       });
     });
 
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
-    socket.on("userIsNotTyping", function(userid) {
+    socket.on("userIsNotTyping", function(obj) {
       $rootScope.$applyAsync(function() {
-        var index = vm.userTypingArray.indexOf(userid);
-        vm.userTypingArray.splice(index, 1);
+        if (obj.channelId === channelId) {
+          var index = vm.userTypingArray.indexOf(userid);
+          vm.userTypingArray.splice(index, 1);
 
-        if (vm.userTypingArray.length === 0) {
-          vm.typeOfTyping = "";
+          if (vm.userTypingArray.length === 0) {
+            vm.typeOfTyping = "";
+          }
+          else if (vm.userTypingArray.length === 1) {
+            vm.typeOfTyping = "is typing";
+          }
+          else {
+            vm.typeOfTyping = "are typing";
+          }
         }
-        else if (vm.userTypingArray.length === 1) {
-          vm.typeOfTyping = "is typing";
-        }
-        else {
-          vm.typeOfTyping = "are typing";
-        }
-
       });
     });
 
     //Get's all the initial messages from the specific channel from the server
-    vm.loadChatMessages = function() {
-      ChatService.getChatMessages({channelId: 1})
+    vm.loadChatMessages = function(channelName) {
+      ChatService.getChatMessages({channelName: channelName})
       .then(function(messages) {
         vm.messages = messages;
         console.log(messages);
@@ -30153,7 +30155,7 @@ Some of the things this module takes care of:
 
     //Get's all the initial users that are currently typing
     vm.loadUsersCurrentlyTyping = function() {
-      ChatService.getUsersCurrentlyTyping()
+      ChatService.getUsersCurrentlyTyping(channelId)
       .then(function(res) {
         if (res.data.data.length >= 1) {
           if (res.data.data.length === 1) {
@@ -30167,17 +30169,6 @@ Some of the things this module takes care of:
         }
       })
     };
-
-
-
-
-    //Functions that are run on page load
-
-
-
-
-
-
 
     //Listens on keyup events and if the key is enter, then send the message to the server
     vm.sendMessage = function(event) {
@@ -30195,7 +30186,7 @@ Some of the things this module takes care of:
             });
 
             ChatService.sendMessage({
-              channelId: 1,
+              channelId: channelId,
               message: JSON.stringify(messageToUser),
             });
           }
@@ -30209,7 +30200,7 @@ Some of the things this module takes care of:
         if (vm.message !== "") {
           if (sendTypingRequest === false) {
             sendTypingRequest = true;
-            ChatService.sendUserIsTyping()
+            ChatService.sendUserIsTyping(channelId)
             .then(function(message) {
               console.log("sent message");
             });
@@ -30218,7 +30209,7 @@ Some of the things this module takes care of:
         else {
           if (sendTypingRequest === true) {
             sendTypingRequest = false;
-            ChatService.sendUserStoppedTyping()
+            ChatService.sendUserStoppedTyping(channelId)
             .then(function(message) {
               console.log("the user stopped typing");
             });
@@ -30254,15 +30245,95 @@ Some of the things this module takes care of:
 
 
 
+    //Make new channel
+    vm.createNewChannel = function($event) {
+      swal({
+        title: "Create New Channel",
+        type: "input",
+        showCancelButton: true,
+        closeOnConfirm: false,
+        closeOnConfirm: false,
+        animation: "slide-from-top",
+        inputPlaceholder: "Channel Name",
+        showLoaderOnConfirm: true,
+      },
+      function(channelName, hey){
+        if (channelName === false) {
+          return false;
+        }
+
+        ChatService.createNewChannel(channelName)
+        .then((res) => {
+          console.log("the repsonse is" + res.data.response);
+          if (res.data.response === "success") {
+            swal({
+              title: "Success",
+              type: "success",
+              text: "You have successfully made your channel",
+              closeOnConfirm: true,
+            }, function() {
+              vm.getAllChannels($stateParams.channelName);
+            });
+        }
+        })
+        .catch((e) => {
+          var inputErrorArray = [];
+
+            e.data.data.forEach((val) => {
+
+              switch(val) {
+                case "tooLong":
+                  if (inputErrorArray.length === 0) {
+                    inputErrorArray.push("The channelName is too long");
+                  }
+                  else {
+                    inputErrorArray.push("<br /> The channelName is too long");
+                  }
+                  break;
+                case "badName":
+                  if (inputErrorArray.length === 0) {
+                    inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
+                  }
+                  else {
+                    inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
+                  }
+                  break;
+                case "channelExists":
+                    if (inputErrorArray.length === 0) {
+                      inputErrorArray.push("Channel Name already exists");
+                    }
+                    else {
+                    inputErrorArray.push("<br /> Channel Name already exists");
+                    }
+                  break;
+                case "paramUndefined":
+                  if (inputErrorArray.length === 0) {
+                    inputErrorArray.push("Please input something");
+                  }
+                  else {
+                    inputErrorArray.push("<br /> Please input something");
+                  }
+                  break;
+                default:
+                  if (inputErrorArray.length === 0) {
+                    inputErrorArray.push("Sorry, there was a server error");
+                  }
+                  else {
+                    inputErrorArray.push("<br /> Sorry, there was a server error");
+                  }
+              }
+            });
+            swal.showInputError(inputErrorArray);
+        });
+      });
+    };
+
     //If the url contains /messages, then run described functions
     if ($location.path().indexOf("/messages") !== -1) {
       var channelName = $stateParams.channelName;
-      if (!channelName) {
-        $state.go("chat-app");
-      }
 
       $rootScope.showFixedTopNav = true;
-      vm.loadChatMessages();
+      vm.loadChatMessages($stateParams.channelName);
       vm.loadUsersCurrentlyTyping();
       vm.getAllChannels(channelName);
     }
@@ -30284,7 +30355,7 @@ Some of the things this module takes care of:
       return $http(
         {
           method: "GET",
-          url: "/api/getChannelMessages?channelId=" + channel.channelId,
+          url: "/api/getChannelMessages?channelName=" + channel.channelName,
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           }
@@ -30315,10 +30386,11 @@ Some of the things this module takes care of:
       };
 
       //Sends to the server that the user is typing
-      service.sendUserIsTyping = function() {
+      service.sendUserIsTyping = function(channelId) {
         return $http({
           method: "POST",
           url: "/api/sendUserIsTyping",
+          data: $.param({channelId: channelId}),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
             'Content-Type': "application/x-www-form-urlencoded",
@@ -30331,6 +30403,7 @@ Some of the things this module takes care of:
         return $http({
           method: "POST",
           url: "/api/sendUserStoppedTyping",
+          data: $.param({channelId: channelId}),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
             'Content-Type': "application/x-www-form-urlencoded",
@@ -30339,10 +30412,10 @@ Some of the things this module takes care of:
       };
 
       //This gets all the users that are currently typing. This function will be run on controller load
-      service.getUsersCurrentlyTyping = function() {
+      service.getUsersCurrentlyTyping = function(channelId) {
         return $http({
           method: "GET",
-          url: "/api/getIntialUsersTyping",
+          url: "/api/getIntialUsersTyping?channelId=" + channelId,
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           }
@@ -30382,6 +30455,19 @@ Some of the things this module takes care of:
           },
         });
       };
+
+      service.createNewChannel = function(channelName) {
+        return $http({
+          method: "POST",
+          url: "/api/createNewChannel",
+          data: $.param({channelName: channelName}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
       return service;
     }
   })();

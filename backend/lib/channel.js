@@ -1,5 +1,6 @@
 const Promise = require("bluebird")
 , mysqlWrap = require("./db.js")
+, chat = require("./chat.js")
 , channel = {};
 
 
@@ -92,6 +93,7 @@ channel.insertChannelToDb = (channelName) => {
             reject("serverError");
           }
           else {
+            chat.userTypingMap[results.insertId] = new Set();
             resolve();
           }
         });
@@ -122,6 +124,8 @@ channel.getAllChannels = () => {
   });
 };
 
+
+
 //Checks if the user is not already in the channel
 channel.checkUserNotInChannel = (obj) => {
   return new Promise((resolve, reject) => {
@@ -149,6 +153,7 @@ channel.checkUserNotInChannel = (obj) => {
   });
 };
 
+
 //Adds the current user to the channel id specified
 channel.addUserToChannel = (obj) => {
   return new Promise((resolve, reject) => {
@@ -171,5 +176,33 @@ channel.addUserToChannel = (obj) => {
     });
   });
 };
+
+//Gets the channel id from the channel name.
+channel.getIdFromName = (channelName) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT chan_id FROM ChannelsTable WHERE chan_name = ?", [channelName], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("channelDoesNotExist");
+            }
+            else {
+              resolve(data[0].chan_id)
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
 
 module.exports = channel;

@@ -14,7 +14,7 @@
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        app: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -27,7 +27,7 @@
           })
           .then(function(res) {
             if (res.data.response === "success") {
-              defer.resolve();
+              defer.resolve(res.data.data);
             }
             else {
               $state.go("chat-app");

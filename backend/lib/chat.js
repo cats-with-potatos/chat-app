@@ -4,7 +4,34 @@ const Promise = require("bluebird")
 , mysqlWrap = require("./db.js")
 , chat = {}
 // userTypingMap is a dictionary that defines who is currently typing
-, userTypingMap = {}
+chat.userTypingMap = {}
+
+//Populates the user is typing map
+chat.populateUserTypingMap = () => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        mclient.query("SELECT chan_id FROM ChannelsTable", (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+          }
+          else {
+            data.forEach((val) => {
+              chat.userTypingMap[val.chan_id] = new Set();
+            });
+            console.log(chat.userTypingMap);
+          }
+        });
+      }
+    })
+  });
+};
+
+chat.populateUserTypingMap();
 
 //Checks to see if there are any problems with the message being sent or any details of the mesage
 chat.checkMessageError = (messageDet) => {
@@ -43,7 +70,7 @@ chat.checkUserInChannel = (messageDet) => {
               reject("notInChannel");
             }
             else {
-              resolve();
+              resolve(messageDet.channelId);
             }
           }
         });
@@ -156,14 +183,14 @@ chat.getMessagesInfo = (messageId) => {
 };
 
 //Gets all messages from channel
-chat.getAllChannelMessages = (channel) => {
+chat.getAllChannelMessages = (channelId) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id", (err, results) => {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [channelId], (err, results) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -178,38 +205,38 @@ chat.getAllChannelMessages = (channel) => {
 };
 
 //Checks to see if user is already in typing dictionary
-chat.userAlreadyTyping = (userid) => {
-  if (typeof userTypingMap[userid] !== "undefined") {
+chat.userAlreadyTyping = (obj) => {
+  if (chat.userTypingMap[obj.channelId].has(obj.userid)) {
     return true;
   }
   return false;
 };
 
 //Adds the currently typing user to the map
-chat.addUserToMap = (userid) => {
-  userTypingMap[userid] = true;
+chat.addUserToMap = (obj) => {
+  chat.userTypingMap[obj.channelId].add(obj.userid);
 };
 
 //Emits that the current user is typing to everone but him/herself
-chat.emitUserTyping = (name, userid, eventname) => {
-  Object.keys(clients).forEach((val) => {
-    if (val !== String(userid)) {
-      io.sockets.connected[clients[val].socket].emit(eventname, name);
+chat.emitUserTyping = (obj) => {
+  chat.userTypingMap[obj.channelId].forEach((val) => {
+    if (val !== String(obj.userid)) {
+      io.sockets.connected[clients[val].socket].emit(obj.eventname, obj.name);
     }
   });
 };
 
 //Returns true if the user is not currently in the map
-chat.userIsNotTyping = (userid) => {
-  if (typeof userTypingMap[userid] === "undefined") {
+chat.userIsNotTyping = (obj) => {
+  if (!chat.userTypingMap[obj.channelId].has(obj.userid)) {
     return true;
   }
   return false;
 };
 
 //Deletes the currently typing user from the map
-chat.deleteUserFromMap = (userid) => {
-  delete userTypingMap[userid];
+chat.deleteUserFromMap = (obj) => {
+  delete chat.userTypingMap[obj.channelId].delete(obj.userid);
 };
 
 //Gets the user's name from their id
@@ -240,12 +267,12 @@ chat.getNameFromId = (userid) => {
 };
 
 //Will get all the id's that are currently typing and get the users names
-chat.getNamesFromTypingHash = (userid) => {
+chat.getNamesFromTypingHash = (obj) => {
   return new Promise((resolve, reject) => {
     const promiseArray = [];
 
-    Object.keys(userTypingMap).forEach((val) => {
-      if (Number(val) !== userid) {
+    Object.keys(chat.userTypingMap[obj.channelId]).forEach((val) => {
+      if (Number(val) !== obj.userid) {
         promiseArray.push(chat.getNameFromId(Number(val)));
       }
     });
@@ -266,7 +293,7 @@ chat.getNamesFromTypingHash = (userid) => {
 I had to move this section into the chat.js file to prevent circular dependencies
 Maybe in the future we could look into a cleaner solution
 
-
+//Work on this
 This will emit an event to all the users if the user is currently typing.
 */
 io.on('connection', (socket) => {
@@ -365,5 +392,6 @@ chat.deleteMessage = (obj) => {
     });
   });
 };
+
 
 module.exports = chat;

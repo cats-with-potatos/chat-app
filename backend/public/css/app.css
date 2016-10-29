@@ -11706,6 +11706,14 @@ h1 {
 #private-messages h1 {
   font-size: 1.75em; }
 
+/* line 327, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+.blueHover:hover {
+  background-color: #34495e; }
+
+/* line 331, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+.blueHover a:hover {
+  color: white; }
+
 /* line 1, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_spinners.scss */
 .loading {
   border-radius: 50%;

@@ -13,7 +13,7 @@ channelRoutes.createNewChannel = (req, res) => { // TYPE: POST
 
   //Check if errors are present
   if (channelError.length !== 0) {
-    res.json({"response": "error", "data": channelError});
+    res.status(400).json({"response": "error", "data": channelError});
     return;
   }
 
@@ -60,8 +60,8 @@ channelRoutes.checkUserInChannel = (req, res) => { // TYPE: GET
       channelId: channelId,
     });
   })
-  .then(() => {
-    res.json({"response": "success"});
+  .then((channelId) => {
+    res.json({"response": "success", "data": channelId});
   })
   .catch((e) => {
     const status = e  === "serverError" ? 500 : 400;

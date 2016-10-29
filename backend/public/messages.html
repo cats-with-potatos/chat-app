@@ -56,7 +56,8 @@
       <h1 class="text-center">Channels</h1>
       <div id="channel-list">
         <ul>
-          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)"> {{channel.chan_name}} </a></li>
+          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true, blueHover: channel.activeChannel !== true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)"> {{channel.chan_name}} </a></li>
+          <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
         </ul>
       </div>
     <div id="private-messages">
