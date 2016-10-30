@@ -70,12 +70,10 @@
     </div>
   </div>
 </div>
-<div class="container" id="footer">
-  <div class="row">
-    <div class="col-xs-12">
+<div id="footer">
       <div id="userTyping">
         <!--This will show if the user is currently typing or not-->
-          <span ng-repeat="message in vm.userTypingArray"> {{message}} </span>  {{vm.typeOfTyping}}
+          <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
           <span ng-show="vm.userTypingArray.length !== 0">
             <!--The dot animation which will show if at least another user is typing-->
             <span class="dot"></span>
@@ -97,9 +95,7 @@
         spellcheck="true"
         required
         maxlength="100"
-        / >
+        />
         </div>
-      </div>
-    </div>
   </div>
 </div>

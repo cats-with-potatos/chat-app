@@ -31,18 +31,19 @@ h1 {
 }
 
 #messagePanel {
-  height: 80%;
-  min-width: 65%;
-  max-width: 81%;
+  top: 80px;
+  width: 50%;
+  margin-left: 19%;
   /* left: 0; */
   /* top: 0; */
-  right: 0;
+
   overflow: auto;
   position: fixed;
   border: 0;
   padding-bottom: 0;
   /* float: right; */
-  margin-top: 50px;
+  bottom: 60px;
+  min-height: 100px;
 }
 
 #messagePanel ul {
@@ -78,14 +79,17 @@ h1 {
 
 //Footer including the input box textarea and user typing
 
+
 #footer {
   position: fixed;
-  bottom: 0;
+  bottom: 20px;
   /* left: 0; */
-  right: 0;
-  padding-bottom: 15px;
+  left: 19%;
+  height: 60px;
+  right: 15px;
+  padding-bottom: 0px;
   background-color: #ffffff;
-  width: 75%;
+  background-color: transparent;
   // height: 200px;
 }
 
@@ -100,10 +104,10 @@ h1 {
   border: 2px solid #E0E0E0;
   background-clip: padding-box;
   font-family: 'Lato', sans-serif;
-  margin: 0;
   color: #3d3c40;
     -webkit-appearance: none;
   box-shadow: none;
+  margin-left: 10px;
   outline: 0;
   // padding-top: 1.5625rem;
   // padding-bottom: 1.5625rem;
@@ -250,7 +254,9 @@ left: 15px;
     -o-transition: left ease .25s;
     -webkit-transition: left ease .25s;
     transition: left ease .25s;
+    min-width: 100px;
 }
+
 
 #channel-sidebar.hide-sidebar {
         left: -250px;

@@ -55,7 +55,7 @@
       };
 
       //Sends to the server that the user has stopped typing
-      service.sendUserStoppedTyping = function() {
+      service.sendUserStoppedTyping = function(channelId) {
         return $http({
           method: "POST",
           url: "/api/sendUserStoppedTyping",

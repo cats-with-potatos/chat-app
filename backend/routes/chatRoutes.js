@@ -133,17 +133,18 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
       userid: userid,
       channelId: channelId,
     });
-
     return chat.getNameFromId(userid);
   })
   .then((name) => {
     //Emit to all other users that they are currently typing
-    chat.emitUserTyping({
+    return chat.emitUserTyping({
       name: name,
       userid: userid,
       channelId: channelId,
       eventname: "userIsTyping",
     });
+  })
+  .then(() => {
     res.json({"response": "success"});
   })
   .catch((e) => {
@@ -162,7 +163,7 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
 
 chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
-  const channelId = req.decoded.channelid;
+  const channelId = req.body.channelId;
 
   if (!channelId) {
     res.json({
@@ -171,7 +172,6 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
     });
     return;
   }
-
 
   chat.checkUserInChannel({
     userid: userid,

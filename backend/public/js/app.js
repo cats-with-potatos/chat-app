@@ -30108,11 +30108,10 @@ Some of the things this module takes care of:
     });
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
-    socket.on("userIsTyping", function(obj) {
+    socket.on("userIsTyping", function(user) {
       $rootScope.$applyAsync(function() {
-
-        if (obj.channelId === channelId) {
-          vm.userTypingArray.push(obj.userid);
+        if (user.channelId === channelId) {
+          vm.userTypingArray.push(user);
 
           if (vm.userTypingArray.length === 1) {
             vm.typeOfTyping = "is typing";
@@ -30125,10 +30124,17 @@ Some of the things this module takes care of:
     });
 
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
-    socket.on("userIsNotTyping", function(obj) {
+    socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (obj.channelId === channelId) {
-          var index = vm.userTypingArray.indexOf(userid);
+        if (user.channelId === channelId) {
+          let index = -1;
+
+          for (let i = 0;i<vm.userTypingArray.length;i++) {
+            if (vm.userTypingArray[i].userid === user.userid) {
+              index = i;
+            }
+          }
+
           vm.userTypingArray.splice(index, 1);
 
           if (vm.userTypingArray.length === 0) {
@@ -30179,8 +30185,7 @@ Some of the things this module takes care of:
           if (vm.message !== "") {
             var messageToUser = vm.message;
             vm.message = "";
-
-            ChatService.sendUserStoppedTyping()
+            ChatService.sendUserStoppedTyping(channelId)
             .then(function() {
               sendTypingRequest = false;
             });
@@ -30274,56 +30279,55 @@ Some of the things this module takes care of:
             }, function() {
               vm.getAllChannels($stateParams.channelName);
             });
-        }
+          }
         })
         .catch((e) => {
           var inputErrorArray = [];
+          e.data.data.forEach((val) => {
 
-            e.data.data.forEach((val) => {
-
-              switch(val) {
-                case "tooLong":
-                  if (inputErrorArray.length === 0) {
-                    inputErrorArray.push("The channelName is too long");
-                  }
-                  else {
-                    inputErrorArray.push("<br /> The channelName is too long");
-                  }
-                  break;
-                case "badName":
-                  if (inputErrorArray.length === 0) {
-                    inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
-                  }
-                  else {
-                    inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
-                  }
-                  break;
-                case "channelExists":
-                    if (inputErrorArray.length === 0) {
-                      inputErrorArray.push("Channel Name already exists");
-                    }
-                    else {
-                    inputErrorArray.push("<br /> Channel Name already exists");
-                    }
-                  break;
-                case "paramUndefined":
-                  if (inputErrorArray.length === 0) {
-                    inputErrorArray.push("Please input something");
-                  }
-                  else {
-                    inputErrorArray.push("<br /> Please input something");
-                  }
-                  break;
-                default:
-                  if (inputErrorArray.length === 0) {
-                    inputErrorArray.push("Sorry, there was a server error");
-                  }
-                  else {
-                    inputErrorArray.push("<br /> Sorry, there was a server error");
-                  }
+            switch(val) {
+              case "tooLong":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("The channelName is too long");
               }
-            });
-            swal.showInputError(inputErrorArray);
+              else {
+                inputErrorArray.push("<br /> The channelName is too long");
+              }
+              break;
+              case "badName":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
+              }
+              else {
+                inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
+              }
+              break;
+              case "channelExists":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Channel Name already exists");
+              }
+              else {
+                inputErrorArray.push("<br /> Channel Name already exists");
+              }
+              break;
+              case "paramUndefined":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Please input something");
+              }
+              else {
+                inputErrorArray.push("<br /> Please input something");
+              }
+              break;
+              default:
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Sorry, there was a server error");
+              }
+              else {
+                inputErrorArray.push("<br /> Sorry, there was a server error");
+              }
+            }
+          });
+          swal.showInputError(inputErrorArray);
         });
       });
     };
@@ -30399,7 +30403,7 @@ Some of the things this module takes care of:
       };
 
       //Sends to the server that the user has stopped typing
-      service.sendUserStoppedTyping = function() {
+      service.sendUserStoppedTyping = function(channelId) {
         return $http({
           method: "POST",
           url: "/api/sendUserStoppedTyping",

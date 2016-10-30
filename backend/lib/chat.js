@@ -219,11 +219,46 @@ chat.addUserToMap = (obj) => {
 
 //Emits that the current user is typing to everone but him/herself
 chat.emitUserTyping = (obj) => {
-  chat.userTypingMap[obj.channelId].forEach((val) => {
+  return new Promise((resolve, reject) => {
+    const peopleInChannel = [];
+
+      mysqlWrap.getConnection((err, mclient) => {
+        if (err) {
+          reject("serverError");
+        }
+        else {
+          mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ? AND inchan_userid != ?", [obj.channelId, obj.userid], (err, data) => {
+            mclient.release();
+            if (err) {
+              reject("serverError");
+            }
+            else {
+              const usersInChannel = Object.keys(clients).filter((val) => {
+                for (let i = 0;i<data.length;i++) {
+                  if (data[i].inchan_userid === Number(val)) {
+                    return true;
+                  }
+                }
+                return false;
+              });
+              usersInChannel.forEach((val) => {
+                console.log(clients[val].socket);
+                io.sockets.connected[clients[val].socket].emit(obj.eventname, {name: obj.name, id: Number(obj.userid), channelId: Number(obj.channelId)});
+              });
+
+              resolve();
+            }
+          });
+        }
+
+    /*
     if (val !== String(obj.userid)) {
-      io.sockets.connected[clients[val].socket].emit(obj.eventname, obj.name);
-    }
-  });
+    console.log("I am typing to "val);
+    io.sockets.connected[clients[val].socket].emit(obj.eventname, obj.name);
+  }
+  */
+});
+});
 };
 
 //Returns true if the user is not currently in the map
@@ -288,6 +323,16 @@ chat.getNamesFromTypingHash = (obj) => {
   });
 };
 
+chat.checkUserIsTyping = (userid) => {
+  const userTypingMapKeys = Object.keys(chat.userTypingMap);
+  for (let i = 0;i<Object.keys(userTypingMapKeys).length;i++) {
+    if (chat.userTypingMap[userTypingMapKeys[i]].has(Number(userid))) {
+      return userTypingMapKeys[i];
+    }
+  }
+  return false;
+};
+
 /*
 
 I had to move this section into the chat.js file to prevent circular dependencies
@@ -298,23 +343,40 @@ This will emit an event to all the users if the user is currently typing.
 */
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
-    for (key in clients) {
-      //To make sure that only properties of the clients object are iterated over
-      if (clients.hasOwnProperty(key)) {
-        if (clients[key].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
-        if (chat.userAlreadyTyping(key)) { //Checks to see if the user is already typing
-          chat.deleteUserFromMap(key) //Deletes a user from the map
+    console.log("hello?");
+    const keys = Object.keys(clients);
 
-          chat.getNameFromId(Number(key))
+    for (let i = 0;i<keys.length;i++) {
+      //To make sure that only properties of the clients object are iterated over
+        if (clients[keys[i]].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
+        const isUserTyping = chat.checkUserIsTyping(keys[i]);
+
+
+
+        if (isUserTyping) { //Checks to see if the user is already typing
+          chat.deleteUserFromMap({userid: Number(keys[i]), channelId: isUserTyping}) //Deletes a user from the map
+          console.log("The key should still be 4: " + keys[i]);
+
+          chat.getNameFromId(Number(keys[i]))
           .then((name) => {
+            console.log("The key should still be 4: " + keys[i]);
             //Emits that the user has stopped typing if they are currently typing
-            chat.emitUserTyping(name, Number(key), "userIsNotTyping");
+            return chat.emitUserTyping({
+              channelId: isUserTyping,
+              userid: Number(keys[i]),
+              eventname: "userIsNotTyping",
+              name: name,
+            });
           })
+          .then(() => {
+            delete clients[keys[i]];
+          });
         }
-        delete clients[key];
-        break;
+        else {
+          delete clients[keys[i]];
+          break;
+        }
       }
-    }
   }
 });
 });

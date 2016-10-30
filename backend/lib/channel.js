@@ -110,7 +110,7 @@ channel.getAllChannels = () => {
         reject("serverError")
       }
       else {
-        mclient.query("SELECT * FROM ChannelsTable", (err, data) => {
+        mclient.query("SELECT * FROM ChannelsTable ORDER BY chan_id ASC", (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
