@@ -35,6 +35,8 @@ Some of the things this module takes care of:
     //This is where the channels will be stored
     vm.channels = [];
 
+    var messagePanel = $("#messagePanel");
+
     /*This is used to tell the server that the user has stopped typing
     if the user goes to another url on the web app. */
     $rootScope.$on('$stateChangeSuccess',
@@ -57,8 +59,13 @@ Some of the things this module takes care of:
         if (message.chan_id === channelId) {
           message.contents = JSON.parse(message.contents);
           vm.messages.push(message);
-          //Make the messages scrollbar go to the bottom
-          document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+
+          //Make the messages scrollbar go to the bottom only if the scrollbar is already at the bottom
+          if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }
         }
       });
     });
