@@ -118,7 +118,11 @@ Some of the things this module takes care of:
       ChatService.getChatMessages({channelName: channelName})
       .then(function(messages) {
         vm.messages = messages;
-        console.log(messages);
+        setTimeout(function() {
+          messagePanel.stop().animate({
+            scrollTop: messagePanel[0].scrollHeight
+          }, 200);
+        }, 0);
       })
     };
 
@@ -298,7 +302,6 @@ Some of the things this module takes care of:
     //If the url contains /messages, then run described functions
     if ($location.path().indexOf("/messages") !== -1) {
       var channelName = $stateParams.channelName;
-
       $rootScope.showFixedTopNav = true;
       vm.loadChatMessages($stateParams.channelName);
       vm.loadUsersCurrentlyTyping();
