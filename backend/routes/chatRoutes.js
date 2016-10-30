@@ -1,4 +1,5 @@
 const chat = require("../lib/chat.js")
+, channel = require("../lib/channel.js")
 , chatRoutes = {};
 
 //Will get all the messages from all the channels.
@@ -12,31 +13,36 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 
 //This will get all the messages from a specific channel
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
-  const userId = req.decoded.id;
-  const channelId = Number(req.query.channelId);
+const userId = req.decoded.id;
+const channelName = req.query.channelName;
 
-  //Checks to see of the channel is not a number
-  if (isNaN(channelId)) {
-    res.status(400).json({"response": "error", "errorType": "paramError"});
-    return;
-  }
+//Checks to see of the channel is not a number
+if (!channelName) {
+  res.status(400).json({"response": "error", "errorType": "paramError"});
+  return;
+}
 
-  //Checks to see if the user is in the channel
-  chat.checkUserInChannel({
+//Checks to see if the user is in the channel
+channel.getIdFromName(channelName)
+.then((channelId) => {
+  console.log(channelId);
+  return chat.checkUserInChannel({
     userid: userId,
     channelId: channelId,
-  })
-  .then(() => {
-    //Getting all the channels messages
-    return chat.getAllChannelMessages(channelId)
-  })
-  .then((data) => {
-    res.status(200).json({"response": "success", "data": data});
-  })
-  .catch((e) => {
-    const status = e === "serverError" ? 500 : 400;
-    res.status(status).json({"response": "error", "errorType": e});
   });
+})
+.then((channelId) => {
+  console.log(channelId);
+  //Getting all the channels messages
+  return chat.getAllChannelMessages(channelId)
+})
+.then((data) => {
+  res.status(200).json({"response": "success", "data": data});
+})
+.catch((e) => {
+  const status = e === "serverError" ? 500 : 400;
+  res.status(status).json({"response": "error", "errorType": e});
+});
 };
 
 
@@ -100,26 +106,49 @@ This route will notify all the other users in the channel that they are typing
 
 chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
+  const channelId = req.body.channelId;
 
-  //Checks if the user is already typing
-  if (chat.userAlreadyTyping(userid)) {
-    res.status(400).json({
+  if (!channelId) {
+    res.json({
       "response": "error",
-      "errorType": "alreadyTyping",
+      "errorType": "paramError",
     });
     return;
   }
 
-  //If they are not, add them
-  chat.addUserToMap(userid);
-
-  chat.getNameFromId(userid)
+  chat.checkUserInChannel({
+    userid: userid,
+    channelId: channelId,
+  })
+  .then(() => {
+    //Checks if the user is already typing
+    if (chat. userAlreadyTyping({
+      userid: userid,
+      channelId: channelId,
+    })) {
+      throw new Error("alreadyTyping");
+    }
+    //If they are not, add them
+    chat.addUserToMap({
+      userid: userid,
+      channelId: channelId,
+    });
+    return chat.getNameFromId(userid);
+  })
   .then((name) => {
     //Emit to all other users that they are currently typing
-    chat.emitUserTyping(name, userid, "userIsTyping");
+    return chat.emitUserTyping({
+      name: name,
+      userid: userid,
+      channelId: channelId,
+      eventname: "userIsTyping",
+    });
+  })
+  .then(() => {
     res.json({"response": "success"});
   })
   .catch((e) => {
+    console.log(e);
     //If error was serverError then return status 500, otherwise, return 400
     const status = e === "serverError" ? 500 : 400;
     res.status(status).json({
@@ -134,23 +163,44 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
 
 chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
+  const channelId = req.body.channelId;
 
-  //Check to see if the user is already not typing and return error
-  if (chat.userIsNotTyping(userid)) {
-    res.status(400).json({
+  if (!channelId) {
+    res.json({
       "response": "error",
-      "errorType": "alreadyNotTyping",
+      "errorType": "paramError",
     });
     return;
   }
 
-  //If they are not, then delete them
-  chat.deleteUserFromMap(userid);
+  chat.checkUserInChannel({
+    userid: userid,
+    channelId: channelId,
+  })
+  .then(() => {
+    //Check to see if the user is already not typing and return error
+  if (chat.userIsNotTyping({
+    userid: userid,
+    channelId: channelId,
+  })) {
+    throw new Error("alreadyNotTyping");
+  }
+    chat.deleteUserFromMap({
+      userid: userid,
+      channelId: channelId,
+    });
 
-  chat.getNameFromId(userid)
+    return chat.getNameFromId(userid);
+  })
   .then((name) => {
     //Emit that the user has stopped typing
-    chat.emitUserTyping(name, userid, "userIsNotTyping");
+    chat.emitUserTyping({
+      name: name,
+      userid: userid,
+      channelId: channelId,
+      eventname: "userIsNotTyping",
+    });
+    res.json({"response": "success"});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400;
@@ -159,16 +209,31 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
       "errorType": e,
     });
   });
-  res.json({"response": "success"});
 };
 
 //This route will send an array with all the users that are currently typing
 chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
   //We will need to use this later once we implement multiple channels
-  const channelId = req.body.channelId;
+  const channelId = req.query.channelId;
   const userid = req.decoded.id;
 
-  chat.getNamesFromTypingHash(userid)
+  if (!channelId) {
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+  chat.checkUserInChannel({
+    userid: userid,
+    channelId: channelId,
+  })
+  .then(() => {
+    return chat.getNamesFromTypingHash({
+      userid: userid,
+      channelId: channelId,
+    })
+  })
   .then((names) => {
     res.json({"response": "success", "data": names});
   })
@@ -198,7 +263,7 @@ chatRoutes.updateMessage = (req, res) => {
     return;
   }
 
-    chat.checkUserOwnsMessage({
+  chat.checkUserOwnsMessage({
     userid: userid,
     messageId: messageId,
     channelId: channelId,

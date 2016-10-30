@@ -4,6 +4,8 @@ const authFunctions = require("./auth.js")
 
 middleware.checkToken = (req, res, next) => {
   //Extracts token from header e.g. "Bear token".split(" ")[1] will equal "token"
+  console.log("Authorization headers is" + req.get("Authorization"));
+
   const token = req.get("Authorization").split(" ")[1];
 
   //Checks if the jwt has been encrypted with our JWT_PASSWORD
