@@ -13,9 +13,9 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', '$location', 'ChatService', Controller]);
+  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', Controller]);
 
-  function Controller($rootScope, $location, ChatService) {
+  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q) {
     var vm = this;
 
     //This is where we will store the users that are currently typing
@@ -31,6 +31,9 @@ Some of the things this module takes care of:
 
     //This boolean indicates whether the user is already typing or not
     var sendTypingRequest = false;
+
+    //This is where the channels will be stored
+    vm.channels = [];
 
     /*This is used to tell the server that the user has stopped typing
     if the user goes to another url on the web app. */
@@ -51,52 +54,61 @@ Some of the things this module takes care of:
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        message.contents = JSON.parse(message.contents);
-        vm.messages.push(message);
-
-        //Make the messages scrollbar go to the bottom
-        document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+        if (message.chan_id === channelId) {
+          message.contents = JSON.parse(message.contents);
+          vm.messages.push(message);
+          //Make the messages scrollbar go to the bottom
+          document.getElementById("messagePanel").scrollTop = document.getElementById("messagePanel").scrollHeight;
+        }
       });
     });
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
-    socket.on("userIsTyping", function(userid) {
+    socket.on("userIsTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        vm.userTypingArray.push(userid);
+        if (user.channelId === channelId) {
+          vm.userTypingArray.push(user);
 
-
-        if (vm.userTypingArray.length === 1) {
-          vm.typeOfTyping = "is typing";
+          if (vm.userTypingArray.length === 1) {
+            vm.typeOfTyping = "is typing";
+          }
+          else if (vm.userTypingArray.length > 1) {
+            vm.typeOfTyping = "are typing";
+          }
         }
-        else if (vm.userTypingArray.length > 1) {
-          vm.typeOfTyping = "are typing";
-        }
-
       });
     });
 
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
-    socket.on("userIsNotTyping", function(userid) {
+    socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        var index = vm.userTypingArray.indexOf(userid);
-        vm.userTypingArray.splice(index, 1);
+        if (user.channelId === channelId) {
+          let index = -1;
 
-        if (vm.userTypingArray.length === 0) {
-          vm.typeOfTyping = "";
-        }
-        else if (vm.userTypingArray.length === 1) {
-          vm.typeOfTyping = "is typing";
-        }
-        else {
-          vm.typeOfTyping = "are typing";
-        }
+          for (let i = 0;i<vm.userTypingArray.length;i++) {
+            if (vm.userTypingArray[i].userid === user.userid) {
+              index = i;
+            }
+          }
 
+          vm.userTypingArray.splice(index, 1);
+
+          if (vm.userTypingArray.length === 0) {
+            vm.typeOfTyping = "";
+          }
+          else if (vm.userTypingArray.length === 1) {
+            vm.typeOfTyping = "is typing";
+          }
+          else {
+            vm.typeOfTyping = "are typing";
+          }
+        }
       });
     });
 
     //Get's all the initial messages from the specific channel from the server
-    vm.loadChatMessages = function() {
-      ChatService.getChatMessages({channelId: 1})
+    vm.loadChatMessages = function(channelName) {
+      ChatService.getChatMessages({channelName: channelName})
       .then(function(messages) {
         vm.messages = messages;
         console.log(messages);
@@ -105,7 +117,7 @@ Some of the things this module takes care of:
 
     //Get's all the initial users that are currently typing
     vm.loadUsersCurrentlyTyping = function() {
-      ChatService.getUsersCurrentlyTyping()
+      ChatService.getUsersCurrentlyTyping(channelId)
       .then(function(res) {
         if (res.data.data.length >= 1) {
           if (res.data.data.length === 1) {
@@ -120,10 +132,6 @@ Some of the things this module takes care of:
       })
     };
 
-    //Functions that are run on page load
-    vm.loadChatMessages();
-    vm.loadUsersCurrentlyTyping();
-
     //Listens on keyup events and if the key is enter, then send the message to the server
     vm.sendMessage = function(event) {
       //If only enter key is pressed
@@ -133,17 +141,16 @@ Some of the things this module takes care of:
           if (vm.message !== "") {
             var messageToUser = vm.message;
             vm.message = "";
-
-            ChatService.sendUserStoppedTyping()
+            ChatService.sendUserStoppedTyping(channelId)
             .then(function() {
               sendTypingRequest = false;
             });
 
             ChatService.sendMessage({
-              channelId: 1,
+              channelId: channelId,
               message: JSON.stringify(messageToUser),
             });
-                      }
+          }
         }
       }
     }
@@ -154,7 +161,7 @@ Some of the things this module takes care of:
         if (vm.message !== "") {
           if (sendTypingRequest === false) {
             sendTypingRequest = true;
-            ChatService.sendUserIsTyping()
+            ChatService.sendUserIsTyping(channelId)
             .then(function(message) {
               console.log("sent message");
             });
@@ -163,7 +170,7 @@ Some of the things this module takes care of:
         else {
           if (sendTypingRequest === true) {
             sendTypingRequest = false;
-            ChatService.sendUserStoppedTyping()
+            ChatService.sendUserStoppedTyping(channelId)
             .then(function(message) {
               console.log("the user stopped typing");
             });
@@ -172,8 +179,125 @@ Some of the things this module takes care of:
       }
     };
 
-    if ($location.path() === "/messages") {
+    //Gets all the channels from the server
+    vm.getAllChannels = function(channelName) {
+      ChatService.getAllChannels()
+      .then(function(res) {
+        if (res.data.response === "success") {
+          for (var i = 0;i<res.data.data.length;i++) {
+            if (res.data.data[i].chan_name === channelName) {
+              console.log("IT WAS FOUND");
+              res.data.data[i].activeChannel = true;
+            }
+          }
+          vm.channels = res.data.data;
+        }
+      })
+      .catch(function(e) {
+        $state.go("chat-app");
+      })
+    };
+
+    //Goes to another channel
+    vm.goToAnotherChannel = function(channelName, $event) {
+      $event.preventDefault();
+      $state.go("chat-app.messages", {channelName: channelName});
+    };
+
+
+
+    //Make new channel
+    vm.createNewChannel = function($event) {
+      swal({
+        title: "Create New Channel",
+        type: "input",
+        showCancelButton: true,
+        closeOnConfirm: false,
+        closeOnConfirm: false,
+        animation: "slide-from-top",
+        inputPlaceholder: "Channel Name",
+        showLoaderOnConfirm: true,
+      },
+      function(channelName, hey){
+        if (channelName === false) {
+          return false;
+        }
+
+        ChatService.createNewChannel(channelName)
+        .then((res) => {
+          console.log("the repsonse is" + res.data.response);
+          if (res.data.response === "success") {
+            swal({
+              title: "Success",
+              type: "success",
+              text: "You have successfully made your channel",
+              closeOnConfirm: true,
+            }, function() {
+              vm.getAllChannels($stateParams.channelName);
+            });
+          }
+        })
+        .catch((e) => {
+          var inputErrorArray = [];
+          e.data.data.forEach((val) => {
+
+            switch(val) {
+              case "tooLong":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("The channelName is too long");
+              }
+              else {
+                inputErrorArray.push("<br /> The channelName is too long");
+              }
+              break;
+              case "badName":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
+              }
+              else {
+                inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
+              }
+              break;
+              case "channelExists":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Channel Name already exists");
+              }
+              else {
+                inputErrorArray.push("<br /> Channel Name already exists");
+              }
+              break;
+              case "paramUndefined":
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Please input something");
+              }
+              else {
+                inputErrorArray.push("<br /> Please input something");
+              }
+              break;
+              default:
+              if (inputErrorArray.length === 0) {
+                inputErrorArray.push("Sorry, there was a server error");
+              }
+              else {
+                inputErrorArray.push("<br /> Sorry, there was a server error");
+              }
+            }
+          });
+          swal.showInputError(inputErrorArray);
+        });
+      });
+    };
+
+    //If the url contains /messages, then run described functions
+    if ($location.path().indexOf("/messages") !== -1) {
+      var channelName = $stateParams.channelName;
+
       $rootScope.showFixedTopNav = true;
+      vm.loadChatMessages($stateParams.channelName);
+      vm.loadUsersCurrentlyTyping();
+      vm.getAllChannels(channelName);
     }
+
+
   }
 }());

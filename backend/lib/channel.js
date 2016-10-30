@@ -1,5 +1,6 @@
 const Promise = require("bluebird")
 , mysqlWrap = require("./db.js")
+, chat = require("./chat.js")
 , channel = {};
 
 
@@ -25,7 +26,7 @@ channel.checkNameError = (channelName) => {
 };
 
 //Checks if the channel name is already in the database
-channel.checkChannelNameExists = (channelName) => {
+channel.checkChannelNameNotExists = (channelName) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
@@ -50,6 +51,33 @@ channel.checkChannelNameExists = (channelName) => {
   });
 };
 
+
+//Checks if the channel name is already in the database
+channel.checkChannelNameExists = (channelName) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT chan_id FROM ChannelsTable WHERE chan_name like binary ?", [channelName], (err, results) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else if (results.length === 0) {
+            reject("channelNotExists");
+          }
+          else {
+            resolve(results[0].chan_id);
+          }
+        });
+      }
+    });
+  });
+};
+
+
 //Inserts the channel into the database
 channel.insertChannelToDb = (channelName) => {
   return new Promise((resolve, reject) => {
@@ -65,6 +93,7 @@ channel.insertChannelToDb = (channelName) => {
             reject("serverError");
           }
           else {
+            chat.userTypingMap[results.insertId] = new Set();
             resolve();
           }
         });
@@ -81,7 +110,7 @@ channel.getAllChannels = () => {
         reject("serverError")
       }
       else {
-        mclient.query("SELECT * FROM ChannelsTable", (err, data) => {
+        mclient.query("SELECT * FROM ChannelsTable ORDER BY chan_id ASC", (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -94,5 +123,86 @@ channel.getAllChannels = () => {
     })
   });
 };
+
+
+
+//Checks if the user is not already in the channel
+channel.checkUserNotInChannel = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT inchan_id FROM UserInChannel WHERE inchan_userid = ? AND inchan_channel_id = ?", [obj.userid, obj.channelId], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length !== 0) {
+              reject("userAlreadyInChannel");
+            }
+            else {
+              resolve(obj.channelId);
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
+
+//Adds the current user to the channel id specified
+channel.addUserToChannel = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("INSERT INTO UserInChannel (inchan_id, inchan_userid, inchan_channel_id) VALUES (DEFAULT, ?, ?)", [obj.userid, obj.channelId], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+//Gets the channel id from the channel name.
+channel.getIdFromName = (channelName) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT chan_id FROM ChannelsTable WHERE chan_name = ?", [channelName], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("channelDoesNotExist");
+            }
+            else {
+              resolve(data[0].chan_id)
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
 
 module.exports = channel;
