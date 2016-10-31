@@ -30070,6 +30070,8 @@ Some of the things this module takes care of:
 
     //This is where the messages will be stored
     vm.messages = [];
+    vm.messagesLoaded = false;
+
 
     vm.message = "";
 
@@ -30157,17 +30159,19 @@ Some of the things this module takes care of:
       });
     });
 
+
     //Get's all the initial messages from the specific channel from the server
     vm.loadChatMessages = function(channelName) {
-      ChatService.getChatMessages({channelName: channelName})
-      .then(function(messages) {
-        vm.messages = messages;
-        setTimeout(function() {
-          messagePanel.stop().animate({
-            scrollTop: messagePanel[0].scrollHeight
-          }, 200);
-        }, 0);
-      })
+        ChatService.getChatMessages({channelName: channelName})
+        .then(function(messages) {
+          vm.messages = messages;
+          vm.messagesLoaded = true;
+          setTimeout(function() {
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }, 0);
+        })
     };
 
     //Get's all the initial users that are currently typing
@@ -30181,7 +30185,7 @@ Some of the things this module takes care of:
           else if (res.data.data.length > 1) {
             vm.typeOfTyping = "are typing";
           }
-
+          console.log("res.data.data is: " + res.data.data);
           vm.userTypingArray = res.data.data;
         }
       })
@@ -30236,6 +30240,11 @@ Some of the things this module takes care of:
 
     //Gets all the channels from the server
     vm.getAllChannels = function(channelName) {
+      if (ChatService.channels) {
+        vm.channels = ChatService.channels;
+        return;
+      }
+
       ChatService.getAllChannels()
       .then(function(res) {
         if (res.data.response === "success") {
@@ -30245,6 +30254,7 @@ Some of the things this module takes care of:
               res.data.data[i].activeChannel = true;
             }
           }
+          ChatService.channels = res.data.data;
           vm.channels = res.data.data;
         }
       })
@@ -30345,11 +30355,28 @@ Some of the things this module takes care of:
 
     //If the url contains /messages, then run described functions
     if ($location.path().indexOf("/messages") !== -1) {
+
+
+      //Gets all the channels
+      vm.getAllChannels(channelName);
+
+
+      //When the window is resized, then the scrollbar will go to the bottom.
+      window.addEventListener("resize", function(event) {
+        messagePanel.stop().animate({
+          scrollTop: messagePanel[0].scrollHeight
+        }, 0);
+      });
+
       var channelName = $stateParams.channelName;
       $rootScope.showFixedTopNav = true;
+
+      //Loads the chat messages
       vm.loadChatMessages($stateParams.channelName);
+
       vm.loadUsersCurrentlyTyping();
-      vm.getAllChannels(channelName);
+      //Loads the Users that are currently typing
+
     }
 
 

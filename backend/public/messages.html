@@ -36,6 +36,14 @@
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default" id="messagePanel">
+
+
+        <div ng-show="vm.messagesLoaded === false">
+          <div style={loadingMiddle} className="loading"></div>
+        </div>
+
+
+        <div ng-show="vm.messagesLoaded === true">
         <ul>
           <!--Messages are repeated here-->
           <li ng-repeat="message in vm.messages">
@@ -44,13 +52,16 @@
                 <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
               </div>
               <div id="contentDiv">
+                <div>
                 <p id="msgUser"><a href="#"> {{message.username}} </a></p>
                 <p id="chatMsg"> {{message.contents}} </p>
               </div>
             </div>
             </div>
+            </div>
           </li>
         </ul>
+      </div>
     </div>
     <div id="channel-sidebar" class="col-md-2">
       <h1 class="text-center">Channels</h1>

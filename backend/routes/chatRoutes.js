@@ -213,8 +213,8 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
 
 //This route will send an array with all the users that are currently typing
 chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
-  //We will need to use this later once we implement multiple channels
-  const channelId = req.query.channelId;
+
+  const channelId = Number(req.query.channelId);
   const userid = req.decoded.id;
 
   if (!channelId) {

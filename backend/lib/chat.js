@@ -292,7 +292,7 @@ chat.getNameFromId = (userid) => {
               reject("userDoesNotExist");
             }
             else {
-              resolve(data[0].username);
+              resolve({name: data[0].username});
             }
           }
         });
@@ -306,7 +306,9 @@ chat.getNamesFromTypingHash = (obj) => {
   return new Promise((resolve, reject) => {
     const promiseArray = [];
 
-    Object.keys(chat.userTypingMap[obj.channelId]).forEach((val) => {
+
+
+    chat.userTypingMap[obj.channelId].forEach((val) => {
       if (Number(val) !== obj.userid) {
         promiseArray.push(chat.getNameFromId(Number(val)));
       }
