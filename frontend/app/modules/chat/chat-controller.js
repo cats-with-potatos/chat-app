@@ -197,6 +197,15 @@ Some of the things this module takes care of:
     //Gets all the channels from the server
     vm.getAllChannels = function(channelName) {
       if (ChatService.channels) {
+        delete ChatService.channels[ChatService.currentChannelIndex].activeChannel;
+
+        for (var i = 0;i<ChatService.channels.length;i++) {
+          if (ChatService.channels[i].chan_name === channelName) {
+            ChatService.channels[i].activeChannel = true;
+            ChatService.currentChannelIndex = i;
+            break;
+          }
+        }
         vm.channels = ChatService.channels;
         return;
       }
@@ -206,8 +215,9 @@ Some of the things this module takes care of:
         if (res.data.response === "success") {
           for (var i = 0;i<res.data.data.length;i++) {
             if (res.data.data[i].chan_name === channelName) {
-              console.log("IT WAS FOUND");
               res.data.data[i].activeChannel = true;
+              ChatService.currentChannelIndex = i;
+              break;
             }
           }
           ChatService.channels = res.data.data;
@@ -311,7 +321,7 @@ Some of the things this module takes care of:
 
     //If the url contains /messages, then run described functions
     if ($location.path().indexOf("/messages") !== -1) {
-
+      var channelName = $stateParams.channelName;
 
       //Gets all the channels
       vm.getAllChannels(channelName);
@@ -324,7 +334,7 @@ Some of the things this module takes care of:
         }, 0);
       });
 
-      var channelName = $stateParams.channelName;
+      $rootScope.channelName = channelName;
       $rootScope.showFixedTopNav = true;
 
       //Loads the chat messages

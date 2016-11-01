@@ -1,7 +1,6 @@
 <style>
 #message-nav  {
-  background-color: #0097A7;
-  width: 81%;
+    width: 81%;
   float: right !important;
   border: 0;
   top: 0;
@@ -64,10 +63,14 @@
       </div>
     </div>
     <div id="channel-sidebar" class="col-md-2">
+
+      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a>
+
+
       <h1 class="text-center">Channels</h1>
       <div id="channel-list">
         <ul>
-          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true, blueHover: channel.activeChannel !== true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)"> {{channel.chan_name}} </a></li>
+          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
           <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
         </ul>
       </div>
