@@ -10,22 +10,15 @@
         <span class="icon-bar"></span>
       </button>
 
+      <i class="fa fa-bars" id="nav-collapse" aria-hidden="true" ng-click="vm.hello($event)"></i>
       <span id="channel-name-header">{{channelName}}</span>
+
     </div>
     <div class="collapse navbar-collapse" id="nav">
       <ul id="nav-links" class="nav navbar-nav navbar-right" ng-show="notLoggedIn">
         <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signin">Log In</a></li>
         <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
       </ul>
-
-      <div class="dropdown" id="userDropdown" ng-show="loggedIn">
-        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> {{username}}
-          <span class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li><a data-ui-sref="chat-app.profile">Profile</a></li>
-            <li><a data-ui-sref="chat-app.signout">Logout</a></li>
-          </ul>
-        </div>
-      </div>
+    </div>
     </div>
   </nav>

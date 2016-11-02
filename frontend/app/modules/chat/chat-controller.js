@@ -13,9 +13,9 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', Controller]);
+  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', '$scope', Controller]);
 
-  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q) {
+  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q, $scope) {
     var vm = this;
 
     //This is where we will store the users that are currently typing
@@ -239,6 +239,10 @@ Some of the things this module takes care of:
     };
 
 
+    $scope.$on("navClicked", function() {
+      $("#channel-sidebar").animate({width: "200px"}, function() {
+      });
+    });
 
     //Make new channel
     vm.createNewChannel = function($event) {

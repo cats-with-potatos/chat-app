@@ -32,6 +32,11 @@
       vm.loggedIn = false;
       vm.notLoggedIn = false;
 
+
+      vm.hello = function($event) {
+        $rootScope.$broadcast("navClicked");
+      };
+
       vm.checkUserLoggedIn = function() {
         SecurityService.checkUserLoggedIn()
         .then(function(res) {

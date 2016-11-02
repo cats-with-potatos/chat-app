@@ -260,6 +260,7 @@ h2, ul li a {
     -webkit-transition: left ease .25s;
     transition: left ease .25s;
     width: 200px;
+    z-index: 3;
 }
 
 
@@ -413,7 +414,17 @@ h2, ul li a {
     text-overflow: ellipsis;
   }
 
+  #nav-collapse {
+    display: none;
+    font-size: 30px;
+    color: #34495e;
+    margin-right: 10px;
+    cursor: pointer;
+  }
 
+  #nav-collapse:hover {
+    color: #0097A7;
+  }
 
 
 
@@ -426,6 +437,10 @@ h2, ul li a {
     width: 100% !important;
   }
 
+
+  #nav-collapse {
+    display: inline-block;
+  }
 
   #footer {
     left: 0;
