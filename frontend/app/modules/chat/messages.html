@@ -1,6 +1,8 @@
 <style>
 #message-nav  {
-    width: 81%;
+  width: calc(100% - 200px);
+  left: 0;
+  padding-left: 10px;
   float: right !important;
   border: 0;
   top: 0;
@@ -35,8 +37,6 @@
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default" id="messagePanel">
-
-
         <div ng-show="vm.messagesLoaded === false">
           <div style={loadingMiddle} className="loading"></div>
         </div>
@@ -63,11 +63,22 @@
       </div>
     </div>
     <div id="channel-sidebar" class="col-md-2">
-
       <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a>
 
+      <div id="user-sections">
+        <div class="user-section">
+          <div class="user-online"></div>
+        </div>
+        <div class="user-section">
+          <div class="user-name">
+            {{ username }}
+          </div>
+        </div>
+        <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
+      </div>
 
-      <h1 class="text-center">Channels</h1>
+
+      <div style="width: 100%;text-align:center;padding-right:30px;"><h2 style="color: #FFF;font-size:20px;">Channels</h2></div>
       <div id="channel-list">
         <ul>
           <li ng-repeat="channel in vm.channels" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>

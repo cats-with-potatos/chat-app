@@ -34,8 +34,8 @@ h1 {
 
 #messagePanel {
   top: 80px;
-  width: 50%;
-  margin-left: 19%;
+  width: calc(100% - 220px);
+  margin-left: 200px;
   /* left: 0; */
   /* top: 0; */
 
@@ -86,7 +86,8 @@ h1 {
   position: fixed;
   bottom: 20px;
   /* left: 0; */
-  left: 19%;
+  left: 200px;
+  width: calc(100% - 220px);
   height: 60px;
   right: 15px;
   padding-bottom: 0px;
@@ -99,7 +100,6 @@ h1 {
   white-space: pre-wrap;
   overflow: auto;
   background: #fff;
-  width: 100%;
   font-size: 1.9375rem;
   line-height: 1.2rem;
   border: 2px solid #E0E0E0;
@@ -190,6 +190,11 @@ left: 15px;
   white-space: pre-line; //This is used to preseve \n in  messages
 }
 
+
+h2, ul li a {
+  font-weight: lighter;
+}
+
 //Flash animation that will be used on the dot class
 @keyframes flash {
     from  {
@@ -245,7 +250,6 @@ left: 15px;
     background: #34495e;
     position: fixed;
     height: 100%;
-    width: 19%;
     overflow: hidden;
     text-overflow: ellipsis;
     left: 0;
@@ -255,7 +259,12 @@ left: 15px;
     -o-transition: left ease .25s;
     -webkit-transition: left ease .25s;
     transition: left ease .25s;
-    min-width: 200px;
+    width: 200px;
+}
+
+
+#channel-sidebar ul li a {
+  font-size: 15px;
 }
 
 #channel-sidebar ul li:not(:last-child) a {
@@ -308,9 +317,9 @@ left: 15px;
 .active-channel {
   background-color: #0097A7;
   width: 100%;
-  padding: 10px 0px;
   margin: 0;
-  height: 45px;
+  padding-top: 1px;
+  height: 35px;
 }
 
 
@@ -355,4 +364,78 @@ left: 15px;
   color: #0097A7;
   margin-right: 10px;
   margin-bottom: 0;
+}
+
+
+  #user-sections {
+    margin-top: 50px;
+  }
+
+  .user-section {
+    float: left;
+    color: #bdc3c7;
+    margin-bottom: 10px;
+  }
+
+  .user-section:nth-child(1) {
+    width: 20%;
+    height: 22px;
+    padding-top: 3px;
+  }
+
+  .user-section:nth-child(2) {
+    width: 60%;
+  }
+
+  .user-section:nth-child(3) {
+    width: 20%;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 0px;
+    cursor: pointer;
+  }
+
+  .user-section:nth-child(3):hover {
+    color: white;
+  }
+
+  .user-online {
+    margin: 0 auto;
+    width: 14px;
+    background-color: #2ecc71;
+    border-radius: 20px;
+    height: 14px;
+  }
+
+  .user-name {
+    padding-top: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+
+
+
+
+@media (max-width: 700px) {
+  #channel-sidebar {
+    width: 0px;
+  }
+
+  #message-nav {
+    width: 100% !important;
+  }
+
+
+  #footer {
+    left: 0;
+    width: 97%;
+  }
+
+  #messagePanel {
+    margin-left: 0px;
+    width: 100%;
+  }
+
+
 }

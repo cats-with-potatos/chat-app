@@ -118,16 +118,16 @@ Some of the things this module takes care of:
 
     //Get's all the initial messages from the specific channel from the server
     vm.loadChatMessages = function(channelName) {
-        ChatService.getChatMessages({channelName: channelName})
-        .then(function(messages) {
-          vm.messages = messages;
-          vm.messagesLoaded = true;
-          setTimeout(function() {
-            messagePanel.stop().animate({
-              scrollTop: messagePanel[0].scrollHeight
-            }, 200);
-          }, 0);
-        })
+      ChatService.getChatMessages({channelName: channelName})
+      .then(function(messages) {
+        vm.messages = messages;
+        vm.messagesLoaded = true;
+        setTimeout(function() {
+          messagePanel.stop().animate({
+            scrollTop: messagePanel[0].scrollHeight
+          }, 200);
+        }, 0);
+      })
     };
 
     //Get's all the initial users that are currently typing
@@ -197,6 +197,8 @@ Some of the things this module takes care of:
     //Gets all the channels from the server
     vm.getAllChannels = function(channelName) {
       if (ChatService.channels) {
+        console.log(ChatService[ChatService.currentChannelIndex]);
+
         delete ChatService.channels[ChatService.currentChannelIndex].activeChannel;
 
         for (var i = 0;i<ChatService.channels.length;i++) {
@@ -206,6 +208,7 @@ Some of the things this module takes care of:
             break;
           }
         }
+
         vm.channels = ChatService.channels;
         return;
       }
@@ -317,6 +320,10 @@ Some of the things this module takes care of:
           swal.showInputError(inputErrorArray);
         });
       });
+    };
+
+    vm.logUserOut = function($event) {
+      $state.go("chat-app.signout");
     };
 
     //If the url contains /messages, then run described functions

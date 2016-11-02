@@ -72,6 +72,11 @@
     };
 
 
+    //Function logs the user out
+    vm.logUserOut = function() {
+
+    };
+
     //Function called when signing in
     vm.signin = function() {
       //Check to see if form input is not undefined
