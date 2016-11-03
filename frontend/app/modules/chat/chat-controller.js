@@ -28,6 +28,8 @@ Some of the things this module takes care of:
     vm.messages = [];
     vm.messagesLoaded = false;
 
+    vm.showDarkOverlay = false;
+
 
     vm.message = "";
 
@@ -240,6 +242,8 @@ Some of the things this module takes care of:
 
 
     $scope.$on("navClicked", function() {
+      vm.showDarkOverlay = true;
+
       $("#channel-sidebar").animate({width: "200px"}, function() {
       });
     });
@@ -330,6 +334,8 @@ Some of the things this module takes care of:
       $state.go("chat-app.signout");
     };
 
+
+
     //If the url contains /messages, then run described functions
     if ($location.path().indexOf("/messages") !== -1) {
       var channelName = $stateParams.channelName;
@@ -351,11 +357,23 @@ Some of the things this module takes care of:
       //Loads the chat messages
       vm.loadChatMessages($stateParams.channelName);
 
+
+      document.addEventListener("click", function(event) {
+        if (vm.showDarkOverlay === true && event.pageX > 200) {
+          $("#channel-sidebar").animate({width: "0px"}, function() {
+            $scope.$apply(function(){
+        vm.showDarkOverlay = false;
+      });
+
+          });
+                }
+      });
+
+
+
       vm.loadUsersCurrentlyTyping();
       //Loads the Users that are currently typing
 
     }
-
-
   }
 }());
