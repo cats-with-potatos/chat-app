@@ -246,9 +246,9 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
 //This route will update a message
 chatRoutes.updateMessage = (req, res) => {
   const userid = req.decoded.id;
-  const messageId = Number(req.query.messageId);
-  const channelId = Number(req.query.channelId);
-  const contents = req.query.contents;
+  const messageId = Number(req.body.messageId);
+  const channelId = Number(req.body.channelId);
+  const contents = req.body.contents;
 
 
   if (chat.checkMessageError({

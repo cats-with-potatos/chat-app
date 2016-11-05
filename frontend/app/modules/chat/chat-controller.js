@@ -117,17 +117,37 @@ Some of the things this module takes care of:
       });
     });
 
+    //This actually edits the current message
+    vm.editMessageInput = function(event, messageId, messageIndex) {
+      console.log(event.target.value);
+      if (event.key === "Enter" && event.shiftKey === false) {
+        event.preventDefault();
+        ChatService.editMessage(
+          {
+            messageId: messageId,
+            channelId: channelId,
+            contents: event.target.value
+          })
+          .then((res) => {
+            if (res.data.response === "success") {
+              vm.messages[messageIndex].contents = event.target.value;
+              delete vm.messages[messageIndex].gettingEdited;
+            }
+          });
+      }
+    };
 
-    vm.editMessage = function(message_id, message_index) {
-      vm.messages[message_index].gettingEdited = true;
+
+    vm.editMessage = function(messageId, messageIndex) {
+      vm.messages[messageIndex].gettingEdited = true;
     }
 
-    vm.deleteMessage = function(message_id, message_index) {
-      vm.messages[message_index].gettingDeleted = true;
-      ChatService.deleteMessage({messageId: message_id, channelId: channelId})
+    vm.deleteMessage = function(messageId, messageIndex) {
+      vm.messages[messageIndex].gettingDeleted = true;
+      ChatService.deleteMessage({messageId: messageId, channelId: channelId})
       .then(function(res) {
         if (res.data.response === "success") {
-            vm.messages.splice(message_index, 1);
+            vm.messages.splice(messageIndex, 1);
         }
       });
     }

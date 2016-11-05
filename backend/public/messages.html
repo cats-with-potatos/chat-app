@@ -53,7 +53,8 @@ width: 75%;
                 <div id="contentDiv">
                   <div>
                     <p id="msgUser"><a href="#"> {{message.username}} </a></p>
-                    <p id="chatMsg"> {{message.contents}} </p>
+                    <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
+                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, message.message_id, $index)" class="form-control edit-styles">{{message.contents}}</textarea> </div>
                   </div>
 
                   <div class="dropup dropup-menu">

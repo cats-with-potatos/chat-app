@@ -129,10 +129,23 @@
           method: "DELETE",
           url: "/api/deleteMessage?messageId=" + obj.messageId + "&channelId=" + obj.channelId,
           headers: {
-          Authorization: "Bearer " + Cookies.get("auth"),
+            Authorization: "Bearer " + Cookies.get("auth"),
           },
         });
       };
+
+      service.editMessage = function(obj) {
+
+        return $http({
+          method: "PUT",
+          url: "/api/updateMessage",
+          data: $.param({messageId: obj.messageId, channelId: obj.channelId, contents: JSON.stringify(obj.contents)}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      }
 
       return service;
     }

@@ -36,6 +36,10 @@ chat.populateUserTypingMap();
 //Checks to see if there are any problems with the message being sent or any details of the mesage
 chat.checkMessageError = (messageDet) => {
   if (typeof messageDet.userid === "undefined" || isNaN(messageDet.channelId) || typeof messageDet.message === "undefined") {
+    console.log(typeof messageDet.userid === "undefined");
+    console.log(isNaN(messageDet.channelId));
+    console.log(messageDet.message);
+
     return "paramError";
   }
 
