@@ -362,9 +362,14 @@ h2, ul li a {
   font-size: 2.4em;
   color: #0097A7;
   margin-right: 10px;
-  margin-bottom: 0;
+  float: left;
 }
 
+#text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
 
 #user-sections {
   margin-top: 50px;
@@ -418,6 +423,8 @@ h2, ul li a {
   color: #34495e;
   margin-right: 10px;
   cursor: pointer;
+  float: left;
+  margin-top: 15px;
 }
 
 #nav-collapse:hover {
@@ -554,5 +561,8 @@ h2, ul li a {
   #messagePanel {
     margin-left: 0px;
     width: 100%;
+  }
+  #text-ellipsis {
+    width: calc(100% - 50px);
   }
 }
