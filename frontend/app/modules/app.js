@@ -42,6 +42,7 @@
         .then(function(res) {
           if (res.data.response === "success") {
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
             $rootScope.loggedIn = true;
           }
           else {

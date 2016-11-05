@@ -30724,6 +30724,7 @@ Some of the things this module takes care of:
             $rootScope.notLoggedIn = false;
             $rootScope.loggedIn = true;;
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
             $state.go('chat-app.messages');
           }
           else {
@@ -30765,7 +30766,7 @@ Some of the things this module takes care of:
 
     //Function logs the user out
     vm.logUserOut = function() {
-
+      $state.go();
     };
 
     //Function called when signing in
@@ -30791,6 +30792,7 @@ Some of the things this module takes care of:
             $rootScope.loggedIn = true;
             $rootScope.notLoggedIn = false;
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
 
             $state.go('chat-app.messages');
           }
@@ -47977,6 +47979,7 @@ if (typeof jQuery === 'undefined') {
         .then(function(res) {
           if (res.data.response === "success") {
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
             $rootScope.loggedIn = true;
           }
           else {

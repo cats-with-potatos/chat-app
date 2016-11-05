@@ -33,6 +33,7 @@
             $rootScope.notLoggedIn = false;
             $rootScope.loggedIn = true;;
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
             $state.go('chat-app.messages');
           }
           else {
@@ -74,7 +75,7 @@
 
     //Function logs the user out
     vm.logUserOut = function() {
-
+      $state.go();
     };
 
     //Function called when signing in
@@ -100,6 +101,7 @@
             $rootScope.loggedIn = true;
             $rootScope.notLoggedIn = false;
             $rootScope.username = res.data.data.username;
+            $rootScope.userid = res.data.data.id;
 
             $state.go('chat-app.messages');
           }
