@@ -472,12 +472,16 @@ h2, ul li a {
 
 
 
+  //These styles are applied when the screen is bigger than 700 pixels
+  @media (min-width: 701px) {
+    #channel-sidebar {
+      width: 200px !important;
+    }
+  }
 
 
 
-
-
-
+//These styles are applied when the screen is smaller than 700 pixels
 @media (max-width: 700px) {
   #channel-sidebar {
     width: 0px;
