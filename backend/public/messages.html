@@ -54,13 +54,12 @@ width: 75%;
                   <div>
                     <p id="msgUser"><a href="#"> {{message.username}} </a></p>
                     <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
-                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, message.message_id, $index)" class="form-control edit-styles">{{message.contents}}</textarea> </div>
+                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, message.message_id, $index)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
                   </div>
 
                   <div class="dropup dropup-menu">
                     <button class="btn btn-default dropdown-toggle" type="button" ng-disabled="message.gettingDeleted" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Dropup
-                      <span class="caret"></span>
+                    <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
                       <li ng-click="vm.editMessage(message.message_id, $index)"><a>Edit Message</a></li>
