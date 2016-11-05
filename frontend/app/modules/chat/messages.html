@@ -10,9 +10,9 @@
 }
 
 /*`.navbar-fixed-top {
-  float: right !important;
-  right: 0 !important;
-  width: 75%;
+float: right !important;
+right: 0 !important;
+width: 75%;
 }`*/
 
 .ng-scope {
@@ -43,20 +43,31 @@
 
 
         <div ng-show="vm.messagesLoaded === true">
-        <ul>
-          <!--Messages are repeated here-->
-          <li ng-repeat="message in vm.messages">
-            <div class="row">
-              <div id="avatarDiv">
-                <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
+          <ul>
+            <!--Messages are repeated here-->
+            <li ng-repeat="message in vm.messages" ng-class="{'getting-deleted': message.gettingDeleted === true}">
+              <div class="row">
+                <div id="avatarDiv">
+                  <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
+                </div>
+                <div id="contentDiv">
+                  <div>
+                    <p id="msgUser"><a href="#"> {{message.username}} </a></p>
+                    <p id="chatMsg"> {{message.contents}} </p>
+                  </div>
+
+                  <div class="dropup dropup-menu">
+                    <button class="btn btn-default dropdown-toggle" type="button" ng-disabled="message.gettingDeleted" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Dropup
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                      <li ng-click="vm.editMessage(message.message_id, $index)"><a>Edit Message</a></li>
+                      <li ng-click="vm.deleteMessage(message.message_id, $index)"><a>Delete Message</a></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <div id="contentDiv">
-                <div>
-                <p id="msgUser"><a href="#"> {{message.username}} </a></p>
-                <p id="chatMsg"> {{message.contents}} </p>
-              </div>
-            </div>
-            </div>
             </div>
           </li>
         </ul>
@@ -85,43 +96,43 @@
           <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
         </ul>
       </div>
-    <div id="private-messages">
-      <h1 class="text-center">Private Messages</h1>
-      <ul>
-        <li><a href="#">Message 2</a></li>
-        <li><a href="#">Message 3</a></li>
-        <li><a href="#">Message 4</a></li>
-      </ul>
+      <div id="private-messages">
+        <h1 class="text-center">Private Messages</h1>
+        <ul>
+          <li><a href="#">Message 2</a></li>
+          <li><a href="#">Message 3</a></li>
+          <li><a href="#">Message 4</a></li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
-<div id="footer">
-      <div id="userTyping">
-        <!--This will show if the user is currently typing or not-->
-          <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
-          <span ng-show="vm.userTypingArray.length !== 0">
-            <!--The dot animation which will show if at least another user is typing-->
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </span>
-        </div>
-      <div class="form-group">
-        <!--Input where the user types-->
-        <input
-        type="text"
-        id="messageBox"
-        class="form-control"
-        placeholder="Chat away and press enter"
-        ng-model="vm.message"
-        autofocus
-        ng-keydown="vm.sendMessage($event)"
-        ng-keyup="vm.sendUserIsTyping($event)"
-        spellcheck="true"
-        required
-        maxlength="100"
-        />
-        </div>
+  <div id="footer">
+    <div id="userTyping">
+      <!--This will show if the user is currently typing or not-->
+      <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
+      <span ng-show="vm.userTypingArray.length !== 0">
+        <!--The dot animation which will show if at least another user is typing-->
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </span>
+    </div>
+    <div class="form-group">
+      <!--Input where the user types-->
+      <input
+      type="text"
+      id="messageBox"
+      class="form-control"
+      placeholder="Chat away and press enter"
+      ng-model="vm.message"
+      autofocus
+      ng-keydown="vm.sendMessage($event)"
+      ng-keyup="vm.sendUserIsTyping($event)"
+      spellcheck="true"
+      required
+      maxlength="100"
+      />
+    </div>
   </div>
 </div>
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">

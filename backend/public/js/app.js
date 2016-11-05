@@ -30162,6 +30162,22 @@ Some of the things this module takes care of:
     });
 
 
+    vm.editMessage = function(message_id, message_index) {
+      vm.messages[message_index].gettingEdited = true;
+    }
+
+    vm.deleteMessage = function(message_id, message_index) {
+      vm.messages[message_index].gettingDeleted = true;
+      ChatService.deleteMessage({messageId: message_id, channelId: channelId})
+      .then(function(res) {
+        if (res.data.response === "success") {
+            vm.messages.splice(message_index, 1);
+        }
+      });
+    }
+
+
+
     //Get's all the initial messages from the specific channel from the server
     vm.loadChatMessages = function(channelName) {
       ChatService.getChatMessages({channelName: channelName})
@@ -30406,11 +30422,11 @@ Some of the things this module takes care of:
         if (vm.showDarkOverlay === true && event.pageX > 200) {
           $("#channel-sidebar").animate({width: "0px"}, function() {
             $scope.$apply(function(){
-        vm.showDarkOverlay = false;
-      });
+              vm.showDarkOverlay = false;
+            });
 
           });
-                }
+        }
       });
 
 
@@ -30544,6 +30560,16 @@ Some of the things this module takes care of:
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
             'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
+      service.deleteMessage = function(obj) {
+        return $http({
+          method: "DELETE",
+          url: "/api/deleteMessage?messageId=" + obj.messageId + "&channelId=" + obj.channelId,
+          headers: {
+          Authorization: "Bearer " + Cookies.get("auth"),
           },
         });
       };

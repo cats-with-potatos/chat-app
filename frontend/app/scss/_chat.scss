@@ -106,7 +106,7 @@ h1 {
   background-clip: padding-box;
   font-family: 'Lato', sans-serif;
   color: #3d3c40;
-    -webkit-appearance: none;
+  -webkit-appearance: none;
   box-shadow: none;
   margin-left: 10px;
   outline: 0;
@@ -115,9 +115,9 @@ h1 {
   // padding-left: .5rem;
   // padding-right: 2.5rem;
   resize: none!important;
-    -webkit-transition: none;
-    -moz-transition: none;
-    transition: none;
+  -webkit-transition: none;
+  -moz-transition: none;
+  transition: none;
   // border-radius: 0 6px 6px 0;
 }
 
@@ -149,43 +149,43 @@ h1 {
 //Bubble styles will be used for Private Messages
 .bubble
 {
-position: relative;
-width: 360px;
-height: 75px;
-padding: 5px;
-background: #00FFFF;
--webkit-border-radius: 14px;
--moz-border-radius: 14px;
-border-radius: 14px;
-border: #222 solid 2px;
+  position: relative;
+  width: 360px;
+  height: 75px;
+  padding: 5px;
+  background: #00FFFF;
+  -webkit-border-radius: 14px;
+  -moz-border-radius: 14px;
+  border-radius: 14px;
+  border: #222 solid 2px;
 }
 
 .bubble:after
 {
-content: '';
-position: absolute;
-border-style: solid;
-border-width: 0 15px 15px;
-border-color: #00FFFF transparent;
-display: block;
-width: 0;
-z-index: 1;
-top: -15px;
-left: 16px;
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 0 15px 15px;
+  border-color: #00FFFF transparent;
+  display: block;
+  width: 0;
+  z-index: 1;
+  top: -15px;
+  left: 16px;
 }
 
 .bubble:before
 {
-content: '';
-position: absolute;
-border-style: solid;
-border-width: 0 16px 16px;
-border-color: #222 transparent;
-display: block;
-width: 0;
-z-index: 0;
-top: -18px;
-left: 15px;
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 0 16px 16px;
+  border-color: #222 transparent;
+  display: block;
+  width: 0;
+  z-index: 0;
+  top: -18px;
+  left: 15px;
   height: 300px;
   white-space: pre-line; //This is used to preseve \n in  messages
 }
@@ -197,42 +197,42 @@ h2, ul li a {
 
 //Flash animation that will be used on the dot class
 @keyframes flash {
-    from  {
-        background: black;
-    }
-    to {
-        background: #CCC;
-    }
+  from  {
+    background: black;
+  }
+  to {
+    background: #CCC;
+  }
 }
 
 
 .dot {
-    display: inline-block;
-    background: #CCC;
-    height: 4px;
-    width: 4px;
-    border-radius: 8px;
-    margin-right: 5px;
+  display: inline-block;
+  background: #CCC;
+  height: 4px;
+  width: 4px;
+  border-radius: 8px;
+  margin-right: 5px;
 
-    //Flashing dot animation that will transition the dots change colors everyone 1 second infinitely
-    animation-name: flash;
-    animation-duration: 1000ms;
-    animation-iteration-count: infinite;
-    animation: flash 1000ms infinite;
+  //Flashing dot animation that will transition the dots change colors everyone 1 second infinitely
+  animation-name: flash;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation: flash 1000ms infinite;
 }
 
 
 
 //All 3 dots will have a different animation delay so they animate at different times
 .dot:first-child {
-    background: black;
+  background: black;
 }
 
 .dot:nth-child(2) {
-    animation-delay: 250ms;
+  animation-delay: 250ms;
 }
 .dot:nth-child(3) {
-    animation-delay: 500ms;
+  animation-delay: 500ms;
 }
 
 #channelBox {
@@ -247,20 +247,20 @@ h2, ul li a {
 
 //Channels Sidebar
 #channel-sidebar {
-    background: #34495e;
-    position: fixed;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    -moz-transition: left ease .25s;
-    -o-transition: left ease .25s;
-    -webkit-transition: left ease .25s;
-    transition: left ease .25s;
-    width: 200px;
-    z-index: 3;
+  background: #34495e;
+  position: fixed;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  -moz-transition: left ease .25s;
+  -o-transition: left ease .25s;
+  -webkit-transition: left ease .25s;
+  transition: left ease .25s;
+  width: 200px;
+  z-index: 3;
 }
 
 
@@ -283,11 +283,11 @@ h2, ul li a {
 
 
 #channel-sidebar.hide-sidebar {
-        left: -250px;
-        -moz-transition: left ease .25s;
-        -o-transition: left ease .25s;
-        -webkit-transition: left ease .25s;
-        transition: left ease .25s;
+  left: -250px;
+  -moz-transition: left ease .25s;
+  -o-transition: left ease .25s;
+  -webkit-transition: left ease .25s;
+  transition: left ease .25s;
 }
 
 #channel-sidebar h1, p, a {
@@ -366,120 +366,163 @@ h2, ul li a {
 }
 
 
-  #user-sections {
-    margin-top: 50px;
-  }
+#user-sections {
+  margin-top: 50px;
+}
 
-  .user-section {
-    float: left;
-    color: #bdc3c7;
-    margin-bottom: 10px;
-  }
+.user-section {
+  float: left;
+  color: #bdc3c7;
+  margin-bottom: 10px;
+}
 
-  .user-section:nth-child(1) {
-    width: 20%;
-    height: 22px;
-    padding-top: 3px;
-  }
+.user-section:nth-child(1) {
+  width: 20%;
+  height: 22px;
+  padding-top: 3px;
+}
 
-  .user-section:nth-child(2) {
-    width: 60%;
-  }
+.user-section:nth-child(2) {
+  width: 60%;
+}
 
-  .user-section:nth-child(3) {
-    width: 20%;
-    text-align: center;
-    font-size: 14px;
-    padding-top: 0px;
-    cursor: pointer;
-  }
+.user-section:nth-child(3) {
+  width: 20%;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 0px;
+  cursor: pointer;
+}
 
-  .user-section:nth-child(3):hover {
-    color: white;
-  }
+.user-section:nth-child(3):hover {
+  color: white;
+}
 
-  .user-online {
-    margin: 0 auto;
-    width: 14px;
-    background-color: #2ecc71;
-    border-radius: 20px;
-    height: 14px;
-  }
+.user-online {
+  margin: 0 auto;
+  width: 14px;
+  background-color: #2ecc71;
+  border-radius: 20px;
+  height: 14px;
+}
 
-  .user-name {
-    padding-top: 0px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.user-name {
+  padding-top: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  #nav-collapse {
-    display: none;
-    font-size: 30px;
-    color: #34495e;
-    margin-right: 10px;
-    cursor: pointer;
-  }
+#nav-collapse {
+  display: none;
+  font-size: 30px;
+  color: #34495e;
+  margin-right: 10px;
+  cursor: pointer;
+}
 
-  #nav-collapse:hover {
-    color: #0097A7;
-  }
+#nav-collapse:hover {
+  color: #0097A7;
+}
 
-  .noShow {
-    display: none;
-  }
+.noShow {
+  display: none;
+}
 
 
-  .dark-overlay {
-    display: none;
-    background-color: #34495e;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    opacity: 0;
+.dark-overlay {
+  display: none;
+  background-color: #34495e;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+  background-color: #FFF;
+  -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
+  animation-name: whiteToGrey;
+  animation-duration: 0.7s;
+  animation-fill-mode: forwards;
+
+}
+
+@-webkit-keyframes whiteToGrey {
+  from {
     background-color: #FFF;
-    -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
-      -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
-      animation-name: whiteToGrey;
-      animation-duration: 0.7s;
-      animation-fill-mode: forwards;
-
+    opacity: 0;
   }
-
-  @-webkit-keyframes whiteToGrey {
-      from {
-        background-color: #FFF;
-        opacity: 0;
-      }
-      to {
-        background-color: #34495e;
-        opacity: 0.5;
-      }
+  to {
+    background-color: #34495e;
+    opacity: 0.5;
   }
+}
 
-  @keyframes whiteToGrey {
-      from {
-        background-color: #FFF;
-        opacity: 0;
-      }
-      to {
-        background-color: #34495e;
-        opacity: 0.5;
-      }
+@keyframes whiteToGrey {
+  from {
+    background-color: #FFF;
+    opacity: 0;
   }
-
-
-
-
-
-  //These styles are applied when the screen is bigger than 700 pixels
-  @media (min-width: 701px) {
-    #channel-sidebar {
-      width: 200px !important;
-    }
+  to {
+    background-color: #34495e;
+    opacity: 0.5;
   }
+}
 
 
+.dropup-menu {
+  float: right;
+  margin-right: 100px;
+  margin-top: -70px;
+}
+
+
+
+
+.dropup-menu ul li{
+  margin-right: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+
+  /* Rules below not implemented in browsers yet */
+  -o-user-select: none;
+  user-select: none;
+}
+
+.dropup-menu ul li:nth-child(1) a:hover {
+  background-color: #0097A7;
+}
+
+.dropup-menu ul li:nth-child(1):hover {
+  background-color: #0097A7 !important;
+}
+
+.dropup-menu ul li:nth-child(2) a:hover {
+  background-color: #e74c3c;
+}
+
+.dropup-menu ul li:nth-child(2):hover {
+  background-color: #e74c3c !important;
+}
+
+.getting-deleted {
+  background-color: rgba(231,76,60, 0.5);
+}
+
+.getting-deleted:hover {
+  background-color: rgba(231,76,60, 0.5) !important;
+}
+
+
+//These styles are applied when the screen is bigger than 700 pixels
+@media (min-width: 701px) {
+  #channel-sidebar {
+    width: 200px !important;
+  }
+}
 
 //These styles are applied when the screen is smaller than 700 pixels
 @media (max-width: 700px) {
@@ -508,7 +551,4 @@ h2, ul li a {
     margin-left: 0px;
     width: 100%;
   }
-
-
-
 }

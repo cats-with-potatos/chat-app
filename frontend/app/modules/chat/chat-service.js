@@ -124,6 +124,16 @@
         });
       };
 
+      service.deleteMessage = function(obj) {
+        return $http({
+          method: "DELETE",
+          url: "/api/deleteMessage?messageId=" + obj.messageId + "&channelId=" + obj.channelId,
+          headers: {
+          Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
       return service;
     }
   })();
