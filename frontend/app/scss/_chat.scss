@@ -430,6 +430,7 @@ h2, ul li a {
 
 
   .dark-overlay {
+    display: none;
     background-color: #34495e;
     position: absolute;
     width: 100%;
@@ -475,6 +476,8 @@ h2, ul li a {
 
 
 
+
+
 @media (max-width: 700px) {
   #channel-sidebar {
     width: 0px;
@@ -484,7 +487,6 @@ h2, ul li a {
     width: 100% !important;
   }
 
-
   #nav-collapse {
     display: inline-block;
   }
@@ -492,6 +494,10 @@ h2, ul li a {
   #footer {
     left: 0;
     width: 97%;
+  }
+
+  .dark-overlay {
+    display: block;
   }
 
   #messagePanel {
