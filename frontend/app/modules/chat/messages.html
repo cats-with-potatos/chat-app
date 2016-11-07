@@ -77,9 +77,9 @@ width: 75%;
     <div id="channel-sidebar" class="col-md-2">
       <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="vm.showSpinner === true"></div>
 
-      <div id="user-sections">
+      <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
         <div class="user-section">
-          <div class="user-online"></div>
+          <div ng-class="{'user-offline': vm.userState === 'online'}"></div>
         </div>
         <div class="user-section">
           <div class="user-name">
@@ -111,7 +111,7 @@ width: 75%;
   <div id="footer">
     <div id="userTyping">
       <!--This will show if the user is currently typing or not-->
-      <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
+      <span ng-repeat="message in vm.userTypingArray"> {{message.name.name}} </span>  {{vm.typeOfTyping}}
       <span ng-show="vm.userTypingArray.length !== 0">
         <!--The dot animation which will show if at least another user is typing-->
         <span class="dot"></span>

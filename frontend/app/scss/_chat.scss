@@ -3,6 +3,8 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
 
+
+
 //Color scheme used
 //http://material.colorion.co/palette/689
 
@@ -11,16 +13,25 @@ body {
   font-family: "Lato", sans-serif;
 }
 
-h1 {
-  color: #546E7A;
+h2, ul {
+  li {
+    a {
+      font-weight: lighter;
+    }
+  }
 }
+
+h1, p, a {
+  color: #FFF;
+}
+
+
 
 .container-content {
   width: 100%;
 }
 
 //Message panel and text within
-
 #message {
   list-style: none;
 }
@@ -34,7 +45,7 @@ h1 {
 
 #messagePanel {
   top: 80px;
-  width: calc(100% - 220px);
+  @include not-collapsed-width();
   margin-left: 200px;
   /* left: 0; */
   /* top: 0; */
@@ -46,48 +57,48 @@ h1 {
   /* float: right; */
   bottom: 60px;
   min-height: 100px;
-}
 
-#messagePanel ul {
-  padding-left: 5px;
-}
+  ul {
+    padding-left: 5px;
+  }
 
-#messagePanel li {
-  padding: 10px 15px;
-  margin-bottom: -1px;
-}
+  li {
+    padding: 10px 15px;
+    margin-bottom: -1px;
 
-#messagePanel li:hover {
-  background: #f9f9f9;
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
 }
 
 #contentDiv {
   float: right;
   width: calc(100% - 65px);
+
 }
 
 //Text within chat box
 #msgUser {
   font-weight: 900;
   font-size: 1.25em;
-  color: #0097A7;
+  color: $cyanish-color;
   margin-right: 10px;
   margin-bottom: 0;
+
+  a {
+    color: $cyanish-color;
+  }
 }
 
-#msgUser a {
-  color: #0097A7;
-}
 
 //Footer including the input box textarea and user typing
-
-
 #footer {
   position: fixed;
   bottom: 20px;
   /* left: 0; */
   left: 200px;
-  width: calc(100% - 220px);
+  @include not-collapsed-width();
   height: 60px;
   right: 15px;
   padding-bottom: 0px;
@@ -118,7 +129,6 @@ h1 {
   -webkit-transition: none;
   -moz-transition: none;
   transition: none;
-  // border-radius: 0 6px 6px 0;
 }
 
 #userTyping {
@@ -132,7 +142,6 @@ h1 {
 }
 
 //User avatar
-
 #avatar {
   margin-right: 10px;
   // border: 2px solid #999;
@@ -154,46 +163,42 @@ h1 {
   height: 75px;
   padding: 5px;
   background: #00FFFF;
-  -webkit-border-radius: 14px;
-  -moz-border-radius: 14px;
-  border-radius: 14px;
+  @include border-radius(14px);
+
   border: #222 solid 2px;
-}
 
-.bubble:after
-{
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 15px 15px;
-  border-color: #00FFFF transparent;
-  display: block;
-  width: 0;
-  z-index: 1;
-  top: -15px;
-  left: 16px;
-}
+  &:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 15px 15px;
+    border-color: #00FFFF transparent;
+    display: block;
+    width: 0;
+    z-index: 1;
+    top: -15px;
+    left: 16px;
+  }
 
-.bubble:before
-{
-  content: '';
-  position: absolute;
-  border-style: solid;
-  border-width: 0 16px 16px;
-  border-color: #222 transparent;
-  display: block;
-  width: 0;
-  z-index: 0;
-  top: -18px;
-  left: 15px;
-  height: 300px;
-  white-space: pre-line; //This is used to preseve \n in  messages
+  &:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 0 16px 16px;
+    border-color: #222 transparent;
+    display: block;
+    width: 0;
+    z-index: 0;
+    top: -18px;
+    left: 15px;
+    height: 300px;
+    white-space: pre-line; //This is used to preseve \n in  messages
+  }
 }
 
 
-h2, ul li a {
-  font-weight: lighter;
-}
+
+
 
 //Flash animation that will be used on the dot class
 @keyframes flash {
@@ -211,7 +216,7 @@ h2, ul li a {
   background: #CCC;
   height: 4px;
   width: 4px;
-  border-radius: 8px;
+  @include border-radius(8px);
   margin-right: 5px;
 
   //Flashing dot animation that will transition the dots change colors everyone 1 second infinitely
@@ -219,21 +224,21 @@ h2, ul li a {
   animation-duration: 1000ms;
   animation-iteration-count: infinite;
   animation: flash 1000ms infinite;
+
+  //All 3 dots will have a different animation delay so they animate at different times
+  &:first-child {
+    background: black;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 250ms;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 500ms;
+  }
 }
 
-
-
-//All 3 dots will have a different animation delay so they animate at different times
-.dot:first-child {
-  background: black;
-}
-
-.dot:nth-child(2) {
-  animation-delay: 250ms;
-}
-.dot:nth-child(3) {
-  animation-delay: 500ms;
-}
 
 #channelBox {
   height: 100%;
@@ -247,7 +252,7 @@ h2, ul li a {
 
 //Channels Sidebar
 #channel-sidebar {
-  background: #34495e;
+  background: $wet-asphalt;
   position: fixed;
   height: 100%;
   overflow: hidden;
@@ -255,45 +260,32 @@ h2, ul li a {
   left: 0;
   margin: 0;
   padding: 0;
-  -moz-transition: left ease .25s;
-  -o-transition: left ease .25s;
-  -webkit-transition: left ease .25s;
-  transition: left ease .25s;
   width: 200px;
   z-index: 3;
 }
 
+ul {
+  li {
+    a {
+      font-size: 15px;
+    }
 
-#channel-sidebar ul li a {
-  font-size: 15px;
+    &:not(:last-child) {
+      a {
+        color: $silver;
+        text-decoration: none;
+
+        &:hover {
+          color: white;
+        }
+      }
+    }
+
+    &:last-child a:hover {
+      color: $concrete;
+    }
+  }
 }
-
-#channel-sidebar ul li:not(:last-child) a {
-  color: #bdc3c7;
-  text-decoration: none;
-}
-
-#channel-sidebar ul li:not(:last-child) a:hover {
-  color: white;
-}
-
-#channel-sidebar ul li:last-child a:hover {
-  color: #95a5a6;
-}
-
-
-#channel-sidebar.hide-sidebar {
-  left: -250px;
-  -moz-transition: left ease .25s;
-  -o-transition: left ease .25s;
-  -webkit-transition: left ease .25s;
-  transition: left ease .25s;
-}
-
-#channel-sidebar h1, p, a {
-  color: #fff;
-}
-
 
 //Channel list
 #channel-list {
@@ -301,70 +293,79 @@ h2, ul li a {
   height: 50%;
   padding: 0;
   margin: 0;
-}
 
-#channel-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 1.5em;
-}
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5em;
+  }
 
-#channel-list a:hover {
-  text-decoration: none;
-  width: 100%;
+  a {
+    &:hover {
+      text-decoration: none;
+      width: 100%;
+    }
+  }
 }
 
 .active-channel {
-  background-color: #0097A7;
+  background-color: $cyanish-color;
   width: 100%;
   margin: 0;
   padding-top: 1px;
   height: 35px;
+
+  a {
+    color: #FFF !important;
+  }
 }
 
-
-.active-channel a {
-  color: #FFF !important;
-}
 
 //Private messages
 #private-messages {
   text-align: center;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1.5em;
+  }
+
+  a {
+    &:hover, &:active {
+      text-decoration: none;
+      width: 100%;
+    }
+  }
+
+  h1 {
+    font-size: 1.75em;
+  }
 }
 
-#private-messages ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 1.5em;
+
+.blueHover {
+  &:hover {
+    background-color: $wet-asphalt;
+  }
+
+  a {
+    &:hover {
+      color: white;
+    }
+  }
 }
 
-#private-messages a:hover, a:active {
-  text-decoration: none;
-  width: 100%;
-}
-
-#private-messages h1 {
-  font-size: 1.75em;
-}
-
-.blueHover:hover {
-  background-color: #34495e;
-}
-
-.blueHover a:hover {
-  color: white;
-}
 
 #channel-name-header {
   font-weight: 700;
   font-size: 2.4em;
-  color: #0097A7;
+  color: $cyanish-color;
   margin-top: 5px;
   margin-right: 10px;
   float: left;
-
 }
 
 #text-ellipsis {
@@ -379,39 +380,52 @@ h2, ul li a {
 
 .user-section {
   float: left;
-  color: #bdc3c7;
+  color: $silver;
   margin-bottom: 10px;
+
+  &:nth-child(1) {
+    width: 20%;
+    height: 22px;
+    padding-top: 3px;
+  }
+
+  &:nth-child(2) {
+    width: 60%;
+  }
+
+  &:nth-child(3) {
+    width: 20%;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 0px;
+    cursor: pointer;
+
+    &:hover {
+      color: white;
+    }
+  }
 }
 
-.user-section:nth-child(1) {
-  width: 20%;
-  height: 22px;
-  padding-top: 3px;
-}
 
-.user-section:nth-child(2) {
-  width: 60%;
-}
 
-.user-section:nth-child(3) {
-  width: 20%;
-  text-align: center;
-  font-size: 14px;
-  padding-top: 0px;
-  cursor: pointer;
-}
-
-.user-section:nth-child(3):hover {
-  color: white;
+.user-state {
+  margin: 0 auto;
+  width: 14px;
+  @include border-radius(20px);
+  height: 14px;
 }
 
 .user-online {
-  margin: 0 auto;
-  width: 14px;
-  background-color: #2ecc71;
-  border-radius: 20px;
-  height: 14px;
+  @extend .user-state;
+  background-color: $emerald;
 }
+
+.user-offline {
+  @extend .user-state;
+  border-color: $silver;
+}
+
+
 
 .user-name {
   padding-top: 0px;
@@ -422,16 +436,17 @@ h2, ul li a {
 #nav-collapse {
   display: none;
   font-size: 30px;
-  color: #34495e;
+  color: $wet-asphalt;
   margin-right: 10px;
   cursor: pointer;
   float: left;
   margin-top: 15px;
+
+  &:hover {
+    color: $cyanish-color;
+  }
 }
 
-#nav-collapse:hover {
-  color: #0097A7;
-}
 
 .noShow {
   display: none;
@@ -440,7 +455,7 @@ h2, ul li a {
 
 .dark-overlay {
   display: none;
-  background-color: #34495e;
+  background-color: $wet-asphalt;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -460,7 +475,7 @@ h2, ul li a {
     opacity: 0;
   }
   to {
-    background-color: #34495e;
+    background-color: $wet-asphalt;
     opacity: 0.5;
   }
 }
@@ -471,7 +486,7 @@ h2, ul li a {
     opacity: 0;
   }
   to {
-    background-color: #34495e;
+    background-color: $wet-asphalt;
     opacity: 0.5;
   }
 }
@@ -481,47 +496,59 @@ h2, ul li a {
   float: right;
   margin-right: 100px;
   margin-top: -90px;
+
+  ul {
+    li {
+      margin-right: 5px;
+
+      @include border-radius(20px)
+
+      cursor: pointer;
+
+      -webkit-user-select: none; /* Chrome/Safari */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* IE10+ */
+
+      /* Rules below not implemented in browsers yet */
+      -o-user-select: none;
+      user-select: none;
+
+      &:nth-child(1) {
+        a {
+          &:hover {
+            background-color: $cyanish-color;
+          }
+        }
+
+        &:hover {
+          background-color: $cyanish-color !important;
+          color: #FFF;
+        }
+      }
+
+      &:nth-child(2) {
+        a {
+          &:hover {
+            background-color: #e74c3c;
+          }
+        }
+
+        &:hover {
+          background-color: #e74c3c !important;
+        }
+      }
+    }
+  }
 }
 
 
-
-
-.dropup-menu ul li{
-  margin-right: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  -webkit-user-select: none; /* Chrome/Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+ */
-
-  /* Rules below not implemented in browsers yet */
-  -o-user-select: none;
-  user-select: none;
-}
-
-.dropup-menu ul li:nth-child(1) a:hover {
-  background-color: #0097A7;
-}
-
-.dropup-menu ul li:nth-child(1):hover {
-  background-color: #0097A7 !important;
-}
-
-.dropup-menu ul li:nth-child(2) a:hover {
-  background-color: #e74c3c;
-}
-
-.dropup-menu ul li:nth-child(2):hover {
-  background-color: #e74c3c !important;
-}
 
 .getting-deleted {
   background-color: rgba(231,76,60, 0.5);
-}
 
-.getting-deleted:hover {
-  background-color: rgba(231,76,60, 0.5) !important;
+  &:hover {
+    background-color: rgba(231,76,60, 0.5) !important;
+  }
 }
 
 .edit-styles {
@@ -543,7 +570,7 @@ h2, ul li a {
 #numOfChannels {
   font-size: 12px;
   font-weight: lighter;
-  color: #bdc3c7;
+  color: $silver;
   margin-left: 5px;
 }
 
@@ -553,7 +580,11 @@ h2, ul li a {
   height: 30px;
   margin-top: 8px;
   margin-left: 5px;
-  border-top-color: #0097A7;
+  border-top-color: $cyanish-color;
+}
+
+.lowerMarginTop {
+  margin-top: 7px !important;
 }
 
 

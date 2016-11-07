@@ -17,6 +17,7 @@ const listen = (app) => {
 					clients[decoded.id] = {
 						socket: socket.id,
 					};
+					socket.emit("userState", "online");
 				})
 				.catch((e) => {
 					console.log("Invalid token");
