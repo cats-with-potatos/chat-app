@@ -446,11 +446,10 @@ h2, ul li a {
   opacity: 0;
   background-color: #FFF;
   -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
-  -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 0.7s; /* Safari 4.0 - 8.0 */
   animation-name: whiteToGrey;
   animation-duration: 0.7s;
   animation-fill-mode: forwards;
-
 }
 
 @-webkit-keyframes whiteToGrey {
@@ -526,6 +525,27 @@ h2, ul li a {
 .edit-styles {
   width: 70%;
 }
+
+#chanDiv {
+  width: 100%;
+  text-align:center;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+#chanTitle {
+  color: #FFF;
+  font-size:20px;
+}
+
+#numOfChannels {
+  font-size: 12px;
+  font-weight: lighter;
+  color: #bdc3c7;
+  margin-left: 5px;
+}
+
+
 
 
 //These styles are applied when the screen is bigger than 700 pixels

@@ -13,9 +13,9 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', '$scope', Controller]);
+  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', '$scope', '$window', '$document' , Controller]);
 
-  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q, $scope) {
+  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q, $scope, $window, $document) {
     var vm = this;
 
     //This is where we will store the users that are currently typing
@@ -28,6 +28,8 @@ Some of the things this module takes care of:
     vm.messages = [];
     vm.messagesLoaded = false;
 
+
+    //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
 
 
@@ -53,8 +55,6 @@ Some of the things this module takes care of:
       }
     });
 
-    //Tells the backend server that a new user has connected
-    socket.emit("newUser", Cookies.get("auth"))
 
 
     //Listens for new messages in realtime and add's it to the vm.messages list
@@ -134,282 +134,296 @@ Some of the things this module takes care of:
               delete vm.messages[messageIndex].gettingEdited;
             }
           });
+        }
+      };
+
+
+      vm.editMessage = function(messageId, messageIndex) {
+        vm.messages[messageIndex].gettingEdited = true;
       }
-    };
 
-
-    vm.editMessage = function(messageId, messageIndex) {
-      vm.messages[messageIndex].gettingEdited = true;
-    }
-
-    vm.deleteMessage = function(messageId, messageIndex) {
-      vm.messages[messageIndex].gettingDeleted = true;
-      ChatService.deleteMessage({messageId: messageId, channelId: channelId})
-      .then(function(res) {
-        if (res.data.response === "success") {
+      vm.deleteMessage = function(messageId, messageIndex) {
+        vm.messages[messageIndex].gettingDeleted = true;
+        ChatService.deleteMessage({messageId: messageId, channelId: channelId})
+        .then(function(res) {
+          if (res.data.response === "success") {
             vm.messages.splice(messageIndex, 1);
-        }
-      });
-    }
-
-
-
-    //Get's all the initial messages from the specific channel from the server
-    vm.loadChatMessages = function(channelName) {
-      ChatService.getChatMessages({channelName: channelName})
-      .then(function(messages) {
-        vm.messages = messages;
-        vm.messagesLoaded = true;
-        setTimeout(function() {
-          messagePanel.stop().animate({
-            scrollTop: messagePanel[0].scrollHeight
-          }, 200);
-        }, 0);
-      })
-    };
-
-    //Get's all the initial users that are currently typing
-    vm.loadUsersCurrentlyTyping = function() {
-      ChatService.getUsersCurrentlyTyping(channelId)
-      .then(function(res) {
-        if (res.data.data.length >= 1) {
-          if (res.data.data.length === 1) {
-            vm.typeOfTyping = "is typing";
           }
-          else if (res.data.data.length > 1) {
-            vm.typeOfTyping = "are typing";
-          }
-          console.log("res.data.data is: " + res.data.data);
-          vm.userTypingArray = res.data.data;
-        }
-      })
-    };
+        });
+      }
 
-    //Listens on keyup events and if the key is enter, then send the message to the server
-    vm.sendMessage = function(event) {
-      //If only enter key is pressed
-      if (event.key === "Enter") {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
+
+
+      //Get's all the initial messages from the specific channel from the server
+      vm.loadChatMessages = function(channelName) {
+        ChatService.getChatMessages({channelName: channelName})
+        .then(function(messages) {
+          vm.messages = messages;
+          vm.messagesLoaded = true;
+          setTimeout(function() {
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }, 0);
+        })
+      };
+
+      //Get's all the initial users that are currently typing
+      vm.loadUsersCurrentlyTyping = function() {
+        ChatService.getUsersCurrentlyTyping(channelId)
+        .then(function(res) {
+          if (res.data.data.length >= 1) {
+            if (res.data.data.length === 1) {
+              vm.typeOfTyping = "is typing";
+            }
+            else if (res.data.data.length > 1) {
+              vm.typeOfTyping = "are typing";
+            }
+            console.log("res.data.data is: " + res.data.data);
+            vm.userTypingArray = res.data.data;
+          }
+        })
+      };
+
+      //Listens on keyup events and if the key is enter, then send the message to the server
+      vm.sendMessage = function(event) {
+        //If only enter key is pressed
+        if (event.key === "Enter") {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            if (vm.message !== "") {
+              var messageToUser = vm.message;
+              vm.message = "";
+              ChatService.sendUserStoppedTyping(channelId)
+              .then(function() {
+                sendTypingRequest = false;
+              });
+
+              ChatService.sendMessage({
+                channelId: channelId,
+                message: JSON.stringify(messageToUser),
+              });
+            }
+          }
+        }
+      }
+
+      //This function tells the server if the user has currently started typing or stopped typing.
+      vm.sendUserIsTyping = function(event) {
+        if (event.key !== "Enter") {
           if (vm.message !== "") {
-            var messageToUser = vm.message;
-            vm.message = "";
-            ChatService.sendUserStoppedTyping(channelId)
-            .then(function() {
+            if (sendTypingRequest === false) {
+              sendTypingRequest = true;
+              ChatService.sendUserIsTyping(channelId)
+              .then(function(message) {
+                console.log("sent message");
+              });
+            }
+          }
+          else {
+            if (sendTypingRequest === true) {
               sendTypingRequest = false;
-            });
-
-            ChatService.sendMessage({
-              channelId: channelId,
-              message: JSON.stringify(messageToUser),
-            });
+              ChatService.sendUserStoppedTyping(channelId)
+              .then(function(message) {
+                console.log("the user stopped typing");
+              });
+            }
           }
         }
-      }
-    }
+      };
 
-    //This function tells the server if the user has currently started typing or stopped typing.
-    vm.sendUserIsTyping = function(event) {
-      if (event.key !== "Enter") {
-        if (vm.message !== "") {
-          if (sendTypingRequest === false) {
-            sendTypingRequest = true;
-            ChatService.sendUserIsTyping(channelId)
-            .then(function(message) {
-              console.log("sent message");
-            });
-          }
-        }
-        else {
-          if (sendTypingRequest === true) {
-            sendTypingRequest = false;
-            ChatService.sendUserStoppedTyping(channelId)
-            .then(function(message) {
-              console.log("the user stopped typing");
-            });
-          }
-        }
-      }
-    };
+      //Gets all the channels from the server
+      vm.getAllChannels = function(channelName) {
+        if (ChatService.channels) {
+          console.log(ChatService[ChatService.currentChannelIndex]);
 
-    //Gets all the channels from the server
-    vm.getAllChannels = function(channelName) {
-      if (ChatService.channels) {
-        console.log(ChatService[ChatService.currentChannelIndex]);
+          delete ChatService.channels[ChatService.currentChannelIndex].activeChannel;
 
-        delete ChatService.channels[ChatService.currentChannelIndex].activeChannel;
-
-        for (var i = 0;i<ChatService.channels.length;i++) {
-          if (ChatService.channels[i].chan_name === channelName) {
-            ChatService.channels[i].activeChannel = true;
-            ChatService.currentChannelIndex = i;
-            break;
-          }
-        }
-
-        vm.channels = ChatService.channels;
-        return;
-      }
-
-      ChatService.getAllChannels()
-      .then(function(res) {
-        if (res.data.response === "success") {
-          for (var i = 0;i<res.data.data.length;i++) {
-            if (res.data.data[i].chan_name === channelName) {
-              res.data.data[i].activeChannel = true;
+          for (var i = 0;i<ChatService.channels.length;i++) {
+            if (ChatService.channels[i].chan_name === channelName) {
+              ChatService.channels[i].activeChannel = true;
               ChatService.currentChannelIndex = i;
               break;
             }
           }
-          ChatService.channels = res.data.data;
-          vm.channels = res.data.data;
-        }
-      })
-      .catch(function(e) {
-        $state.go("chat-app");
-      })
-    };
 
-    //Goes to another channel
-    vm.goToAnotherChannel = function(channelName, $event) {
-      $event.preventDefault();
-      $state.go("chat-app.messages", {channelName: channelName});
-    };
-
-
-    $scope.$on("navClicked", function() {
-      vm.showDarkOverlay = true;
-
-      $("#channel-sidebar").animate({width: "200px"}, function() {
-      });
-    });
-
-    //Make new channel
-    vm.createNewChannel = function($event) {
-      swal({
-        title: "Create New Channel",
-        type: "input",
-        showCancelButton: true,
-        closeOnConfirm: false,
-        closeOnConfirm: false,
-        animation: "slide-from-top",
-        inputPlaceholder: "Channel Name",
-        showLoaderOnConfirm: true,
-      },
-      function(channelName, hey){
-        if (channelName === false) {
-          return false;
+          vm.channels = ChatService.channels;
+          return;
         }
 
-        ChatService.createNewChannel(channelName)
-        .then((res) => {
-          console.log("the repsonse is" + res.data.response);
+        ChatService.getAllChannels()
+        .then(function(res) {
           if (res.data.response === "success") {
-            swal({
-              title: "Success",
-              type: "success",
-              text: "You have successfully made your channel",
-              closeOnConfirm: true,
-            }, function() {
-              vm.getAllChannels($stateParams.channelName);
-            });
-          }
-        })
-        .catch((e) => {
-          var inputErrorArray = [];
-          e.data.data.forEach((val) => {
-
-            switch(val) {
-              case "tooLong":
-              if (inputErrorArray.length === 0) {
-                inputErrorArray.push("The channelName is too long");
-              }
-              else {
-                inputErrorArray.push("<br /> The channelName is too long");
-              }
-              break;
-              case "badName":
-              if (inputErrorArray.length === 0) {
-                inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
-              }
-              else {
-                inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
-              }
-              break;
-              case "channelExists":
-              if (inputErrorArray.length === 0) {
-                inputErrorArray.push("Channel Name already exists");
-              }
-              else {
-                inputErrorArray.push("<br /> Channel Name already exists");
-              }
-              break;
-              case "paramUndefined":
-              if (inputErrorArray.length === 0) {
-                inputErrorArray.push("Please input something");
-              }
-              else {
-                inputErrorArray.push("<br /> Please input something");
-              }
-              break;
-              default:
-              if (inputErrorArray.length === 0) {
-                inputErrorArray.push("Sorry, there was a server error");
-              }
-              else {
-                inputErrorArray.push("<br /> Sorry, there was a server error");
+            for (var i = 0;i<res.data.data.length;i++) {
+              if (res.data.data[i].chan_name === channelName) {
+                res.data.data[i].activeChannel = true;
+                ChatService.currentChannelIndex = i;
+                break;
               }
             }
-          });
-          swal.showInputError(inputErrorArray);
+            ChatService.channels = res.data.data;
+            vm.channels = res.data.data;
+          }
+        })
+        .catch(function(e) {
+          $state.go("chat-app");
+        })
+      };
+
+      //Goes to another channel
+      vm.goToAnotherChannel = function(channelName, $event) {
+        $event.preventDefault();
+        $state.go("chat-app.messages", {channelName: channelName});
+      };
+
+
+      $scope.$on("navClicked", function() {
+        vm.showDarkOverlay = true;
+
+        $("#channel-sidebar").animate({width: "200px"}, function() {
         });
       });
-    };
 
-    vm.logUserOut = function($event) {
-      $state.go("chat-app.signout");
-    };
+      //Make new channel
+      vm.createNewChannel = function($event) {
+        swal({
+          title: "Create New Channel",
+          type: "input",
+          showCancelButton: true,
+          closeOnConfirm: false,
+          closeOnConfirm: false,
+          animation: "slide-from-top",
+          inputPlaceholder: "Channel Name",
+          showLoaderOnConfirm: true,
+        },
+        function(channelName) {
+          //Kinda misleading but this means the user pressed the cancel button
+          if (channelName === false) {
+            return false;
+          }
 
+          ChatService.createNewChannel(channelName)
+          .then((res) => {
+            if (res.data.response === "success") {
+              swal({
+                title: "Success",
+                type: "success",
+                text: "You have successfully made your channel",
+                closeOnConfirm: true,
+              }, function() {
+                $scope.$apply(function() {
+                  vm.channels.push(res.data.data);
+                });
+              });
+            }
+          })
+          .catch((e) => {
+            var inputErrorArray = [];
+            e.data.data.forEach((val) => {
 
+              switch(val) {
+                case "tooLong":
+                if (inputErrorArray.length === 0) {
+                  inputErrorArray.push("The channelName is too long");
+                }
+                else {
+                  inputErrorArray.push("<br /> The channelName is too long");
+                }
+                break;
+                case "badName":
+                if (inputErrorArray.length === 0) {
+                  inputErrorArray.push("Channel Name should only include A-Z a-z 0-9 - _");
+                }
+                else {
+                  inputErrorArray.push("<br /> Channel Name should only include A-Z a-z 0-9 - _");
+                }
+                break;
+                case "channelExists":
+                if (inputErrorArray.length === 0) {
+                  inputErrorArray.push("Channel Name already exists");
+                }
+                else {
+                  inputErrorArray.push("<br /> Channel Name already exists");
+                }
+                break;
+                case "paramUndefined":
+                if (inputErrorArray.length === 0) {
+                  inputErrorArray.push("Please input something");
+                }
+                else {
+                  inputErrorArray.push("<br /> Please input something");
+                }
+                break;
+                default:
+                if (inputErrorArray.length === 0) {
+                  inputErrorArray.push("Sorry, there was a server error");
+                }
+                else {
+                  inputErrorArray.push("<br /> Sorry, there was a server error");
+                }
+              }
+            });
+            swal.showInputError(inputErrorArray);
+          });
+        });
+      };
 
-    //If the url contains /messages, then run described functions
-    if ($location.path().indexOf("/messages") !== -1) {
-      var channelName = $stateParams.channelName;
-
-      //Gets all the channels
-      vm.getAllChannels(channelName);
-
+      //Logs the user out
+      vm.logUserOut = function($event) {
+        $state.go("chat-app.signout");
+      };
 
       //When the window is resized, then the scrollbar will go to the bottom.
-      window.addEventListener("resize", function(event) {
-        messagePanel.stop().animate({
-          scrollTop: messagePanel[0].scrollHeight
-        }, 0);
-      });
+      vm.pushScrollbarToBottom = function() {
+        $window.addEventListener("resize", function(event) {
+          //Will make the scrollbar go to the bottom
+          messagePanel.stop().animate({
+            scrollTop: messagePanel[0].scrollHeight
+          }, 0);
+        });
+      };
 
-      $rootScope.channelName = channelName;
-      $rootScope.showFixedTopNav = true;
-
-      //Loads the chat messages
-      vm.loadChatMessages($stateParams.channelName);
-
-
-      document.addEventListener("click", function(event) {
-        if (vm.showDarkOverlay === true && event.pageX > 200) {
-          $("#channel-sidebar").animate({width: "0px"}, function() {
-            $scope.$apply(function(){
-              vm.showDarkOverlay = false;
+      //Listens for click events if the sidebar is toggled
+      vm.sidebarAnimateOnClick = function() {
+        $document.on("click", function(event) {
+          //If there is a dark overlay shown and the where the user clicked was bigger than 200
+          if (vm.showDarkOverlay === true && event.pageX > 200) {
+            $("#channel-sidebar").animate({width: "0px"}, function() {
+              //Used so showDarkOverlay will update
+              $scope.$apply(function(){
+                vm.showDarkOverlay = false;
+              });
             });
-
-          });
-        }
-      });
-
+          }
+        });
+      };
 
 
-      vm.loadUsersCurrentlyTyping();
-      //Loads the Users that are currently typing
 
+      //If the url contains /messages, then run described functions
+      if ($location.path().indexOf("/messages") !== -1) {
+        var channelName = $stateParams.channelName;
+        $rootScope.channelName = channelName;
+        $rootScope.showFixedTopNav = true;
+
+        //Tells the backend server that a new user has connected
+        socket.emit("newUser", Cookies.get("auth"))
+
+
+        //Gets all the channels
+        vm.getAllChannels(channelName);
+
+        //Loads the chat messages
+        vm.loadChatMessages($stateParams.channelName);
+
+        //Pushes the scrollbar to bottom on page resize
+        vm.pushScrollbarToBottom();
+
+        //Will make the width of the sidebar to 0 if sidebar is not collapsed and < 700px
+        vm.sidebarAnimateOnClick();
+
+        //Loads the Users that are currently typing
+        vm.loadUsersCurrentlyTyping();
+      }
     }
-  }
-}());
+  }());

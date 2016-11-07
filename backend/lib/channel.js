@@ -94,7 +94,8 @@ channel.insertChannelToDb = (channelName) => {
           }
           else {
             chat.userTypingMap[results.insertId] = new Set();
-            resolve();
+
+            resolve({chan_id: results.insertId, chan_name: channelName});
           }
         });
       }

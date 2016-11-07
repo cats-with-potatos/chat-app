@@ -22,8 +22,8 @@ channelRoutes.createNewChannel = (req, res) => { // TYPE: POST
   .then(() => {
     return channel.insertChannelToDb(channelName);
   })
-  .then(() => {
-    res.json({"response": "success"})
+  .then((insertedRow) => {
+    res.json({"response": "success", data: insertedRow})
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400;
