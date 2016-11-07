@@ -30117,6 +30117,7 @@ Some of the things this module takes care of:
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
+
       $rootScope.$applyAsync(function() {
         if (message.chan_id === channelId) {
           message.contents = JSON.parse(message.contents);
@@ -30134,6 +30135,7 @@ Some of the things this module takes care of:
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
+      console.log(user);
       $rootScope.$applyAsync(function() {
         if (user.channelId === channelId) {
           vm.userTypingArray.push(user);

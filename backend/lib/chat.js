@@ -246,7 +246,7 @@ chat.emitUserTyping = (obj) => {
                 return false;
               });
               usersInChannel.forEach((val) => {
-                console.log(clients[val].socket);
+
                 io.sockets.connected[clients[val].socket].emit(obj.eventname, {name: obj.name, id: Number(obj.userid), channelId: Number(obj.channelId)});
               });
 
@@ -296,7 +296,7 @@ chat.getNameFromId = (userid) => {
               reject("userDoesNotExist");
             }
             else {
-              resolve({name: data[0].username});
+              resolve(data[0].username);
             }
           }
         });
