@@ -30076,6 +30076,8 @@ Some of the things this module takes care of:
     //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
 
+    //Used to show and hide spinner at top
+    vm.showSpinner = false;
 
     vm.message = "";
 
@@ -30123,7 +30125,7 @@ Some of the things this module takes care of:
       $rootScope.$applyAsync(function() {
         if (user.channelId === channelId) {
           vm.userTypingArray.push(user);
-
+          //If one user is typing, set text to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 1) {
             vm.typeOfTyping = "is typing";
           }
@@ -30147,7 +30149,7 @@ Some of the things this module takes care of:
           }
 
           vm.userTypingArray.splice(index, 1);
-
+          //If no user is typing, set text to not, if length is 1, set to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 0) {
             vm.typeOfTyping = "";
           }
@@ -30163,8 +30165,8 @@ Some of the things this module takes care of:
 
     //This actually edits the current message
     vm.editMessageInput = function(event, messageId, messageIndex) {
-      console.log(event.target.value);
       if (event.key === "Enter" && event.shiftKey === false) {
+        //Prevents the Enter event
         event.preventDefault();
         ChatService.editMessage(
           {
@@ -30174,7 +30176,10 @@ Some of the things this module takes care of:
           })
           .then((res) => {
             if (res.data.response === "success") {
+              //Sets the contents of the updated message
               vm.messages[messageIndex].contents = event.target.value;
+
+              //Changes the message to not being edited
               delete vm.messages[messageIndex].gettingEdited;
             }
           });
@@ -30183,19 +30188,23 @@ Some of the things this module takes care of:
 
 
       vm.editMessage = function(messageId, messageIndex) {
+        //A textbox will be displayed with the message contents
         vm.messages[messageIndex].gettingEdited = true;
       }
 
       vm.deleteMessage = function(messageId, messageIndex) {
+        //A red background will appear showing that the message is in the process of being deleted
         vm.messages[messageIndex].gettingDeleted = true;
+
+
         ChatService.deleteMessage({messageId: messageId, channelId: channelId})
         .then(function(res) {
           if (res.data.response === "success") {
+            //Deletes message
             vm.messages.splice(messageIndex, 1);
           }
         });
       }
-
 
 
       //Get's all the initial messages from the specific channel from the server
@@ -30205,6 +30214,7 @@ Some of the things this module takes care of:
           vm.messages = messages;
           vm.messagesLoaded = true;
           setTimeout(function() {
+            //Scrollbar will go to bottom
             messagePanel.stop().animate({
               scrollTop: messagePanel[0].scrollHeight
             }, 200);
@@ -30223,7 +30233,6 @@ Some of the things this module takes care of:
             else if (res.data.data.length > 1) {
               vm.typeOfTyping = "are typing";
             }
-            console.log("res.data.data is: " + res.data.data);
             vm.userTypingArray = res.data.data;
           }
         })
@@ -30316,6 +30325,8 @@ Some of the things this module takes care of:
 
       //Goes to another channel
       vm.goToAnotherChannel = function(channelName, $event) {
+        vm.showSpinner = true;
+        document.querySelector("#user-sections").style.marginTop = "7px";
         $event.preventDefault();
         $state.go("chat-app.messages", {channelName: channelName});
       };

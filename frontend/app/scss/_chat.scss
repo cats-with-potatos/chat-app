@@ -361,8 +361,10 @@ h2, ul li a {
   font-weight: 700;
   font-size: 2.4em;
   color: #0097A7;
+  margin-top: 5px;
   margin-right: 10px;
   float: left;
+
 }
 
 #text-ellipsis {
@@ -545,7 +547,14 @@ h2, ul li a {
   margin-left: 5px;
 }
 
-
+#spinnerAtTop {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-top: 8px;
+  margin-left: 5px;
+  border-top-color: #0097A7;
+}
 
 
 //These styles are applied when the screen is bigger than 700 pixels

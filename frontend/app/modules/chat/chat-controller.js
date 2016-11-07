@@ -32,6 +32,8 @@ Some of the things this module takes care of:
     //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
 
+    //Used to show and hide spinner at top
+    vm.showSpinner = false;
 
     vm.message = "";
 
@@ -279,6 +281,8 @@ Some of the things this module takes care of:
 
       //Goes to another channel
       vm.goToAnotherChannel = function(channelName, $event) {
+        vm.showSpinner = true;
+        document.querySelector("#user-sections").style.marginTop = "7px";
         $event.preventDefault();
         $state.go("chat-app.messages", {channelName: channelName});
       };
