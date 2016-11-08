@@ -10,6 +10,9 @@
     vm.buttonDisabled = false;
     vm.checkbox = false;
 
+    $rootScope.channelName = "";
+
+
     //Function called when signing up
     vm.signup = function() {
       //Check to see if form input is not undefined

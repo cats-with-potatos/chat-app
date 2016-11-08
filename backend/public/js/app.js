@@ -30102,9 +30102,22 @@ Some of the things this module takes care of:
     });
 
 
+    //Listens for new messages in realtime and add's it to the vm.messages list
+    socket.on("userState", function(typeOfState) {
+      $rootScope.$applyAsync(function() {
+        if (typeOfState === "online") {
+          ChatService.userState = "online";
+          vm.userState = "online";
+        }
+      });
+    });
+
+
+
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
+
       $rootScope.$applyAsync(function() {
         if (message.chan_id === channelId) {
           message.contents = JSON.parse(message.contents);
@@ -30122,6 +30135,7 @@ Some of the things this module takes care of:
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
+      console.log(user);
       $rootScope.$applyAsync(function() {
         if (user.channelId === channelId) {
           vm.userTypingArray.push(user);
@@ -30166,6 +30180,8 @@ Some of the things this module takes care of:
     //This actually edits the current message
     vm.editMessageInput = function(event, messageId, messageIndex) {
       if (event.key === "Enter" && event.shiftKey === false) {
+        vm.showSpinner = true;
+
         //Prevents the Enter event
         event.preventDefault();
         ChatService.editMessage(
@@ -30176,6 +30192,8 @@ Some of the things this module takes care of:
           })
           .then((res) => {
             if (res.data.response === "success") {
+              vm.showSpinner = false;
+
               //Sets the contents of the updated message
               vm.messages[messageIndex].contents = event.target.value;
 
@@ -30195,11 +30213,15 @@ Some of the things this module takes care of:
       vm.deleteMessage = function(messageId, messageIndex) {
         //A red background will appear showing that the message is in the process of being deleted
         vm.messages[messageIndex].gettingDeleted = true;
+        vm.showSpinner = true;
+
 
 
         ChatService.deleteMessage({messageId: messageId, channelId: channelId})
         .then(function(res) {
           if (res.data.response === "success") {
+            vm.showSpinner = false;
+
             //Deletes message
             vm.messages.splice(messageIndex, 1);
           }
@@ -30325,8 +30347,10 @@ Some of the things this module takes care of:
 
       //Goes to another channel
       vm.goToAnotherChannel = function(channelName, $event) {
-        vm.showSpinner = true;
-        document.querySelector("#user-sections").style.marginTop = "7px";
+        if (channelName !== $stateParams.channelName) {
+          vm.showSpinner = true;
+        }
+
         $event.preventDefault();
         $state.go("chat-app.messages", {channelName: channelName});
       };
@@ -30425,6 +30449,7 @@ Some of the things this module takes care of:
 
       //Logs the user out
       vm.logUserOut = function($event) {
+        vm.showSpinner = true;
         $state.go("chat-app.signout");
       };
 
@@ -30462,7 +30487,13 @@ Some of the things this module takes care of:
         $rootScope.showFixedTopNav = true;
 
         //Tells the backend server that a new user has connected
-        socket.emit("newUser", Cookies.get("auth"))
+        socket.emit("newUser", Cookies.get("auth"));
+
+        //Gets the users state if they were previously on the website
+        if (ChatService.userState) {
+          vm.userState = ChatService.userState;
+        }
+
 
 
         //Gets all the channels
@@ -30725,6 +30756,9 @@ Some of the things this module takes care of:
     var vm = this;
     vm.buttonDisabled = false;
     vm.checkbox = false;
+
+    $rootScope.channelName = "";
+
 
     //Function called when signing up
     vm.signup = function() {
