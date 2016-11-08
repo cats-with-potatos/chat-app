@@ -67,7 +67,13 @@
           return defer.promise;
         }]
       }
-    });
+    }).state("chat-app.pm", {
+      url: '/privatemessage/:username',
+      templateUrl: 'sample-3.html',
+      controller: 'SampleController',
+      controllerAs: 'vm'
+    })
+
   }
 
 }())
