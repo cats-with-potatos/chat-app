@@ -94,12 +94,12 @@ width: 75%;
 
       <div id="channel-list">
         <ul>
-          <li ng-repeat="channel in vm.channels.slice(0,4)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
+          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
           <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
         </ul>
       </div>
       <div id="private-messages">
-        <h1 class="text-center">Private Messages</h1>
+        <h2 class="text-center">Private Messages <span id="numOfUsers">(3)</span></h2>
         <ul>
           <li><a href="#">Message 2</a></li>
           <li><a href="#">Message 3</a></li>

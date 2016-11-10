@@ -340,8 +340,9 @@ ul {
     }
   }
 
-  h1 {
-    font-size: 1.75em;
+  h2 {
+    font-size: 18px;
+    color: #FFF;
   }
 }
 
@@ -567,11 +568,17 @@ ul {
   font-size:20px;
 }
 
+
+
 #numOfChannels {
   font-size: 12px;
   font-weight: lighter;
   color: $silver;
   margin-left: 5px;
+}
+
+#numOfUsers {
+  @extend #numOfChannels;
 }
 
 #spinnerAtTop {
@@ -586,6 +593,7 @@ ul {
 .lowerMarginTop {
   margin-top: 7px !important;
 }
+
 
 
 //These styles are applied when the screen is bigger than 700 pixels

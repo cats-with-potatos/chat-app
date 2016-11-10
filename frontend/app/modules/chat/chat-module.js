@@ -14,7 +14,7 @@
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        channelId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -67,13 +67,44 @@
           return defer.promise;
         }]
       }
-    }).state("chat-app.pm", {
-      url: '/privatemessage/:username',
-      templateUrl: 'sample-3.html',
-      controller: 'SampleController',
-      controllerAs: 'vm'
-    })
+    }).state("chat-app.privatemessages", {
+      url: '/privatemessages/:username',
+      templateUrl: 'messages.html',
+      controller: 'ChatController',
+      controllerAs: 'vm',
+      resolve: {
 
+    /*
+    Checks if the user is logged in. If they are,
+    then check if the user exists, then go to page,
+    otherwise go to home page
+    */
+
+    channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+      var defer = $q.defer();
+      SecurityService.checkUserLoggedIn()
+      .then(function(res) {
+        if (res.data.response === "success") {
+          return ChatService.checkUserExists($stateParams.username)
+        }
+        else {
+          $state.go("chat-app");
+        }
+      })
+      .then(function(res) {
+        if (res.data.response === "success") {
+          defer.resolve(res.data.data.id);
+        }
+        else {
+          $state.go("chat-app");
+        }
+      })
+      .catch(function(e) {
+          $state.go("chat-app");
+      });
+      return defer.promise;
+    }]
+      }
+    });
   }
-
-}())
+}());

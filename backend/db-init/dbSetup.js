@@ -28,7 +28,17 @@ const uic_create_query = `CREATE TABLE IF NOT EXISTS UserInChannel (
   inchan_channel_id TINYINT UNSIGNED NOT NULL,
   PRIMARY KEY (inchan_id));`;
 
-const createTableArray = [ut_create_query, ct_create_query, mt_create_query, uic_create_query];
+const pm_create_query =   `CREATE TABLE IF NOT EXISTS PrivateMessages (
+  pm_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  pm_from TINYINT UNSIGNED NOT NULL,
+  pm_to TINYINT UNSIGNED NOT NULL,
+  pm_message VARCHAR(256) NOT NULL,
+  pm_date DATETIME NOT NULL,
+  PRIMARY KEY (pm_id)
+)`
+
+
+const createTableArray = [ut_create_query, ct_create_query, mt_create_query, uic_create_query, pm_create_query];
 
 
 

@@ -29856,7 +29856,7 @@ $provide.value("$locale", {
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        channelId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -29909,12 +29909,49 @@ $provide.value("$locale", {
           return defer.promise;
         }]
       }
+    }).state("chat-app.privatemessages", {
+      url: '/privatemessages/:username',
+      templateUrl: 'messages.html',
+      controller: 'ChatController',
+      controllerAs: 'vm',
+      resolve: {
+
+    /*
+    Checks if the user is logged in. If they are,
+    then check if the user exists, then go to page,
+    otherwise go to home page
+    */
+
+    channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+      var defer = $q.defer();
+      SecurityService.checkUserLoggedIn()
+      .then(function(res) {
+        if (res.data.response === "success") {
+          return ChatService.checkUserExists($stateParams.username)
+        }
+        else {
+          $state.go("chat-app");
+        }
+      })
+      .then(function(res) {
+        if (res.data.response === "success") {
+          defer.resolve(res.data.data.id);
+        }
+        else {
+          $state.go("chat-app");
+        }
+      })
+      .catch(function(e) {
+          $state.go("chat-app");
+      });
+      return defer.promise;
+    }]
+      }
     });
   }
+}());
 
-}())
-
-;(function() {
+(function() {
   'use strict';
   angular
     .module('chat-app.sample', [])
@@ -30057,9 +30094,9 @@ Some of the things this module takes care of:
   'use strict';
   angular
   .module('chat-app.chat')
-  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelId', '$q', '$scope', '$window', '$document' , Controller]);
+  .controller('ChatController', ['$rootScope', '$location', '$stateParams', '$state', 'ChatService', 'channelOrUserId', '$q', '$scope', '$window', '$document' , Controller]);
 
-  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelId, $q, $scope, $window, $document) {
+  function Controller($rootScope, $location, $stateParams, $state, ChatService, channelOrUserId, $q, $scope, $window, $document) {
     var vm = this;
 
     //This is where we will store the users that are currently typing
@@ -30119,7 +30156,7 @@ Some of the things this module takes care of:
     socket.on("newChannelMessage", function(message) {
 
       $rootScope.$applyAsync(function() {
-        if (message.chan_id === channelId) {
+        if (message.chan_id === channelOrUserId) {
           message.contents = JSON.parse(message.contents);
           vm.messages.push(message);
 
@@ -30137,7 +30174,7 @@ Some of the things this module takes care of:
     socket.on("userIsTyping", function(user) {
       console.log(user);
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelId) {
+        if (user.channelId === channelOrUserId) {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 1) {
@@ -30153,7 +30190,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelId) {
+        if (user.channelId === channelOrUserId) {
           let index = -1;
 
           for (let i = 0;i<vm.userTypingArray.length;i++) {
@@ -30187,7 +30224,7 @@ Some of the things this module takes care of:
         ChatService.editMessage(
           {
             messageId: messageId,
-            channelId: channelId,
+            channelId: channelOrUserId,
             contents: event.target.value
           })
           .then((res) => {
@@ -30217,7 +30254,7 @@ Some of the things this module takes care of:
 
 
 
-        ChatService.deleteMessage({messageId: messageId, channelId: channelId})
+        ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId})
         .then(function(res) {
           if (res.data.response === "success") {
             vm.showSpinner = false;
@@ -30246,7 +30283,7 @@ Some of the things this module takes care of:
 
       //Get's all the initial users that are currently typing
       vm.loadUsersCurrentlyTyping = function() {
-        ChatService.getUsersCurrentlyTyping(channelId)
+        ChatService.getUsersCurrentlyTyping(channelOrUserId)
         .then(function(res) {
           if (res.data.data.length >= 1) {
             if (res.data.data.length === 1) {
@@ -30269,13 +30306,13 @@ Some of the things this module takes care of:
             if (vm.message !== "") {
               var messageToUser = vm.message;
               vm.message = "";
-              ChatService.sendUserStoppedTyping(channelId)
+              ChatService.sendUserStoppedTyping(channelOrUserId)
               .then(function() {
                 sendTypingRequest = false;
               });
 
               ChatService.sendMessage({
-                channelId: channelId,
+                channelId: channelOrUserId,
                 message: JSON.stringify(messageToUser),
               });
             }
@@ -30289,7 +30326,7 @@ Some of the things this module takes care of:
           if (vm.message !== "") {
             if (sendTypingRequest === false) {
               sendTypingRequest = true;
-              ChatService.sendUserIsTyping(channelId)
+              ChatService.sendUserIsTyping(channelOrUserId)
               .then(function(message) {
                 console.log("sent message");
               });
@@ -30298,7 +30335,7 @@ Some of the things this module takes care of:
           else {
             if (sendTypingRequest === true) {
               sendTypingRequest = false;
-              ChatService.sendUserStoppedTyping(channelId)
+              ChatService.sendUserStoppedTyping(channelOrUserId)
               .then(function(message) {
                 console.log("the user stopped typing");
               });
@@ -30480,36 +30517,42 @@ Some of the things this module takes care of:
 
 
 
+      //Gets the users state if they were previously on the website
+      if (ChatService.userState) {
+        vm.userState = ChatService.userState;
+      }
+
+      //Pushes the scrollbar to bottom on page resize
+      vm.pushScrollbarToBottom();
+
+      //Will make the width of the sidebar to 0 if sidebar is not collapsed and < 700px
+      vm.sidebarAnimateOnClick();
+
+      //Gets all the channels
+      vm.getAllChannels(channelName);
+
+      //Gets all users
+      //vm.getAllUsers(ChatService.userState.);
+
+
       //If the url contains /messages, then run described functions
-      if ($location.path().indexOf("/messages") !== -1) {
+      if ($location.path().indexOf("/messages") === 0) {
         var channelName = $stateParams.channelName;
         $rootScope.channelName = channelName;
         $rootScope.showFixedTopNav = true;
 
-        //Tells the backend server that a new user has connected
-        socket.emit("newUser", Cookies.get("auth"));
-
-        //Gets the users state if they were previously on the website
-        if (ChatService.userState) {
-          vm.userState = ChatService.userState;
-        }
-
-
-
-        //Gets all the channels
-        vm.getAllChannels(channelName);
-
         //Loads the chat messages
         vm.loadChatMessages($stateParams.channelName);
 
-        //Pushes the scrollbar to bottom on page resize
-        vm.pushScrollbarToBottom();
-
-        //Will make the width of the sidebar to 0 if sidebar is not collapsed and < 700px
-        vm.sidebarAnimateOnClick();
-
         //Loads the Users that are currently typing
         vm.loadUsersCurrentlyTyping();
+      }
+      else if ($location.path().indexOf("/privatemessages") === 0) {
+        $rootScope.showFixedTopNav = true;
+        $rootScope.channelName = $stateParams.username;
+
+
+
       }
     }
   }());
@@ -30651,7 +30694,6 @@ Some of the things this module takes care of:
       };
 
       service.editMessage = function(obj) {
-
         return $http({
           method: "PUT",
           url: "/api/updateMessage",
@@ -30661,7 +30703,17 @@ Some of the things this module takes care of:
             'Content-Type': "application/x-www-form-urlencoded",
           },
         });
-      }
+      };
+
+      service.checkUserExists = function(username) {
+        return $http({
+          method: "GET",
+          url: "/api/checkUserExists?username=" + username,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
 
       return service;
     }
@@ -48037,6 +48089,10 @@ if (typeof jQuery === 'undefined') {
         SecurityService.checkUserLoggedIn()
         .then(function(res) {
           if (res.data.response === "success") {
+            //Tells the backend server that a new user has connected
+            socket.emit("newUser", Cookies.get("auth"));
+
+
             $rootScope.username = res.data.data.username;
             $rootScope.userid = res.data.data.id;
             $rootScope.loggedIn = true;

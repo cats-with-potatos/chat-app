@@ -41,6 +41,10 @@
         SecurityService.checkUserLoggedIn()
         .then(function(res) {
           if (res.data.response === "success") {
+            //Tells the backend server that a new user has connected
+            socket.emit("newUser", Cookies.get("auth"));
+
+
             $rootScope.username = res.data.data.username;
             $rootScope.userid = res.data.data.id;
             $rootScope.loggedIn = true;

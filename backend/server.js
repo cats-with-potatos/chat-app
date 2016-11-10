@@ -13,6 +13,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use('/api', router);
 
+//User Routes
+console.log(routes.userRoutes.checkUserExists);
+console.log(routes.userRoutes.getFiveUsers);
+console.log(routes.userRoutes.getAllUsers);
+
+router.get("/checkUserExists", middleware.checkToken, routes.userRoutes.checkUserExists);
+router.get("/getFiveUsers", middleware.checkToken, routes.userRoutes.getFiveUsers);
+router.get("/getAllUsers", middleware.checkToken, routes.userRoutes.getAllUsers);
+
 //Auth Routes
 router.post("/signup", routes.authRoutes.signup);
 router.post("/signin", routes.authRoutes.signin);

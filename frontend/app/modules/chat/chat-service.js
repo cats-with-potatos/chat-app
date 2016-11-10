@@ -135,7 +135,6 @@
       };
 
       service.editMessage = function(obj) {
-
         return $http({
           method: "PUT",
           url: "/api/updateMessage",
@@ -145,7 +144,17 @@
             'Content-Type': "application/x-www-form-urlencoded",
           },
         });
-      }
+      };
+
+      service.checkUserExists = function(username) {
+        return $http({
+          method: "GET",
+          url: "/api/checkUserExists?username=" + username,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
 
       return service;
     }
