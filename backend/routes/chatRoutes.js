@@ -325,4 +325,50 @@ chatRoutes.deleteMessage = (req, res) => {
   });
 };
 
+chatRoutes.sendPrivateMessage = (req, res) => {
+  const userid = req.decoded.id;
+  const messageTo = Number(req.body.messageTo);
+  const message = req.body.message;
+
+  if (chat.checkParamError({
+    messageTo: messageTo,
+    message: message,
+    userid: userid,
+  })) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+  chat.checkPMIdExists(messageTo)
+  .then(() => {
+    return chat.insertPrivateMessageToDb({
+      userid: userid,
+      messageTo: messageTo,
+      message: message,
+    });
+  })
+  .then(() => {
+    return chat.sendPMToUser({
+      userid: userid,
+      messageTo: messageTo,
+      message: message,
+    });
+  })
+  .then(() => {
+    res.status(200).json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(e).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+
+};
+
 module.exports = chatRoutes;

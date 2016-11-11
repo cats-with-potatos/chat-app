@@ -1,10 +1,28 @@
 (function() {
   angular
   .module('chat-app.chat')
-  .service('ChatService', ['$http', Service]);
+  .service('ChatService', ['$http', '$rootScope', Service]);
 
-  function Service($http) {
+  function Service($http, $rootScope) {
     var service = this;
+
+    var lastState = null;
+    var currentState = null;
+
+    $rootScope.$on('$stateChangeSuccess',
+    function(event, toState, toParams, fromState, fromParams){
+      lastState = fromState.name;
+      currentState = toState.name;
+    });
+
+    service.getLastState = function() {
+      return lastState;
+    };
+
+
+    service.getCurrentState = function() {
+      return currentState;
+    };
 
     //This will get all messages from the specific channel from the server
     service.getChatMessages = function(channel) {
@@ -27,6 +45,7 @@
           return messagesArray; // Returns data in an array
         })
       };
+
 
       //Sends a message to the server.
       service.sendMessage = function(data) {
@@ -156,6 +175,49 @@
         });
       };
 
+      service.getAllUsers = function() {
+        return $http({
+          method: "GET",
+          url: "/api/getAllUsers",
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
+      service.findNewActive = function(currentState, newParam) {
+        if (currentState === "chat-app.messages") {
+          for (var i = 0;i<service.channels.length;i++) {
+            if (service.channels[i].chan_name === newParam) {
+              service.channels[i].activeChannel = true;
+              service.currentChannelIndex = i;
+              return;
+            }
+          }
+        }
+        else {
+
+          for (var i = 0;i<service.users.length;i++) {
+            if (service.users[i].username === newParam) {
+              service.users[i].activeUser = true;
+              service.currentUserIndex = i;
+              return;
+            }
+          }
+        }
+      };
+
+      service.deleteActive = function(chanOrPm, newParam, currentState) {
+        if (chanOrPm === "chan") {
+          delete service.channels[service.currentChannelIndex].activeChannel;
+          service.findNewActive(currentState, newParam);
+          return;
+        }
+
+        delete service.users[service.currentUserIndex].activeUser;
+        service.findNewActive(currentState, newParam);
+        return;
+      };
       return service;
     }
   })();

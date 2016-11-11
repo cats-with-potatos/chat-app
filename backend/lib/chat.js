@@ -459,5 +459,104 @@ chat.deleteMessage = (obj) => {
   });
 };
 
+//Inserted the private message in to the db
+chat.insertPrivateMessageToDb = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+
+//Checks to see if there are any problems with the private message being sent to the user
+chat.checkParamError = (obj) => {
+  if (!obj.messageTo || !obj.message || obj.userid === obj.messageTo) {
+    return "paramError";
+  }
+
+
+  //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
+  try {
+    if (JSON.parse(obj.message).length > 100) {
+      return "messageTooLong";
+    }
+  }
+  catch(e) {
+    return "paramError";
+  }
+  return null;
+};
+
+//Sends a private message to the user
+
+chat.sendPMToUser = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT username FROM UserTable WHERE user_id = ?", [obj.userid], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (clients[obj.messageTo]) {
+              obj.username = data[0].username;
+              io.sockets.connected[clients[obj.messageTo].socket].emit("newPrivateMessage", obj);
+            }
+            resolve();
+          }
+        })
+      }
+    });
+  });
+};
+
+//Checks if the messageTo id exists
+chat.checkPMIdExists = (messageTo) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT user_id FROM UserTable WHERE user_id = ?", [messageTo], (err, data) => {
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("userDoesNotExist");
+            }
+            else {
+              resolve();
+            }
+          }
+        });
+      }
+    });
+
+  });
+};
+
+
+
+
 
 module.exports = chat;

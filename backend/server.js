@@ -14,10 +14,6 @@ app.use(bodyParser.json())
 app.use('/api', router);
 
 //User Routes
-console.log(routes.userRoutes.checkUserExists);
-console.log(routes.userRoutes.getFiveUsers);
-console.log(routes.userRoutes.getAllUsers);
-
 router.get("/checkUserExists", middleware.checkToken, routes.userRoutes.checkUserExists);
 router.get("/getFiveUsers", middleware.checkToken, routes.userRoutes.getFiveUsers);
 router.get("/getAllUsers", middleware.checkToken, routes.userRoutes.getAllUsers);
@@ -32,9 +28,12 @@ router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
 router.get("/getIntialUsersTyping", middleware.checkToken, routes.chatRoutes.getIntialUsersTyping)
 
+
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
 router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
 router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
+router.post("/sendPrivateMessage", middleware.checkToken, routes.chatRoutes.sendPrivateMessage);
+
 
 router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
 router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage)

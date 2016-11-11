@@ -37,7 +37,7 @@ user.getAllUsers = (userid) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT * FROM UserTable WHERE user_id != ? ", [userid], (err, data) => {
+        mclient.query("SELECT user_id, username FROM UserTable WHERE user_id != ? ", [userid], (err, data) => {
           if (err) {
             reject("serverError");
           }

@@ -28,6 +28,9 @@ Some of the things this module takes care of:
     vm.messages = [];
     vm.messagesLoaded = false;
 
+    //This is where the users are stored
+    vm.users = [];
+
 
     //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
@@ -45,10 +48,16 @@ Some of the things this module takes care of:
 
     var messagePanel = $("#messagePanel");
 
+    //Will keep track of the previous states
+    var history = [];
+
     /*This is used to tell the server that the user has stopped typing
     if the user goes to another url on the web app. */
     $rootScope.$on('$stateChangeSuccess',
     function(event, toState, toParams, fromState, fromParams){
+
+      history.push(fromState.name);
+
       if (vm.message) {
         ChatService.sendUserStoppedTyping()
         .then(function(message) {
@@ -265,40 +274,25 @@ Some of the things this module takes care of:
 
       //Gets all the channels from the server
       vm.getAllChannels = function(channelName) {
-        if (ChatService.channels) {
-          console.log(ChatService[ChatService.currentChannelIndex]);
-
-          delete ChatService.channels[ChatService.currentChannelIndex].activeChannel;
-
-          for (var i = 0;i<ChatService.channels.length;i++) {
-            if (ChatService.channels[i].chan_name === channelName) {
-              ChatService.channels[i].activeChannel = true;
-              ChatService.currentChannelIndex = i;
-              break;
-            }
-          }
-
-          vm.channels = ChatService.channels;
-          return;
-        }
-
-        ChatService.getAllChannels()
-        .then(function(res) {
-          if (res.data.response === "success") {
-            for (var i = 0;i<res.data.data.length;i++) {
-              if (res.data.data[i].chan_name === channelName) {
-                res.data.data[i].activeChannel = true;
-                ChatService.currentChannelIndex = i;
-                break;
+        if (!ChatService.channels) {
+          ChatService.getAllChannels()
+          .then(function(res) {
+            if (res.data.response === "success") {
+              for (var i = 0;i<res.data.data.length;i++) {
+                if (res.data.data[i].chan_name === channelName) {
+                  res.data.data[i].activeChannel = true;
+                  ChatService.currentChannelIndex = i;
+                  break;
+                }
               }
+              ChatService.channels = res.data.data;
+              vm.channels = res.data.data;
             }
-            ChatService.channels = res.data.data;
-            vm.channels = res.data.data;
-          }
-        })
-        .catch(function(e) {
-          $state.go("chat-app");
-        })
+          })
+          .catch(function(e) {
+            $state.go("chat-app");
+          });
+        }
       };
 
       //Goes to another channel
@@ -434,7 +428,63 @@ Some of the things this module takes care of:
         });
       };
 
+      vm.goToPrivateMessage = function(user_id, username, event) {
+        $state.go("chat-app.privatemessages", {username: username});
+      }
 
+      vm.getAllUsers = function() {
+        if (!ChatService.users) {
+          //Gets all users
+          ChatService.getAllUsers()
+          .then(function(res) {
+            if (res.data.response === "success") {
+
+              for (var i = 0;i<res.data.data.length;i++) {
+                if (res.data.data[i].username === $stateParams.username) {
+                  res.data.data[i].activeUser = true;
+                  ChatService.currentUserIndex = i;
+                }
+              }
+
+              vm.users = res.data.data;
+              ChatService.users = res.data.data;
+            }
+          });
+        }
+      };
+
+      vm.refreshSidebarContent = function() {
+        if (ChatService.channels && ChatService.users) {
+          var currentState = ChatService.getCurrentState();
+          var previousState = ChatService.getLastState();
+          var chanOrPm;
+          var newParam;
+
+
+          if (previousState === "chat-app.messages") {
+            chanOrPm = "chan"
+          }
+          else {
+            chanOrPm = "pm";
+          }
+
+          if (currentState === "chat-app.messages") {
+            newParam = $stateParams.channelName;
+          }
+          else {
+            newParam = $stateParams.username;
+          }
+
+          ChatService.deleteActive(chanOrPm, newParam, currentState);
+          vm.users = ChatService.users;
+          vm.channels = ChatService.channels;
+        }
+      };
+
+
+
+
+      $rootScope.showFixedTopNav = true;
 
       //Gets the users state if they were previously on the website
       if (ChatService.userState) {
@@ -448,17 +498,22 @@ Some of the things this module takes care of:
       vm.sidebarAnimateOnClick();
 
       //Gets all the channels
-      vm.getAllChannels(channelName);
+      vm.getAllChannels($stateParams.channelName);
 
-      //Gets all users
-      //vm.getAllUsers(ChatService.userState.);
+
+      //Gets all the users
+      vm.getAllUsers();
+
+
+      //Refreshes the sidebar content
+      vm.refreshSidebarContent();
+
 
 
       //If the url contains /messages, then run described functions
       if ($location.path().indexOf("/messages") === 0) {
         var channelName = $stateParams.channelName;
         $rootScope.channelName = channelName;
-        $rootScope.showFixedTopNav = true;
 
         //Loads the chat messages
         vm.loadChatMessages($stateParams.channelName);
@@ -467,7 +522,6 @@ Some of the things this module takes care of:
         vm.loadUsersCurrentlyTyping();
       }
       else if ($location.path().indexOf("/privatemessages") === 0) {
-        $rootScope.showFixedTopNav = true;
         $rootScope.channelName = $stateParams.username;
 
 
