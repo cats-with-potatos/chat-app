@@ -185,6 +185,31 @@
         });
       };
 
+
+      service.sendPrivateMessage = function(obj) {
+        return $http({
+          method: "POST",
+          url: "/api/sendPrivateMessage",
+          data: $.param({messageTo: obj.messageTo, message: JSON.stringify(obj.message)}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
+      service.getPrivateMessages = function(userToId) {
+        return $http({
+          method: "GET",
+          url: "/api/getPrivateMessages?userTo=" + userToId,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
+
+
       service.findNewActive = function(currentState, newParam) {
         if (currentState === "chat-app.messages") {
           for (var i = 0;i<service.channels.length;i++) {

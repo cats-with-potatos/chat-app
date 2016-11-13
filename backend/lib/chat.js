@@ -467,7 +467,7 @@ chat.insertPrivateMessageToDb = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -516,9 +516,23 @@ chat.sendPMToUser = (obj) => {
             reject("serverError");
           }
           else {
+            obj.username = data[0].username;
+            obj.contents = obj.message;
+            delete obj.message;
+
+
+            console.log("messageTo is: " + obj.messageTo);
+            console.log("clients is");
+            console.log(clients);
+
             if (clients[obj.messageTo]) {
-              obj.username = data[0].username;
+              console.log("I have emitted to : " + obj.messageTo);
               io.sockets.connected[clients[obj.messageTo].socket].emit("newPrivateMessage", obj);
+            }
+            console.log(obj.userid);
+            if (clients[obj.userid]) {
+              console.log("I am sending the message to : " + obj.userid);
+              io.sockets.connected[clients[obj.userid].socket].emit("newPrivateMessage", obj);
             }
             resolve();
           }
@@ -537,6 +551,7 @@ chat.checkPMIdExists = (messageTo) => {
       }
       else {
         mclient.query("SELECT user_id FROM UserTable WHERE user_id = ?", [messageTo], (err, data) => {
+          mclient.release();
           if (err) {
             reject("serverError");
           }
@@ -555,8 +570,26 @@ chat.checkPMIdExists = (messageTo) => {
   });
 };
 
-
-
-
+//Gets the private messages
+chat.getPrivateMessages = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_message AS contents, UserTable.username FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject('serverError');
+          }
+          else {
+            resolve(data);
+          }
+        });
+      }
+    });
+  });
+};
 
 module.exports = chat;

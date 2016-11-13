@@ -179,12 +179,12 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   })
   .then(() => {
     //Check to see if the user is already not typing and return error
-  if (chat.userIsNotTyping({
-    userid: userid,
-    channelId: channelId,
-  })) {
-    throw new Error("alreadyNotTyping");
-  }
+    if (chat.userIsNotTyping({
+      userid: userid,
+      channelId: channelId,
+    })) {
+      throw new Error("alreadyNotTyping");
+    }
     chat.deleteUserFromMap({
       userid: userid,
       channelId: channelId,
@@ -244,7 +244,7 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
 };
 
 //This route will update a message
-chatRoutes.updateMessage = (req, res) => {
+chatRoutes.updateMessage = (req, res) => { // TYPE: PUT
   const userid = req.decoded.id;
   const messageId = Number(req.body.messageId);
   const channelId = Number(req.body.channelId);
@@ -286,7 +286,7 @@ chatRoutes.updateMessage = (req, res) => {
 };
 
 //This route will delete a message.
-chatRoutes.deleteMessage = (req, res) => {
+chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
   const userid = req.decoded.id;
   const messageId = Number(req.query.messageId);
   const channelId = Number(req.query.channelId);
@@ -325,7 +325,8 @@ chatRoutes.deleteMessage = (req, res) => {
   });
 };
 
-chatRoutes.sendPrivateMessage = (req, res) => {
+//Sends a private message
+chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
   const messageTo = Number(req.body.messageTo);
   const message = req.body.message;
@@ -362,13 +363,48 @@ chatRoutes.sendPrivateMessage = (req, res) => {
     });
   })
   .catch((e) => {
+    console.log(e);
     const status = e === "serverError" ? 500 : 400;
-    res.status(e).json({
+    res.status(status).json({
       "response": "error",
       "errorType": e,
     });
   });
+};
 
+//This route will get all messages between the user and another person
+chatRoutes.getPrivateMessages = (req, res) => { // TYPE: GET
+  const userid = req.decoded.id;
+  const userTo = Number(req.query.userTo);
+
+  if (!userTo || userid === userTo) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+  chat.checkPMIdExists(userTo)
+  .then(() => {
+    return chat.getPrivateMessages({
+      userid: userid,
+      userTo: userTo,
+    });
+  })
+  .then(function(messages) {
+    res.json({
+      "response": "success",
+      "data": messages,
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
 };
 
 module.exports = chatRoutes;

@@ -26,7 +26,8 @@ router.get("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkU
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
-router.get("/getIntialUsersTyping", middleware.checkToken, routes.chatRoutes.getIntialUsersTyping)
+router.get("/getPrivateMessages", middleware.checkToken, routes.chatRoutes.getPrivateMessages);
+router.get("/getIntialUsersTyping", middleware.checkToken, routes.chatRoutes.getIntialUsersTyping);
 
 
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
@@ -36,7 +37,7 @@ router.post("/sendPrivateMessage", middleware.checkToken, routes.chatRoutes.send
 
 
 router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
-router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage)
+router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage);
 
 
 //Channel Routes

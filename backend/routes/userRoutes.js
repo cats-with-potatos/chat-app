@@ -38,6 +38,16 @@ userRoutes.checkUserExists = (req, res) => { // TYPE: GET
 //Thirdly goes to offline users recently chatted to.
 
 userRoutes.getFiveUsers = (req, res) => { // TYPE: GET
+  const userid = req.decoded.id;
+
+  if (!userid) {
+    res.status(400).json({
+      "response": "erorr",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
   res.json({"response": "success", "data": "hey"});
 };
 

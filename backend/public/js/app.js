@@ -30179,6 +30179,26 @@ Some of the things this module takes care of:
       });
     });
 
+    //Listens for new private messages in realtime and add's it to the vm.messages list
+    socket.on("newPrivateMessage", function(message) {
+      $rootScope.$applyAsync(function() {
+        console.log("I HAVE PUSHEDO");
+        message.contents = JSON.parse(message.contents);
+        vm.messages.push(message);
+
+        if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
+          messagePanel.stop().animate({
+            scrollTop: messagePanel[0].scrollHeight
+          }, 200);
+        }
+        //2 joedaoud, after the message has been sent, an event will be emitted to the server
+        //you need to make a new array eg. vm. = []
+        //then push the message to the array. then
+
+      });
+    });
+
+
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
       console.log(user);
@@ -30200,9 +30220,9 @@ Some of the things this module takes care of:
     socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
         if (user.channelId === channelOrUserId) {
-          let index = -1;
+          var index = -1;
 
-          for (let i = 0;i<vm.userTypingArray.length;i++) {
+          for (var i = 0;i<vm.userTypingArray.length;i++) {
             if (vm.userTypingArray[i].userid === user.userid) {
               index = i;
             }
@@ -30236,7 +30256,7 @@ Some of the things this module takes care of:
             channelId: channelOrUserId,
             contents: event.target.value
           })
-          .then((res) => {
+          .then(function(res) {
             if (res.data.response === "success") {
               vm.showSpinner = false;
 
@@ -30308,49 +30328,72 @@ Some of the things this module takes care of:
 
       //Listens on keyup events and if the key is enter, then send the message to the server
       vm.sendMessage = function(event) {
-        //If only enter key is pressed
+        var currentState = ChatService.getCurrentState();
         if (event.key === "Enter") {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
-            if (vm.message !== "") {
+            if (currentState === "chat-app.privatemessages") {
               var messageToUser = vm.message;
               vm.message = "";
-              ChatService.sendUserStoppedTyping(channelOrUserId)
-              .then(function() {
-                sendTypingRequest = false;
-              });
+              ChatService.sendPrivateMessage({
+                messageTo: channelOrUserId,
+                message: messageToUser,
+              })
+              .then(function(res) {
+                $("#messageBox").focus();
+              })
+            }
+            else {
+              //If only enter key is pressed
+              event.preventDefault();
+              if (vm.message !== "") {
+                var messageToUser = vm.message;
+                vm.message = "";
+                ChatService.sendUserStoppedTyping(channelOrUserId)
+                .then(function() {
+                  sendTypingRequest = false;
+                });
 
-              ChatService.sendMessage({
-                channelId: channelOrUserId,
-                message: JSON.stringify(messageToUser),
-              });
+                ChatService.sendMessage({
+                  channelId: channelOrUserId,
+                  message: JSON.stringify(messageToUser),
+                });
+              }
             }
           }
+
         }
       }
 
       //This function tells the server if the user has currently started typing or stopped typing.
       vm.sendUserIsTyping = function(event) {
-        if (event.key !== "Enter") {
-          if (vm.message !== "") {
-            if (sendTypingRequest === false) {
-              sendTypingRequest = true;
-              ChatService.sendUserIsTyping(channelOrUserId)
-              .then(function(message) {
-                console.log("sent message");
-              });
-            }
-          }
-          else {
-            if (sendTypingRequest === true) {
-              sendTypingRequest = false;
-              ChatService.sendUserStoppedTyping(channelOrUserId)
-              .then(function(message) {
-                console.log("the user stopped typing");
-              });
-            }
-          }
+        var currentState = ChatService.getCurrentState();
+
+        if (currentState === "chat-app.privatemessages") {
+          //leave this for now
         }
+        else {
+          if (event.key !== "Enter") {
+              if (vm.message !== "") {
+                if (sendTypingRequest === false) {
+                  sendTypingRequest = true;
+                  ChatService.sendUserIsTyping(channelOrUserId)
+                  .then(function(message) {
+                    console.log("sent message");
+                  });
+                }
+              }
+              else {
+                if (sendTypingRequest === true) {
+                  sendTypingRequest = false;
+                  ChatService.sendUserStoppedTyping(channelOrUserId)
+                  .then(function(message) {
+                    console.log("the user stopped typing");
+                  });
+                }
+              }
+            }
+          }
       };
 
       //Gets all the channels from the server
@@ -30413,7 +30456,7 @@ Some of the things this module takes care of:
           }
 
           ChatService.createNewChannel(channelName)
-          .then((res) => {
+          .then(function(res) {
             if (res.data.response === "success") {
               swal({
                 title: "Success",
@@ -30427,9 +30470,9 @@ Some of the things this module takes care of:
               });
             }
           })
-          .catch((e) => {
+          .catch(function(e) {
             var inputErrorArray = [];
-            e.data.data.forEach((val) => {
+            e.data.data.forEach(function(val) {
 
               switch(val) {
                 case "tooLong":
@@ -30562,8 +30605,21 @@ Some of the things this module takes care of:
         }
       };
 
+      //Gets the initial messages in the private conversation
+      vm.getPrivateMessages = function() {
+        ChatService.getPrivateMessages(channelOrUserId)
+        .then(function(res) {
+          if (res.data.response === "success") {
+            for (var i = 0;i<res.data.data.length;i++) {
+              res.data.data[i].contents = JSON.parse(res.data.data[i].contents);
+            }
 
+            vm.messages = res.data.data;
+            vm.messagesLoaded = true;
+          }
+        });
 
+      };
 
       $rootScope.showFixedTopNav = true;
 
@@ -30591,6 +30647,8 @@ Some of the things this module takes care of:
 
 
 
+
+
       //If the url contains /messages, then run described functions
       if ($location.path().indexOf("/messages") === 0) {
         var channelName = $stateParams.channelName;
@@ -30605,6 +30663,8 @@ Some of the things this module takes care of:
       else if ($location.path().indexOf("/privatemessages") === 0) {
         $rootScope.channelName = $stateParams.username;
 
+        //Loads all the private messages
+        vm.getPrivateMessages();
 
 
       }
@@ -30797,6 +30857,31 @@ Some of the things this module takes care of:
           },
         });
       };
+
+
+      service.sendPrivateMessage = function(obj) {
+        return $http({
+          method: "POST",
+          url: "/api/sendPrivateMessage",
+          data: $.param({messageTo: obj.messageTo, message: JSON.stringify(obj.message)}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
+      service.getPrivateMessages = function(userToId) {
+        return $http({
+          method: "GET",
+          url: "/api/getPrivateMessages?userTo=" + userToId,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
+
 
       service.findNewActive = function(currentState, newParam) {
         if (currentState === "chat-app.messages") {
