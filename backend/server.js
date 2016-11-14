@@ -19,31 +19,28 @@ router.get("/getFiveUsers", middleware.checkToken, routes.userRoutes.getFiveUser
 router.get("/getAllUsers", middleware.checkToken, routes.userRoutes.getAllUsers);
 
 //Auth Routes
+router.get("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);
 router.post("/signup", routes.authRoutes.signup);
 router.post("/signin", routes.authRoutes.signin);
-router.get("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);
 
 //Chat Routes
 router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
 router.get("/getPrivateMessages", middleware.checkToken, routes.chatRoutes.getPrivateMessages);
 router.get("/getIntialUsersTyping", middleware.checkToken, routes.chatRoutes.getIntialUsersTyping);
-
-
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
 router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
+router.post("/sendUserIsTypingPM", middleware.checkToken, routes.chatRoutes.sendUserIsTypingPM);
 router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
+router.post("/sendUserStoppedTypingPM", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
 router.post("/sendPrivateMessage", middleware.checkToken, routes.chatRoutes.sendPrivateMessage);
-
-
-router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
 router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage);
+router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
 
 
 //Channel Routes
 router.post("/addUserToChannel", middleware.checkToken, routes.channelRoutes.addUserToChannel);
 router.post("/createNewChannel", middleware.checkToken, routes.channelRoutes.createNewChannel);
-
 router.get("/getAllChannels", middleware.checkToken, routes.channelRoutes.getAllChannels);
 router.get("/checkUserInChannel", middleware.checkToken, routes.channelRoutes.checkUserInChannel);
 

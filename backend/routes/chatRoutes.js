@@ -122,7 +122,7 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
   })
   .then(() => {
     //Checks if the user is already typing
-    if (chat. userAlreadyTyping({
+    if (chat.userAlreadyTyping({
       userid: userid,
       channelId: channelId,
     })) {
@@ -159,8 +159,67 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
 };
 
 
-//This is sent from the client when the user has stopped typing.
+//Sent when a user begings to type in a private message
+chatRoutes.sendUserIsTypingPM = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const userTo = Number(req.body.userTo);
 
+  if (!userTo) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError"
+    });
+    return;
+  }
+
+  chat.checkPMIdExists(userTo)
+  .then(() => {
+    return chat.userAlreadyTypingPM(
+      {
+        userFrom: userid,
+        userTo: userTo
+      });
+  })
+  .then(() => {
+    return chat.addUserToPMMap({
+      userFrom: userid,
+      userTo: userTo,
+    });
+  })
+  .then(() => {
+    return chat.getNameFromId(userid);
+  })
+  .then((name) => {
+    return chat.emitUserTypingPM({
+      name: name,
+      userid: userid,
+      userTo: userTo,
+      eventname: "userIsTypingPM",
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+};
+
+//Sent when a user stops typing in a private message
+chatRoutes.sendUserIsTypingPM = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const userTo = req.body.userTo;
+};
+
+
+
+//This is sent from the client when the user has stopped typing.
 chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
   const channelId = req.body.channelId;

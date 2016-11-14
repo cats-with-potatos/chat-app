@@ -208,6 +208,18 @@
         });
       };
 
+      service.sendUserIsTypingPM = function(userId) {
+        return $http({
+          method: "POST",
+          url: "/api/sendUserIsTypingPM",
+          data: $.param({userTo: userId}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
+        });
+      };
+
 
 
       service.findNewActive = function(currentState, newParam) {

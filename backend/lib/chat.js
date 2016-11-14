@@ -5,25 +5,25 @@ const Promise = require("bluebird")
 , chat = {}
 // userTypingMap is a dictionary that defines who is currently typing
 chat.userTypingMap = {}
+chat.userTypingPMMap = {};
 
 //Populates the user is typing map
 chat.populateUserTypingMap = () => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
-        console.log(err);
+        reject("serverError");
       }
       else {
         mclient.query("SELECT chan_id FROM ChannelsTable", (err, data) => {
           mclient.release();
           if (err) {
-            console.log(err);
+            reject("serverError");
           }
           else {
             data.forEach((val) => {
               chat.userTypingMap[val.chan_id] = new Set();
             });
-            console.log(chat.userTypingMap);
           }
         });
       }
@@ -31,7 +31,32 @@ chat.populateUserTypingMap = () => {
   });
 };
 
+chat.populateUserPMTypingMap = () => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT user_id FROM UserTable", (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            data.forEach((val) => {
+              chat.userTypingPMMap[val.user_id] = new Set();
+            });
+          }
+        });
+      }
+    });
+  });
+};
+
 chat.populateUserTypingMap();
+chat.populateUserPMTypingMap();
+
 
 //Checks to see if there are any problems with the message being sent or any details of the mesage
 chat.checkMessageError = (messageDet) => {
@@ -263,6 +288,16 @@ chat.emitUserTyping = (obj) => {
   */
 });
 });
+};
+
+//Emits to the other user in the private messages that the user is typipng
+chat.emitUserTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (clients[obj.userTo]) {
+      io.sockets.connected[clients[obj.userTo].socket].emit(obj.eventname, {name: obj.name, id: obj.userid});
+    }
+    resolve();
+  });
 };
 
 //Returns true if the user is not currently in the map
@@ -589,6 +624,26 @@ chat.getPrivateMessages = (obj) => {
         });
       }
     });
+  });
+};
+
+//Checks if the user is already typing
+chat.userAlreadyTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (chat.userTypingPMMap[obj.userFrom].has(obj.userTo)) {
+      reject("userAlreadyTyping");
+    }
+    else {
+      resolve();
+    }
+  });
+};
+
+//Adds the user to the pm map
+chat.addUserToPMMap = (obj) => {
+  return new Promise((resolve, reject) => {
+    chat.userTypingPMMap[obj.userFrom].add(obj.userTo);
+    resolve();
   });
 };
 

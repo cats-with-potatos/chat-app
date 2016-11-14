@@ -74,9 +74,9 @@ width: 75%;
         </ul>
       </div>
     </div>
-    <div id="channel-sidebar" class="col-md-2">
-      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="vm.showSpinner === true"></div>
 
+    <div id="channel-sidebar" class="col-md-2">
+      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
       <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
         <div class="user-section">
           <div ng-class="{'user-offline': vm.userState === 'online'}"></div>

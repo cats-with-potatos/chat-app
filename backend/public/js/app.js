@@ -29856,7 +29856,9 @@ $provide.value("$locale", {
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', '$rootScope', function (SecurityService, ChatService, $q, $state, $stateParams, $rootScope) {
+          var vm = this;
+
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -29877,6 +29879,8 @@ $provide.value("$locale", {
           })
           .catch(function(e) {
             if (e.data.errorType === "notInChannel") {
+              $rootScope.showSpinner = false;
+
               swal({
                 title: "Join Channel?",
                 type: "info",
@@ -30117,7 +30121,7 @@ Some of the things this module takes care of:
     vm.showDarkOverlay = false;
 
     //Used to show and hide spinner at top
-    vm.showSpinner = false;
+    $rootScope.showSpinner = false;
 
     vm.message = "";
 
@@ -30179,6 +30183,8 @@ Some of the things this module takes care of:
       });
     });
 
+
+
     //Listens for new private messages in realtime and add's it to the vm.messages list
     socket.on("newPrivateMessage", function(message) {
       $rootScope.$applyAsync(function() {
@@ -30191,12 +30197,10 @@ Some of the things this module takes care of:
             scrollTop: messagePanel[0].scrollHeight
           }, 200);
         }
-        //2 joedaoud, after the message has been sent, an event will be emitted to the server
-        //you need to make a new array eg. vm. = []
-        //then push the message to the array. then
-
       });
     });
+
+
 
 
     //Listens for people typing in realtime and adding it to vm.userTypingArray
@@ -30212,6 +30216,17 @@ Some of the things this module takes care of:
           else if (vm.userTypingArray.length > 1) {
             vm.typeOfTyping = "are typing";
           }
+        }
+      });
+    });
+
+    socket.on("userIsTypingPM", function(user) {
+      $rootScope.$applyAsync(function() {
+        console.log("HI");
+        if (user.id === channelOrUserId) {
+          vm.userTypingArray.push(user);
+          //If one user is typing, set text to "is typing", else set to "are typing"
+            vm.typeOfTyping = "is typing";
         }
       });
     });
@@ -30246,7 +30261,7 @@ Some of the things this module takes care of:
     //This actually edits the current message
     vm.editMessageInput = function(event, messageId, messageIndex) {
       if (event.key === "Enter" && event.shiftKey === false) {
-        vm.showSpinner = true;
+        $rootScope.showSpinner = true;
 
         //Prevents the Enter event
         event.preventDefault();
@@ -30258,7 +30273,7 @@ Some of the things this module takes care of:
           })
           .then(function(res) {
             if (res.data.response === "success") {
-              vm.showSpinner = false;
+              $rootScope.showSpinner = false;
 
               //Sets the contents of the updated message
               vm.messages[messageIndex].contents = event.target.value;
@@ -30279,14 +30294,14 @@ Some of the things this module takes care of:
       vm.deleteMessage = function(messageId, messageIndex) {
         //A red background will appear showing that the message is in the process of being deleted
         vm.messages[messageIndex].gettingDeleted = true;
-        vm.showSpinner = true;
+        $rootScope.showSpinner = true;
 
 
 
         ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId})
         .then(function(res) {
           if (res.data.response === "success") {
-            vm.showSpinner = false;
+            $rootScope.showSpinner = false;
 
             //Deletes message
             vm.messages.splice(messageIndex, 1);
@@ -30368,32 +30383,50 @@ Some of the things this module takes care of:
       //This function tells the server if the user has currently started typing or stopped typing.
       vm.sendUserIsTyping = function(event) {
         var currentState = ChatService.getCurrentState();
-
         if (currentState === "chat-app.privatemessages") {
-          //leave this for now
-        }
-        else {
           if (event.key !== "Enter") {
-              if (vm.message !== "") {
-                if (sendTypingRequest === false) {
-                  sendTypingRequest = true;
-                  ChatService.sendUserIsTyping(channelOrUserId)
-                  .then(function(message) {
-                    console.log("sent message");
-                  });
-                }
+            if (vm.message) {
+              if (sendTypingRequest === false) {
+                sendTypingRequest = true;
+                ChatService.sendUserIsTypingPM(channelOrUserId)
+                .then(function(message) {
+                  console.log("sent message");
+                });
               }
-              else {
-                if (sendTypingRequest === true) {
-                  sendTypingRequest = false;
-                  ChatService.sendUserStoppedTyping(channelOrUserId)
-                  .then(function(message) {
-                    console.log("the user stopped typing");
-                  });
-                }
+            }
+            else {
+              if (sendTypingRequest === true) {
+                sendTypingRequest = false;
+                ChatService.sendUserStoppedTypingPM(channelOrUserId)
+                .then(function(message) {
+                  console.log("the user stopped typing");
+                });
               }
             }
           }
+        }
+        else {
+          if (event.key !== "Enter") {
+            if (vm.message) {
+              if (sendTypingRequest === false) {
+                sendTypingRequest = true;
+                ChatService.sendUserIsTyping(channelOrUserId)
+                .then(function(message) {
+                  console.log("sent message");
+                });
+              }
+            }
+            else {
+              if (sendTypingRequest === true) {
+                sendTypingRequest = false;
+                ChatService.sendUserStoppedTyping(channelOrUserId)
+                .then(function(message) {
+                  console.log("the user stopped typing");
+                });
+              }
+            }
+          }
+        }
       };
 
       //Gets all the channels from the server
@@ -30409,8 +30442,17 @@ Some of the things this module takes care of:
                   break;
                 }
               }
+
               ChatService.channels = res.data.data;
+
               vm.channels = res.data.data;
+
+              if (ChatService.currentChannelIndex > 4) {
+                var temp = res.data.data[ChatService.currentChannelIndex];
+                vm.channels.splice(ChatService.currentChannelIndex, 1);
+                vm.channels.unshift(temp);
+                ChatService.currentChannelIndex = 0;
+              }
             }
           })
           .catch(function(e) {
@@ -30422,7 +30464,7 @@ Some of the things this module takes care of:
       //Goes to another channel
       vm.goToAnotherChannel = function(channelName, $event) {
         if (channelName !== $stateParams.channelName) {
-          vm.showSpinner = true;
+          $rootScope.showSpinner = true;
         }
 
         $event.preventDefault();
@@ -30523,7 +30565,7 @@ Some of the things this module takes care of:
 
       //Logs the user out
       vm.logUserOut = function($event) {
-        vm.showSpinner = true;
+        $rootScope.showSpinner = true;
         $state.go("chat-app.signout");
       };
 
@@ -30568,6 +30610,13 @@ Some of the things this module takes care of:
                   res.data.data[i].activeUser = true;
                   ChatService.currentUserIndex = i;
                 }
+              }
+
+              if (ChatService.currentUserIndex > 4) {
+                var temp = res.data.data[ChatService.currentUserIndex];
+                res.data.data.slice(ChatService.currentUserIndex, 1);
+                res.data.data.unshift(temp);
+                ChatService.currentUserIndex = 0;
               }
 
               vm.users = res.data.data;
@@ -30615,6 +30664,7 @@ Some of the things this module takes care of:
             }
 
             vm.messages = res.data.data;
+
             vm.messagesLoaded = true;
           }
         });
@@ -30878,6 +30928,18 @@ Some of the things this module takes care of:
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           },
+        });
+      };
+
+      service.sendUserIsTypingPM = function(userId) {
+        return $http({
+          method: "POST",
+          url: "/api/sendUserIsTypingPM",
+          data: $.param({userTo: userId}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
         });
       };
 

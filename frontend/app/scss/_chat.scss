@@ -503,7 +503,6 @@ ul {
     li {
       margin-right: 5px;
 
-      @include border-radius(20px)
 
       cursor: pointer;
 
@@ -515,28 +514,35 @@ ul {
       -o-user-select: none;
       user-select: none;
 
+
       &:nth-child(1) {
         a {
+          color: inherit;
+
           &:hover {
-            background-color: $cyanish-color;
+            background-color: $cyanish-color !important;
+            color: #FFF !important;
           }
-        }
+                }
 
         &:hover {
-          background-color: $cyanish-color !important;
           color: #FFF;
+          background-color: $cyanish-color !important;
         }
       }
 
       &:nth-child(2) {
         a {
+          color: inherit;
+
           &:hover {
-            background-color: #e74c3c;
+            background-color: $delete-color;
+
           }
         }
-
         &:hover {
-          background-color: #e74c3c !important;
+          background-color: $delete-color !important;
+          color: #FFF;
         }
       }
     }

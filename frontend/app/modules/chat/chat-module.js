@@ -14,7 +14,9 @@
         /*Checks if the user is logged in. If they are, then go to the home page, if they aren't, then
         proceed to the signup page.
         */
-        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', function (SecurityService, ChatService, $q, $state, $stateParams) {
+        channelOrUserId: ["SecurityService", "ChatService", "$q", '$state', '$stateParams', '$rootScope', function (SecurityService, ChatService, $q, $state, $stateParams, $rootScope) {
+          var vm = this;
+
           var defer = $q.defer();
           SecurityService.checkUserLoggedIn()
           .then(function(res) {
@@ -35,6 +37,8 @@
           })
           .catch(function(e) {
             if (e.data.errorType === "notInChannel") {
+              $rootScope.showSpinner = false;
+
               swal({
                 title: "Join Channel?",
                 type: "info",

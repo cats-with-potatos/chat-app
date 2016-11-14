@@ -11834,10 +11834,6 @@ ul li:last-child a:hover {
   /* line 503, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   .dropup-menu ul li {
     margin-right: 5px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    border-radius: 20px;
     cursor: pointer;
     -webkit-user-select: none;
     /* Chrome/Safari */
@@ -11848,51 +11844,59 @@ ul li:last-child a:hover {
     /* Rules below not implemented in browsers yet */
     -o-user-select: none;
     user-select: none; }
-    /* line 520, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
-    .dropup-menu ul li:nth-child(1) a:hover {
-      background-color: #0097A7; }
-    /* line 525, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+    /* line 519, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+    .dropup-menu ul li:nth-child(1) a {
+      color: inherit; }
+      /* line 522, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+      .dropup-menu ul li:nth-child(1) a:hover {
+        background-color: #0097A7 !important;
+        color: #FFF !important; }
+    /* line 528, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
     .dropup-menu ul li:nth-child(1):hover {
-      background-color: #0097A7 !important;
-      color: #FFF; }
-    /* line 533, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
-    .dropup-menu ul li:nth-child(2) a:hover {
-      background-color: #e74c3c; }
-    /* line 538, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+      color: #FFF;
+      background-color: #0097A7 !important; }
+    /* line 535, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+    .dropup-menu ul li:nth-child(2) a {
+      color: inherit; }
+      /* line 538, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+      .dropup-menu ul li:nth-child(2) a:hover {
+        background-color: #e74c3c; }
+    /* line 543, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
     .dropup-menu ul li:nth-child(2):hover {
-      background-color: #e74c3c !important; }
+      background-color: #e74c3c !important;
+      color: #FFF; }
 
-/* line 548, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 554, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 .getting-deleted {
   background-color: rgba(231, 76, 60, 0.5); }
-  /* line 551, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 557, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   .getting-deleted:hover {
     background-color: rgba(231, 76, 60, 0.5) !important; }
 
-/* line 556, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 562, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 .edit-styles {
   width: 70%; }
 
-/* line 560, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 566, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 #chanDiv {
   width: 100%;
   text-align: center;
   display: inline-block;
   margin-left: 10px; }
 
-/* line 567, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 573, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 #chanTitle {
   color: #FFF;
   font-size: 20px; }
 
-/* line 574, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 580, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 #numOfChannels, #numOfUsers {
   font-size: 12px;
   font-weight: lighter;
   color: #bdc3c7;
   margin-left: 5px; }
 
-/* line 585, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 591, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 #spinnerAtTop {
   display: inline-block;
   width: 30px;
@@ -11901,40 +11905,40 @@ ul li:last-child a:hover {
   margin-left: 5px;
   border-top-color: #0097A7; }
 
-/* line 594, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+/* line 600, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
 .lowerMarginTop {
   margin-top: 7px !important; }
 
 @media (min-width: 701px) {
-  /* line 602, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 608, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #channel-sidebar {
     width: 200px !important; } }
 
 @media (max-width: 700px) {
-  /* line 609, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 615, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #channel-sidebar {
     width: 0px; }
-  /* line 613, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 619, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #message-nav {
     width: 100% !important; }
-  /* line 617, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 623, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #nav-collapse {
     display: inline-block; }
-  /* line 621, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 627, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #footer {
     left: 0;
     width: 97%; }
-  /* line 626, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 632, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   .dark-overlay {
     display: block; }
-  /* line 630, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 636, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #messagePanel {
     margin-left: 0px;
     width: 100%; }
-  /* line 634, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 640, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #text-ellipsis {
     width: calc(100% - 50px); }
-  /* line 638, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
+  /* line 644, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_chat.scss */
   #messageBox {
     width: calc(100% - 15px); } }
 
@@ -11971,12 +11975,12 @@ ul li:last-child a:hover {
 
 /* line 37, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_spinners.scss */
 #signOutSpinner {
-  display: inline-block;
+  float: right;
   width: 50px;
   height: 50px;
-  margin-top: 100px;
   margin-top: 8px;
   margin-left: 5px;
+  position: absolute;
   border-top-color: #0097A7; }
 
 /* line 1, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_user.scss */
