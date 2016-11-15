@@ -40,6 +40,8 @@ Some of the things this module takes care of:
 
     vm.message = "";
 
+    var channelorPrivate = $location.path().indexOf("/messages") === 0 ? "channel" : "private";
+
     //This boolean indicates whether the user is already typing or not
     var sendTypingRequest = false;
 
@@ -82,9 +84,8 @@ Some of the things this module takes care of:
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
-
       $rootScope.$applyAsync(function() {
-        if (message.chan_id === channelOrUserId) {
+        if (message.chan_id === channelOrUserId && channelorPrivate === "channel") {
           message.contents = JSON.parse(message.contents);
           vm.messages.push(message);
 
@@ -103,32 +104,31 @@ Some of the things this module takes care of:
     //Listens for new private messages in realtime and add's it to the vm.messages list
     socket.on("newPrivateMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        console.log("I HAVE PUSHEDO");
+        console.log("hehexd");
+        console.log();
+        if ((message.userid === channelOrUserId || message.userid === $rootScope.userid) && channelorPrivate === "private") {
+          try {
+            message.contents = JSON.parse(message.contents);
+          }
+          catch(e) {
+            console.log(e);
+          }
+          vm.messages.push(message);
 
-        try {
-          message.contents = JSON.parse(message.contents);
-        }
-        catch(e) {
-          console.log(e);
-        }
-        vm.messages.push(message);
-
-        if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
-          messagePanel.stop().animate({
-            scrollTop: messagePanel[0].scrollHeight
-          }, 200);
+          if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }
         }
       });
     });
 
 
-
-
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
-      console.log(user);
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId) {
+        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 1) {
@@ -144,10 +144,10 @@ Some of the things this module takes care of:
     socket.on("userIsTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
         console.log("HI");
-        if (user.id === channelOrUserId) {
+        if (user.id === channelOrUserId && channelorPrivate === "private") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
-            vm.typeOfTyping = "is typing";
+          vm.typeOfTyping = "is typing";
         }
       });
     });
@@ -156,7 +156,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.id === channelOrUserId) {
+        if (user.id=== channelOrUserId && channelorPrivate === "private") {
           console.log("hehexd");
           var index = -1;
 
@@ -177,7 +177,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId) {
+        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
           var index = -1;
 
           for (var i = 0;i<vm.userTypingArray.length;i++) {
@@ -295,9 +295,9 @@ Some of the things this module takes care of:
               vm.message = "";
 
               ChatService.sendUserStoppedTypingPM(channelOrUserId)
-                .then(function() {
-                  sendTypingRequest = false;
-                });
+              .then(function() {
+                sendTypingRequest = false;
+              });
 
               ChatService.sendPrivateMessage({
                 messageTo: channelOrUserId,
@@ -619,11 +619,11 @@ Some of the things this module takes care of:
             vm.messagesLoaded = true;
 
             setTimeout(function() {
-            //Scrollbar will go to bottom
-            messagePanel.stop().animate({
-              scrollTop: messagePanel[0].scrollHeight
-            }, 200);
-          }, 0);
+              //Scrollbar will go to bottom
+              messagePanel.stop().animate({
+                scrollTop: messagePanel[0].scrollHeight
+              }, 200);
+            }, 0);
 
           }
         });
@@ -659,7 +659,7 @@ Some of the things this module takes care of:
 
 
       //If the url contains /messages, then run described functions
-      if ($location.path().indexOf("/messages") === 0) {
+      if (channelorPrivate === "channel") {
         var channelName = $stateParams.channelName;
         $rootScope.channelName = channelName;
 
@@ -669,9 +669,8 @@ Some of the things this module takes care of:
         //Loads the Users that are currently typing
         vm.loadUsersCurrentlyTyping();
       }
-      else if ($location.path().indexOf("/privatemessages") === 0) {
+      else if (channelorPrivate === "private") {
         $rootScope.channelName = $stateParams.username;
-
         //Loads all the private messages
         vm.getPrivateMessages();
 
