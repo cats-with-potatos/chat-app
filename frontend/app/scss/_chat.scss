@@ -57,6 +57,7 @@ h1, p, a {
   position: fixed;
   border: 0;
   padding-bottom: 0;
+  margin-bottom: 30px;
   /* float: right; */
   bottom: 60px;
   min-height: 100px;
@@ -133,8 +134,9 @@ h1, p, a {
   font-size: 1em;
   line-height: 1rem;
   max-width: 75%;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  margin-left: 12px;
+  margin-top: -5px !important;
+  position:absolute;
   font-weight: 700;
 }
 

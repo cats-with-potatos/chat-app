@@ -502,9 +502,10 @@ chat.insertPrivateMessageToDb = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
           mclient.release();
           if (err) {
+            console.log(err);
             reject("serverError");
           }
           else {

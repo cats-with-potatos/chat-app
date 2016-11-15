@@ -403,6 +403,7 @@ chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
   }
   chat.checkPMIdExists(messageTo)
   .then(() => {
+
     return chat.insertPrivateMessageToDb({
       userid: userid,
       messageTo: messageTo,
