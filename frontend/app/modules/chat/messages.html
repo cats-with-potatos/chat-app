@@ -90,7 +90,7 @@ width: 75%;
       </div>
 
 
-      <div id="chanDiv"><h2 id="chanTitle"><a href="#">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
+      <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
 
       <div id="channel-list">
         <ul>
@@ -99,7 +99,7 @@ width: 75%;
         </ul>
       </div>
       <div id="private-messages">
-        <h2 class="text-center"><a href="#">Private Messages</a> <span id="numOfUsers">(3)</span></h2>
+        <h2 class="text-center"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">(3)</span></h2>
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
@@ -136,4 +136,38 @@ width: 75%;
   </div>
 </div>
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">
+</div>
+
+<!-- Modals -->
+<div class="chan-modal modal fade" id="chanModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="modal-body">
+                        <h2>List of Channels</h2>
+                        <hr class="">
+                        <ul class="">
+                            <li>
+                                <strong><a href="#">Channel 1</a></strong>
+                            </li>
+                            <li>
+                                <strong><a href="#">Channel 2</a></strong>
+                            </li>
+                            <li>
+                                <strong><a href="#">Channel 3</a></strong>
+                            </li>
+                        </ul>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
