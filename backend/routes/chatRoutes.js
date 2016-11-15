@@ -211,14 +211,6 @@ chatRoutes.sendUserIsTypingPM = (req, res) => { // TYPE: POST
   })
 };
 
-//Sent when a user stops typing in a private message
-chatRoutes.sendUserIsTypingPM = (req, res) => { // TYPE: POST
-  const userid = req.decoded.id;
-  const userTo = req.body.userTo;
-};
-
-
-
 //This is sent from the client when the user has stopped typing.
 chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;

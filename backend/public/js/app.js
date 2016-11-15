@@ -30384,6 +30384,7 @@ Some of the things this module takes care of:
       vm.sendUserIsTyping = function(event) {
         var currentState = ChatService.getCurrentState();
         if (currentState === "chat-app.privatemessages") {
+
           if (event.key !== "Enter") {
             if (vm.message) {
               if (sendTypingRequest === false) {
@@ -30404,6 +30405,7 @@ Some of the things this module takes care of:
               }
             }
           }
+
         }
         else {
           if (event.key !== "Enter") {
@@ -30666,6 +30668,14 @@ Some of the things this module takes care of:
             vm.messages = res.data.data;
 
             vm.messagesLoaded = true;
+
+            setTimeout(function() {
+            //Scrollbar will go to bottom
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }, 0);
+
           }
         });
 

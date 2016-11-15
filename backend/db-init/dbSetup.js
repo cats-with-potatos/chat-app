@@ -2,7 +2,7 @@ const mysql = require('promise-mysql');
 let connection;
 
 const ut_create_query = `CREATE TABLE IF NOT EXISTS UserTable (
-user_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+user_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 username VARCHAR(32) BINARY NOT NULL UNIQUE,
 password VARCHAR (128) NOT NULL,
 salt VARCHAR (32) NOT NULL,
@@ -10,28 +10,28 @@ PRIMARY KEY (user_id));`;
 
 // Query to create Channels table
 const ct_create_query = `CREATE TABLE IF NOT EXISTS ChannelsTable (
-chan_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
+chan_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 chan_name VARCHAR(64) NOT NULL UNIQUE,
 PRIMARY KEY (chan_id));`;
 
 // Query to create Messages table
 const mt_create_query = `CREATE TABLE IF NOT EXISTS MessagesTable (
-message_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+message_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 contents VARCHAR(256) NOT NULL,
 sender VARCHAR(32) NOT NULL,
-chan_link_id TINYINT UNSIGNED NOT NULL,
+chan_link_id INT UNSIGNED NOT NULL,
 PRIMARY KEY (message_id));`;
 
 const uic_create_query = `CREATE TABLE IF NOT EXISTS UserInChannel (
-  inchan_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  inchan_userid TINYINT UNSIGNED NOT NULL,
-  inchan_channel_id TINYINT UNSIGNED NOT NULL,
+  inchan_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  inchan_userid INT UNSIGNED NOT NULL,
+  inchan_channel_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (inchan_id));`;
 
 const pm_create_query =   `CREATE TABLE IF NOT EXISTS PrivateMessages (
-  pm_id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  pm_from TINYINT UNSIGNED NOT NULL,
-  pm_to TINYINT UNSIGNED NOT NULL,
+  pm_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  pm_from INT UNSIGNED NOT NULL,
+  pm_to INT UNSIGNED NOT NULL,
   pm_message VARCHAR(256) NOT NULL,
   pm_date DATETIME NOT NULL,
   PRIMARY KEY (pm_id)
