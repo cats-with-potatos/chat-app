@@ -104,7 +104,13 @@ Some of the things this module takes care of:
     socket.on("newPrivateMessage", function(message) {
       $rootScope.$applyAsync(function() {
         console.log("I HAVE PUSHEDO");
-        message.contents = JSON.parse(message.contents);
+
+        try {
+          message.contents = JSON.parse(message.contents);
+        }
+        catch(e) {
+          console.log(e);
+        }
         vm.messages.push(message);
 
         if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
@@ -145,6 +151,28 @@ Some of the things this module takes care of:
         }
       });
     });
+
+
+    //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
+    socket.on("userIsNotTypingPM", function(user) {
+      $rootScope.$applyAsync(function() {
+        if (user.id === channelOrUserId) {
+          console.log("hehexd");
+          var index = -1;
+
+          for (var i = 0;i<vm.userTypingArray.length;i++) {
+            if (vm.userTypingArray[i].userid === user.userid) {
+              index = i;
+            }
+          }
+
+          vm.userTypingArray.splice(index, 1);
+          //If no user is typing, set text to not, if length is 1, set to "is typing", else set to "are typing"
+          vm.typeOfTyping = "";
+        }
+      });
+    });
+
 
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(user) {
@@ -265,6 +293,12 @@ Some of the things this module takes care of:
             if (currentState === "chat-app.privatemessages") {
               var messageToUser = vm.message;
               vm.message = "";
+
+              ChatService.sendUserStoppedTypingPM(channelOrUserId)
+                .then(function() {
+                  sendTypingRequest = false;
+                });
+
               ChatService.sendPrivateMessage({
                 messageTo: channelOrUserId,
                 message: messageToUser,

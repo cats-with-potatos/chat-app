@@ -220,6 +220,19 @@
         });
       };
 
+      service.sendUserStoppedTypingPM = function(userId) {
+        return $http({
+          method: "POST",
+          url: "/api/sendUserStoppedTypingPM",
+          data: $.param({userTo: userId}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          }
+        });
+      };
+
+
 
 
       service.findNewActive = function(currentState, newParam) {

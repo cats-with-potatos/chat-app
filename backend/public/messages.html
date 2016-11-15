@@ -99,7 +99,7 @@ width: 75%;
         </ul>
       </div>
       <div id="private-messages">
-        <h2 class="text-center">Private Messages <span id="numOfUsers">(3)</span></h2>
+        <h2 class="text-center">Private Messages <span id="numOfUsers">({{vm.users.length}})</span></h2>
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
