@@ -99,7 +99,7 @@ width: 75%;
         </ul>
       </div>
       <div id="private-messages">
-        <h2 class="text-center"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">(3)</span></h2>
+        <h2 class="text-center"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers"></span></h2>
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
@@ -138,7 +138,7 @@ width: 75%;
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">
 </div>
 
-<!-- Modals -->
+<!-- Channel Modal -->
 <div class="chan-modal modal fade" id="chanModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-content">
         <div class="close-modal" data-dismiss="modal">
@@ -151,7 +151,32 @@ width: 75%;
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2">
                     <div class="modal-body">
-                        <h2>List of Channels</h2>
+                        <h2>Browse all {{vm.channels.length}} Channels</h2>
+                        <ul class="">
+                          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
+                        </ul>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Private Messages Modal -->
+<div class="pm-modal modal fade" id="pmModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="modal-body">
+                        <h2>Private Messages</h2>
                         <hr class="">
                         <ul class="">
                             <li>
