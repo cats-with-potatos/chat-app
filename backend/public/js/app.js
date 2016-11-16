@@ -30171,10 +30171,18 @@ Some of the things this module takes care of:
     socket.on("newChannelMessage", function(message) {
       $rootScope.$applyAsync(function() {
         if (message.chan_id === channelOrUserId && channelorPrivate === "channel") {
-          message.contents = JSON.parse(message.contents);
+
+          try {
+            message.contents = JSON.parse(message.contents);
+          }
+          catch(e) {
+            console.log(e);
+          }
+
           vm.messages.push(message);
 
           //Make the messages scrollbar go to the bottom only if the scrollbar is already at the bottom
+
           if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
             messagePanel.stop().animate({
               scrollTop: messagePanel[0].scrollHeight
@@ -30372,8 +30380,8 @@ Some of the things this module takes care of:
       //Listens on keyup events and if the key is enter, then send the message to the server
       vm.sendMessage = function(event) {
         var currentState = ChatService.getCurrentState();
-        if (event.key === "Enter") {
-          if (event.key === "Enter" && !event.shiftKey) {
+        if (event.key === "Enter" || event.keyIdentifier === "Enter") {
+          if ((event.key === "Enter" || event.keyIdentifier === "Enter") && !event.shiftKey) {
             event.preventDefault();
             if (currentState === "chat-app.privatemessages") {
               var messageToUser = vm.message;
