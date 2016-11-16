@@ -145,11 +145,18 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2">
                     <div class="modal-body">
-                        <h2>Browse all {{vm.channels.length}} Channels or <a href="#" ng-click="vm.createNewChannel($event)">+</a> Add</h2>
+                      <div class="col-sm-8">
+                        <h2>Browse all {{vm.channels.length}} channels </h2>
+                      </div>
+                      <div class="col-sm-2 col-sm-offset-2 add-chan">
+                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default"><i class="fa fa-plus"></i> New Channel</button>
+                      </div>
+                      <div class="col-sm-12">
                         <ul class="">
                           <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
                         </ul>
                         <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                      </div>
                     </div>
                 </div>
             </div>
