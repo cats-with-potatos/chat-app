@@ -77,7 +77,7 @@ width: 75%;
 
     <div id="channel-sidebar" class="col-md-2">
       <a ng-click="vm.goToHome()" class="navbar-brand" id="app-brand" style="cursor: pointer;"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
-      <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
+      <div id="user-sections" ng-class="{'lowerMarginTop': showSpinner === true}">
         <div class="user-section">
           <div ng-class="{'user-online': userState === 'online'}"></div>
         </div>

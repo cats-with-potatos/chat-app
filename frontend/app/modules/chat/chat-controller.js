@@ -69,23 +69,6 @@ Some of the things this module takes care of:
     });
 
 
-    //Listens for new messages in realtime and add's it to the vm.messages list
-    socket.on("userState", function(typeOfState) {
-      $rootScope.$applyAsync(function() {
-        if (typeOfState === "online") {
-          ChatService.userState = "online";
-          vm.userState = "online";
-        }
-        else if (typeOfState === "offline") {
-          console.log("you are going offline!");
-          ChatService.userState = "offline";
-          vm.userState = "offline";
-        }
-      });
-    });
-
-
-
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
