@@ -687,6 +687,12 @@ ul {
 }
 .chan-modal .close-modal:hover {
   opacity: 0.3;
+  background: #e8e8e8;
+  border-radius: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  user-select: none;
 }
 .chan-modal .close-modal .lr {
   height: 75px;
