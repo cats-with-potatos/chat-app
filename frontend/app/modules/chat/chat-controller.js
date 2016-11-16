@@ -40,6 +40,8 @@ Some of the things this module takes care of:
 
     vm.message = "";
 
+    var channelorPrivate = $location.path().indexOf("/messages") === 0 ? "channel" : "private";
+
     //This boolean indicates whether the user is already typing or not
     var sendTypingRequest = false;
 
@@ -74,6 +76,11 @@ Some of the things this module takes care of:
           ChatService.userState = "online";
           vm.userState = "online";
         }
+        else if (typeOfState === "offline") {
+          console.log("you are going offline!");
+          ChatService.userState = "offline";
+          vm.userState = "offline";
+        }
       });
     });
 
@@ -82,13 +89,20 @@ Some of the things this module takes care of:
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
-
       $rootScope.$applyAsync(function() {
-        if (message.chan_id === channelOrUserId) {
-          message.contents = JSON.parse(message.contents);
+        if (message.chan_id === channelOrUserId && channelorPrivate === "channel") {
+
+          try {
+            message.contents = JSON.parse(message.contents);
+          }
+          catch(e) {
+            console.log(e);
+          }
+
           vm.messages.push(message);
 
           //Make the messages scrollbar go to the bottom only if the scrollbar is already at the bottom
+
           if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
             messagePanel.stop().animate({
               scrollTop: messagePanel[0].scrollHeight
@@ -103,26 +117,31 @@ Some of the things this module takes care of:
     //Listens for new private messages in realtime and add's it to the vm.messages list
     socket.on("newPrivateMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        console.log("I HAVE PUSHEDO");
-        message.contents = JSON.parse(message.contents);
-        vm.messages.push(message);
+        console.log("hehexd");
+        console.log();
+        if ((message.userid === channelOrUserId || message.userid === $rootScope.userid) && channelorPrivate === "private") {
+          try {
+            message.contents = JSON.parse(message.contents);
+          }
+          catch(e) {
+            console.log(e);
+          }
+          vm.messages.push(message);
 
-        if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
-          messagePanel.stop().animate({
-            scrollTop: messagePanel[0].scrollHeight
-          }, 200);
+          if (messagePanel[0].scrollHeight - messagePanel.scrollTop() == messagePanel.outerHeight()) {
+            messagePanel.stop().animate({
+              scrollTop: messagePanel[0].scrollHeight
+            }, 200);
+          }
         }
       });
     });
 
 
-
-
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
-      console.log(user);
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId) {
+        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 1) {
@@ -138,18 +157,40 @@ Some of the things this module takes care of:
     socket.on("userIsTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
         console.log("HI");
-        if (user.id === channelOrUserId) {
+        if (user.id === channelOrUserId && channelorPrivate === "private") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
-            vm.typeOfTyping = "is typing";
+          vm.typeOfTyping = "is typing";
         }
       });
     });
 
+
+    //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
+    socket.on("userIsNotTypingPM", function(user) {
+      $rootScope.$applyAsync(function() {
+        if (user.id=== channelOrUserId && channelorPrivate === "private") {
+          console.log("hehexd");
+          var index = -1;
+
+          for (var i = 0;i<vm.userTypingArray.length;i++) {
+            if (vm.userTypingArray[i].userid === user.userid) {
+              index = i;
+            }
+          }
+
+          vm.userTypingArray.splice(index, 1);
+          //If no user is typing, set text to not, if length is 1, set to "is typing", else set to "are typing"
+          vm.typeOfTyping = "";
+        }
+      });
+    });
+
+
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId) {
+        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
           var index = -1;
 
           for (var i = 0;i<vm.userTypingArray.length;i++) {
@@ -259,12 +300,18 @@ Some of the things this module takes care of:
       //Listens on keyup events and if the key is enter, then send the message to the server
       vm.sendMessage = function(event) {
         var currentState = ChatService.getCurrentState();
-        if (event.key === "Enter") {
-          if (event.key === "Enter" && !event.shiftKey) {
+        if (event.key === "Enter" || event.keyIdentifier === "Enter") {
+          if ((event.key === "Enter" || event.keyIdentifier === "Enter") && !event.shiftKey) {
             event.preventDefault();
             if (currentState === "chat-app.privatemessages") {
               var messageToUser = vm.message;
               vm.message = "";
+
+              ChatService.sendUserStoppedTypingPM(channelOrUserId)
+              .then(function() {
+                sendTypingRequest = false;
+              });
+
               ChatService.sendPrivateMessage({
                 messageTo: channelOrUserId,
                 message: messageToUser,
@@ -483,6 +530,10 @@ Some of the things this module takes care of:
       //Logs the user out
       vm.logUserOut = function($event) {
         $rootScope.showSpinner = true;
+        delete ChatService.channels;
+        delete ChatService.users;
+        delete ChatService.userState;
+
         $state.go("chat-app.signout");
       };
 
@@ -585,11 +636,11 @@ Some of the things this module takes care of:
             vm.messagesLoaded = true;
 
             setTimeout(function() {
-            //Scrollbar will go to bottom
-            messagePanel.stop().animate({
-              scrollTop: messagePanel[0].scrollHeight
-            }, 200);
-          }, 0);
+              //Scrollbar will go to bottom
+              messagePanel.stop().animate({
+                scrollTop: messagePanel[0].scrollHeight
+              }, 200);
+            }, 0);
 
           }
         });
@@ -625,7 +676,7 @@ Some of the things this module takes care of:
 
 
       //If the url contains /messages, then run described functions
-      if ($location.path().indexOf("/messages") === 0) {
+      if (channelorPrivate === "channel") {
         var channelName = $stateParams.channelName;
         $rootScope.channelName = channelName;
 
@@ -635,9 +686,8 @@ Some of the things this module takes care of:
         //Loads the Users that are currently typing
         vm.loadUsersCurrentlyTyping();
       }
-      else if ($location.path().indexOf("/privatemessages") === 0) {
+      else if (channelorPrivate === "private") {
         $rootScope.channelName = $stateParams.username;
-
         //Loads all the private messages
         vm.getPrivateMessages();
 

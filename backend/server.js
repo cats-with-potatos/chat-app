@@ -32,7 +32,7 @@ router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendCha
 router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
 router.post("/sendUserIsTypingPM", middleware.checkToken, routes.chatRoutes.sendUserIsTypingPM);
 router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
-router.post("/sendUserStoppedTypingPM", middleware.checkToken, routes.chatRoutes.sendUserStoppedTyping);
+router.post("/sendUserStoppedTypingPM", middleware.checkToken, routes.chatRoutes.sendUserStoppedTypingPM);
 router.post("/sendPrivateMessage", middleware.checkToken, routes.chatRoutes.sendPrivateMessage);
 router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage);
 router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);

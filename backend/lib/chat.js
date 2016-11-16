@@ -293,7 +293,9 @@ chat.emitUserTyping = (obj) => {
 //Emits to the other user in the private messages that the user is typipng
 chat.emitUserTypingPM = (obj) => {
   return new Promise((resolve, reject) => {
+    console.log(obj.userTo);
     if (clients[obj.userTo]) {
+      console.log("I am sending!");
       io.sockets.connected[clients[obj.userTo].socket].emit(obj.eventname, {name: obj.name, id: obj.userid});
     }
     resolve();
@@ -382,7 +384,7 @@ This will emit an event to all the users if the user is currently typing.
 */
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
-    console.log("hello?");
+    socket.emit("userState", "offline");
     const keys = Object.keys(clients);
 
     for (let i = 0;i<keys.length;i++) {
@@ -502,10 +504,9 @@ chat.insertPrivateMessageToDb = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
           mclient.release();
           if (err) {
-            console.log(err);
             reject("serverError");
           }
           else {
@@ -617,6 +618,7 @@ chat.getPrivateMessages = (obj) => {
         mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_message AS contents, UserTable.username FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
           mclient.release();
           if (err) {
+            console.log(err);
             reject('serverError');
           }
           else {
@@ -640,10 +642,31 @@ chat.userAlreadyTypingPM = (obj) => {
   });
 };
 
+//Checks if the user is not already typing
+chat.userAlreadyNotTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (!chat.userTypingPMMap[obj.userFrom].has(obj.userTo)) {
+      reject("userAlreadyNotTyping");
+    }
+    else {
+      resolve();
+    }
+  });
+};
+
+
 //Adds the user to the pm map
 chat.addUserToPMMap = (obj) => {
   return new Promise((resolve, reject) => {
     chat.userTypingPMMap[obj.userFrom].add(obj.userTo);
+    resolve();
+  });
+};
+
+//Adds the user to the pm map
+chat.deleteUserToPMMap = (obj) => {
+  return new Promise((resolve, reject) => {
+    chat.userTypingPMMap[obj.userFrom].delete(obj.userTo);
     resolve();
   });
 };

@@ -79,7 +79,7 @@ width: 75%;
       <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
       <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
         <div class="user-section">
-          <div ng-class="{'user-offline': vm.userState === 'online'}"></div>
+          <div ng-class="{'user-online': userState === 'online'}"></div>
         </div>
         <div class="user-section">
           <div class="user-name">
@@ -89,8 +89,12 @@ width: 75%;
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
       </div>
 
+<<<<<<< HEAD
 
       <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
+=======
+      <div id="chanDiv"><h2 id="chanTitle">Channels  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
+>>>>>>> f4f0f6ba04267ada225fe1034c4e10e92836d4d3
 
       <div id="channel-list">
         <ul>
@@ -99,7 +103,11 @@ width: 75%;
         </ul>
       </div>
       <div id="private-messages">
+<<<<<<< HEAD
         <h2 class="text-center"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">({{vm.users.length}})</span></h2>
+=======
+        <h2 class="text-center">Private Messages <span id="numOfUsers">({{vm.users.length}})</span></h2>
+>>>>>>> f4f0f6ba04267ada225fe1034c4e10e92836d4d3
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
