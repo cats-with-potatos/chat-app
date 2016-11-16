@@ -751,11 +751,11 @@ ul {
   font-weight: bold;
 }
 .channel-search {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   line-height: normal;
   padding: .75rem;
   border: 1px solid #C5C5C5;
-  border-radius: .25rem;
+  border-radius: .50rem;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -763,7 +763,6 @@ ul {
   color: #555459;
   width: 100%;
   max-width: 100%;
-  margin: 0 0 .5rem;
     -webkit-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
     -moz-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
     transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
@@ -771,20 +770,20 @@ ul {
     -moz-osx-font-smoothing: grayscale;
   box-shadow: none;
   height: auto;
-  padding-left: 2.5rem;
+  padding-left: 3.5rem;
   padding-right: 3rem;
 }
 
 .searchspan {
     float: left;
-    margin-right: 25px;
-    margin-top: -23px;
+    margin-right: 30px;
+    margin-top: -30px;
     padding-left: 10px;
     padding-bottom: 5px;
     position: relative;
     z-index: 1;
     color: lightgray;
-    font-size: 1.25rem;
+    font-size: 2.25rem;
     font-style: normal;
     font-weight: 400;
     display: inline-block;
