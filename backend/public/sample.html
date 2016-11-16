@@ -1,0 +1,10 @@
+<div>
+  <h1>Sample Page 1</h1>
+	
+  <label>Name</label>
+  <input data-ng-model="vm.name" /><br/>
+  <sample-directive data-ng-if="vm.isShowingGreeting" data-name="vm.name"></sample-directive>
+  <button data-ng-click="vm.loadGreeting(); vm.isShowingGreeting = true">Load Greeting</button>
+  <button data-ng-click="vm.isShowingGreeting = !vm.isShowingGreeting">{{ vm.isShowingGreeting ? 'Hide' : 'Show' }}  Greeting</button>
+  <a data-ui-sref="chat-app.sample-2">Go to sample 2</a>
+</div>

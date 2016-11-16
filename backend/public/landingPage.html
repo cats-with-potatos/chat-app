@@ -1,0 +1,32 @@
+<!-- Hide the navbar on the landing page -->
+<style>
+.navbar {
+   visibility: hidden;
+}
+</style>
+<!-- Image with class bg used as the fullscreen background -->
+<img src="../img/typing-min.jpg" class="bg" alt="" />
+<div class="container">
+  <div class="row">
+    <div id="landing-box" class="col-md-8 col-md-offset-2 text-center landing-content landing-text" ng-hide="hideNavBar">
+      <h1 id="landing-h1">Chat App</h1>
+      <h2>A Great Application for Great Conversation</h2>
+      <p class="lead">
+        Chat with friends and family with our Chat App!
+        <br>
+        Made with love by the Cats-With-Potatos team.
+      </p>
+      <!-- <hr> -->
+      <div class="col-md-12 text-center form-group">
+        <div ng-show="notLoggedIn">
+          <button data-ui-sref="chat-app.signin" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-sign-in fa-3"></i> Sign In</button>
+          <button data-ui-sref="chat-app.signup" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-user-plus fa-3"></i> Sign Up</button>
+        </div>
+        <div ng-show="loggedIn">
+          <button data-ui-sref="chat-app.messages({channelName: 'general'})" class="btn btn-lg btn-default" id="sign-up-btn"><i class="fa fa-comments-o fa-3"></i> Go To Messages</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
