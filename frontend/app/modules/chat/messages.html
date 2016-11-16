@@ -9,12 +9,6 @@
   border-radius: 0;
 }
 
-/*`.navbar-fixed-top {
-float: right !important;
-right: 0 !important;
-width: 75%;
-}`*/
-
 .ng-scope {
   margin: 0 !important;
 }
@@ -37,8 +31,9 @@ width: 75%;
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default" id="messagePanel">
+
         <div ng-show="vm.messagesLoaded === false">
-          <div style={loadingMiddle} className="loading"></div>
+          <div class="loading" id="messageSpinner"></div>
         </div>
 
 

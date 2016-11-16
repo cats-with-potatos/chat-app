@@ -646,6 +646,12 @@ ul {
   #messageBox {
     width: calc(100% - 15px);
   }
+
+  #messageSpinner {
+    position:absolute;
+    left: calc(50% - 60px);
+  }
+
 }
 
 //Modal Styling
