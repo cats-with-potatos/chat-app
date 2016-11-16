@@ -89,7 +89,7 @@
       <div id="channel-list">
         <ul>
           <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
-          <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
+          <li><a href="#" ng-click="vm.createNewChannel($event)"><i class="fa fa-plus"> </i></a></li>
         </ul>
       </div>
       <div id="private-messages">
@@ -148,14 +148,14 @@
                       <div class="col-sm-8">
                         <h2>Browse all {{vm.channels.length}} channels </h2>
                       </div>
-                      <div class="col-sm-2 col-sm-offset-2 add-chan">
-                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default"><i class="fa fa-plus"></i> New Channel</button>
+                      <div class="col-sm-2 col-sm-offset-1 add-chan">
+                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan"><i class="fa fa-plus"> </i> New Channel</button>
                       </div>
                       <div class="col-sm-12">
                         <ul class="">
-                          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
+                          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
                         </ul>
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
                       </div>
                     </div>
                 </div>
@@ -179,9 +179,9 @@
                     <div class="modal-body">
                         <h2>Private Messages ({{vm.users.length}})</h2>
                         <ul class="">
-                          <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
+                          <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
                         </ul>
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
                     </div>
                 </div>
             </div>
