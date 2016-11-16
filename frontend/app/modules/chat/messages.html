@@ -76,7 +76,7 @@ width: 75%;
     </div>
 
     <div id="channel-sidebar" class="col-md-2">
-      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
+      <a ng-click="vm.goToHome()" class="navbar-brand" id="app-brand" style="cursor: pointer;"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
       <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
         <div class="user-section">
           <div ng-class="{'user-online': userState === 'online'}"></div>
@@ -89,12 +89,7 @@ width: 75%;
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
       </div>
 
-<<<<<<< HEAD
-
-      <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
-=======
       <div id="chanDiv"><h2 id="chanTitle">Channels  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
->>>>>>> f4f0f6ba04267ada225fe1034c4e10e92836d4d3
 
       <div id="channel-list">
         <ul>
@@ -103,11 +98,7 @@ width: 75%;
         </ul>
       </div>
       <div id="private-messages">
-<<<<<<< HEAD
-        <h2 class="text-center"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">({{vm.users.length}})</span></h2>
-=======
         <h2 class="text-center">Private Messages <span id="numOfUsers">({{vm.users.length}})</span></h2>
->>>>>>> f4f0f6ba04267ada225fe1034c4e10e92836d4d3
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
@@ -144,54 +135,4 @@ width: 75%;
   </div>
 </div>
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">
-</div>
-
-<!-- Channel Modal -->
-<div class="chan-modal modal fade" id="chanModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-            <div class="lr">
-                <div class="rl">
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <div class="modal-body">
-                        <h2>Browse all {{vm.channels.length}} Channels or <a href="#" ng-click="vm.createNewChannel($event)">+</a> Add</h2>
-                        <ul class="">
-                          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
-                        </ul>
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Private Messages Modal -->
-<div class="chan-modal modal fade" id="pmModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-            <div class="lr">
-                <div class="rl">
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2">
-                    <div class="modal-body">
-                        <h2>Private Messages ({{vm.users.length}})</h2>
-                        <ul class="">
-                          <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
-                        </ul>
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

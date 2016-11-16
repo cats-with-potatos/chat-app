@@ -30648,6 +30648,7 @@ Some of the things this module takes care of:
       };
 
       vm.goToPrivateMessage = function(user_id, username, event) {
+        $rootScope.showSpinner = true;
         $state.go("chat-app.privatemessages", {username: username});
       }
 
@@ -30705,6 +30706,14 @@ Some of the things this module takes care of:
           vm.users = ChatService.users;
           vm.channels = ChatService.channels;
         }
+      };
+
+      //Go to home page
+      vm.goToHome = function() {
+        $rootScope.showSpinner = true;
+        delete ChatService.channels;
+        delete ChatService.users;
+        $state.go("chat-app.landing");
       };
 
       //Gets the initial messages in the private conversation
