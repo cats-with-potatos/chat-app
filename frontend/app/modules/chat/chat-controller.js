@@ -530,6 +530,10 @@ Some of the things this module takes care of:
       //Logs the user out
       vm.logUserOut = function($event) {
         $rootScope.showSpinner = true;
+        delete ChatService.channels;
+        delete ChatService.users;
+        delete ChatService.userState;
+
         $state.go("chat-app.signout");
       };
 

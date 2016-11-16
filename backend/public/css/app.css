@@ -11978,6 +11978,7 @@ ul li:last-child a:hover {
 /* line 37, /Users/raf/Programming/projects/catsWithPotatoes/frontend/app/scss/_spinners.scss */
 #signOutSpinner {
   float: right;
+  margin: 0 auto;
   width: 50px;
   height: 50px;
   margin-top: 8px;
