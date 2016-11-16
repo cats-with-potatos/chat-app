@@ -719,13 +719,24 @@ ul {
   list-style: none;
   margin-bottom: 50px;
 }
-.modal-body li {
-  font-size: 2.5em;
+#chan-list a {
+  font-size: 1.8em;
+  color: #0097A7;
+}
+#chan-list a:hover {
+  text-decoration: underline;
+}
+#pm-list a {
+  font-size: 1.8em;
+  color: #0097A7;
+}
+#pm-list a:hover {
+  text-decoration: underline;
 }
 .active-channel-modal {
-  font-size: 2.5em;
+  font-weight: bold;
 }
-.modal-body a, a:hover, a:visited {
+.modal-body {
   color: #000;
 }
 .add-chan {
