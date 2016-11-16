@@ -384,7 +384,7 @@ This will emit an event to all the users if the user is currently typing.
 */
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
-    console.log("hello?");
+    socket.emit("userState", "offline");
     const keys = Object.keys(clients);
 
     for (let i = 0;i<keys.length;i++) {

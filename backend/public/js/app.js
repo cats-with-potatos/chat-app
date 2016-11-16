@@ -30161,6 +30161,11 @@ Some of the things this module takes care of:
           ChatService.userState = "online";
           vm.userState = "online";
         }
+        else if (typeOfState === "offline") {
+          console.log("you are going offline!");
+          ChatService.userState = "offline";
+          vm.userState = "offline";
+        }
       });
     });
 
