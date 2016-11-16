@@ -41,19 +41,23 @@ h1, p, a {
   font-weight: normal;
   font-size: 1.25em;
   color: #000;
+  white-space: pre-line;
 }
 
 #messagePanel {
   top: 80px;
   @include not-collapsed-width();
   margin-left: 200px;
+
   /* left: 0; */
   /* top: 0; */
 
   overflow: auto;
+  overflow-x: hidden;
   position: fixed;
   border: 0;
   padding-bottom: 0;
+  margin-bottom: 30px;
   /* float: right; */
   bottom: 60px;
   min-height: 100px;
@@ -112,7 +116,6 @@ h1, p, a {
   overflow: auto;
   background: #fff;
   font-size: 1.9375rem;
-  line-height: 1.2rem;
   border: 2px solid #E0E0E0;
   background-clip: padding-box;
   font-family: 'Lato', sans-serif;
@@ -121,14 +124,9 @@ h1, p, a {
   box-shadow: none;
   margin-left: 10px;
   outline: 0;
-  // padding-top: 1.5625rem;
-  // padding-bottom: 1.5625rem;
-  // padding-left: .5rem;
-  // padding-right: 2.5rem;
-  resize: none!important;
-  -webkit-transition: none;
-  -moz-transition: none;
-  transition: none;
+  bottom: 0;
+  position: fixed;
+  width: calc(100% - 220px);
 }
 
 #userTyping {
@@ -136,8 +134,9 @@ h1, p, a {
   font-size: 1em;
   line-height: 1rem;
   max-width: 75%;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  margin-left: 12px;
+  margin-top: -5px !important;
+  position:absolute;
   font-weight: 700;
 }
 
@@ -321,6 +320,10 @@ ul {
   }
 }
 
+.active-user {
+  @extend .active-channel;
+}
+
 
 //Private messages
 #private-messages {
@@ -340,8 +343,9 @@ ul {
     }
   }
 
-  h1 {
-    font-size: 1.75em;
+  h2 {
+    font-size: 18px;
+    color: #FFF;
   }
 }
 
@@ -501,7 +505,6 @@ ul {
     li {
       margin-right: 5px;
 
-      @include border-radius(20px)
 
       cursor: pointer;
 
@@ -513,28 +516,35 @@ ul {
       -o-user-select: none;
       user-select: none;
 
+
       &:nth-child(1) {
         a {
+          color: inherit;
+
           &:hover {
-            background-color: $cyanish-color;
+            background-color: $cyanish-color !important;
+            color: #FFF !important;
           }
-        }
+                }
 
         &:hover {
-          background-color: $cyanish-color !important;
           color: #FFF;
+          background-color: $cyanish-color !important;
         }
       }
 
       &:nth-child(2) {
         a {
+          color: inherit;
+
           &:hover {
-            background-color: #e74c3c;
+            background-color: $delete-color;
+
           }
         }
-
         &:hover {
-          background-color: #e74c3c !important;
+          background-color: $delete-color !important;
+          color: #FFF;
         }
       }
     }
@@ -567,11 +577,17 @@ ul {
   font-size:20px;
 }
 
+
+
 #numOfChannels {
   font-size: 12px;
   font-weight: lighter;
   color: $silver;
   margin-left: 5px;
+}
+
+#numOfUsers {
+  @extend #numOfChannels;
 }
 
 #spinnerAtTop {
@@ -586,6 +602,7 @@ ul {
 .lowerMarginTop {
   margin-top: 7px !important;
 }
+
 
 
 //These styles are applied when the screen is bigger than 700 pixels
@@ -624,5 +641,9 @@ ul {
   }
   #text-ellipsis {
     width: calc(100% - 50px);
+  }
+
+  #messageBox {
+    width: calc(100% - 15px);
   }
 }

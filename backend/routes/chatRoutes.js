@@ -122,7 +122,7 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
   })
   .then(() => {
     //Checks if the user is already typing
-    if (chat. userAlreadyTyping({
+    if (chat.userAlreadyTyping({
       userid: userid,
       channelId: channelId,
     })) {
@@ -159,8 +159,112 @@ chatRoutes.sendUserIsTyping = (req, res) => { // TYPE: POST
 };
 
 
-//This is sent from the client when the user has stopped typing.
+//Sent when a user begings to type in a private message
+chatRoutes.sendUserIsTypingPM = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const userTo = Number(req.body.userTo);
 
+  if (!userTo) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError"
+    });
+    return;
+  }
+
+  chat.checkPMIdExists(userTo)
+  .then(() => {
+    return chat.userAlreadyTypingPM(
+      {
+        userFrom: userid,
+        userTo: userTo,
+      });
+  })
+  .then(() => {
+    return chat.addUserToPMMap({
+      userFrom: userid,
+      userTo: userTo,
+    });
+  })
+  .then(() => {
+    return chat.getNameFromId(userid);
+  })
+  .then((name) => {
+    return chat.emitUserTypingPM({
+      name: name,
+      userid: userid,
+      userTo: userTo,
+      eventname: "userIsTypingPM",
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+};
+
+//Sent when a user begings to type in a private message
+chatRoutes.sendUserStoppedTypingPM = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const userTo = Number(req.body.userTo);
+
+  if (!userTo) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError"
+    });
+    return;
+  }
+
+  chat.checkPMIdExists(userTo)
+  .then(() => {
+    return chat.userAlreadyNotTypingPM(
+      {
+        userFrom: userid,
+        userTo: userTo,
+      });
+  })
+  .then(() => {
+    return chat.deleteUserToPMMap({
+      userFrom: userid,
+      userTo: userTo,
+    });
+  })
+  .then(() => {
+    return chat.getNameFromId(userid);
+  })
+  .then((name) => {
+    return chat.emitUserTypingPM({
+      name: name,
+      userid: userid,
+      userTo: userTo,
+      eventname: "userIsNotTypingPM",
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+};
+
+
+//This is sent from the client when the user has stopped typing.
 chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
   const channelId = req.body.channelId;
@@ -179,12 +283,12 @@ chatRoutes.sendUserStoppedTyping = (req, res) => { // TYPE: POST
   })
   .then(() => {
     //Check to see if the user is already not typing and return error
-  if (chat.userIsNotTyping({
-    userid: userid,
-    channelId: channelId,
-  })) {
-    throw new Error("alreadyNotTyping");
-  }
+    if (chat.userIsNotTyping({
+      userid: userid,
+      channelId: channelId,
+    })) {
+      throw new Error("alreadyNotTyping");
+    }
     chat.deleteUserFromMap({
       userid: userid,
       channelId: channelId,
@@ -244,7 +348,7 @@ chatRoutes.getIntialUsersTyping = (req, res) => { // TYPE: GET
 };
 
 //This route will update a message
-chatRoutes.updateMessage = (req, res) => {
+chatRoutes.updateMessage = (req, res) => { // TYPE: PUT
   const userid = req.decoded.id;
   const messageId = Number(req.body.messageId);
   const channelId = Number(req.body.channelId);
@@ -286,7 +390,7 @@ chatRoutes.updateMessage = (req, res) => {
 };
 
 //This route will delete a message.
-chatRoutes.deleteMessage = (req, res) => {
+chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
   const userid = req.decoded.id;
   const messageId = Number(req.query.messageId);
   const channelId = Number(req.query.channelId);
@@ -319,6 +423,92 @@ chatRoutes.deleteMessage = (req, res) => {
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400;
     res.json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+};
+
+//Sends a private message
+chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
+  const userid = req.decoded.id;
+  const messageTo = Number(req.body.messageTo);
+  const message = req.body.message;
+
+  if (chat.checkParamError({
+    messageTo: messageTo,
+    message: message,
+    userid: userid,
+  })) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+  chat.checkPMIdExists(messageTo)
+  .then(() => {
+
+    return chat.insertPrivateMessageToDb({
+      userid: userid,
+      messageTo: messageTo,
+      message: message,
+    });
+  })
+  .then(() => {
+    return chat.sendPMToUser({
+      userid: userid,
+      messageTo: messageTo,
+      message: message,
+    });
+  })
+  .then(() => {
+    res.status(200).json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  });
+};
+
+//This route will get all messages between the user and another person
+chatRoutes.getPrivateMessages = (req, res) => { // TYPE: GET
+  const userid = req.decoded.id;
+  const userTo = Number(req.query.userTo);
+
+  if (!userTo || userid === userTo) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+
+  chat.checkPMIdExists(userTo)
+  .then(() => {
+    console.log("Did I make it to: checkPMIdExists");
+    return chat.getPrivateMessages({
+      userid: userid,
+      userTo: userTo,
+    });
+  })
+  .then(function(messages) {
+
+    res.json({
+      "response": "success",
+      "data": messages,
+    });
+  })
+  .catch((e) => {
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
       "response": "error",
       "errorType": e,
     });

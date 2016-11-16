@@ -5,25 +5,25 @@ const Promise = require("bluebird")
 , chat = {}
 // userTypingMap is a dictionary that defines who is currently typing
 chat.userTypingMap = {}
+chat.userTypingPMMap = {};
 
 //Populates the user is typing map
 chat.populateUserTypingMap = () => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
-        console.log(err);
+        reject("serverError");
       }
       else {
         mclient.query("SELECT chan_id FROM ChannelsTable", (err, data) => {
           mclient.release();
           if (err) {
-            console.log(err);
+            reject("serverError");
           }
           else {
             data.forEach((val) => {
               chat.userTypingMap[val.chan_id] = new Set();
             });
-            console.log(chat.userTypingMap);
           }
         });
       }
@@ -31,7 +31,32 @@ chat.populateUserTypingMap = () => {
   });
 };
 
+chat.populateUserPMTypingMap = () => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT user_id FROM UserTable", (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            data.forEach((val) => {
+              chat.userTypingPMMap[val.user_id] = new Set();
+            });
+          }
+        });
+      }
+    });
+  });
+};
+
 chat.populateUserTypingMap();
+chat.populateUserPMTypingMap();
+
 
 //Checks to see if there are any problems with the message being sent or any details of the mesage
 chat.checkMessageError = (messageDet) => {
@@ -265,6 +290,18 @@ chat.emitUserTyping = (obj) => {
 });
 };
 
+//Emits to the other user in the private messages that the user is typipng
+chat.emitUserTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    console.log(obj.userTo);
+    if (clients[obj.userTo]) {
+      console.log("I am sending!");
+      io.sockets.connected[clients[obj.userTo].socket].emit(obj.eventname, {name: obj.name, id: obj.userid});
+    }
+    resolve();
+  });
+};
+
 //Returns true if the user is not currently in the map
 chat.userIsNotTyping = (obj) => {
   if (!chat.userTypingMap[obj.channelId].has(obj.userid)) {
@@ -347,7 +384,7 @@ This will emit an event to all the users if the user is currently typing.
 */
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
-    console.log("hello?");
+    socket.emit("userState", "offline");
     const keys = Object.keys(clients);
 
     for (let i = 0;i<keys.length;i++) {
@@ -459,5 +496,179 @@ chat.deleteMessage = (obj) => {
   });
 };
 
+//Inserted the private message in to the db
+chat.insertPrivateMessageToDb = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+
+//Checks to see if there are any problems with the private message being sent to the user
+chat.checkParamError = (obj) => {
+  if (!obj.messageTo || !obj.message || obj.userid === obj.messageTo) {
+    return "paramError";
+  }
+
+
+  //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
+  try {
+    if (JSON.parse(obj.message).length > 100) {
+      return "messageTooLong";
+    }
+  }
+  catch(e) {
+    return "paramError";
+  }
+  return null;
+};
+
+//Sends a private message to the user
+
+chat.sendPMToUser = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT username FROM UserTable WHERE user_id = ?", [obj.userid], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            obj.username = data[0].username;
+            obj.contents = obj.message;
+            delete obj.message;
+
+
+            console.log("messageTo is: " + obj.messageTo);
+            console.log("clients is");
+            console.log(clients);
+
+            if (clients[obj.messageTo]) {
+              console.log("I have emitted to : " + obj.messageTo);
+              io.sockets.connected[clients[obj.messageTo].socket].emit("newPrivateMessage", obj);
+            }
+            console.log(obj.userid);
+            if (clients[obj.userid]) {
+              console.log("I am sending the message to : " + obj.userid);
+              io.sockets.connected[clients[obj.userid].socket].emit("newPrivateMessage", obj);
+            }
+            resolve();
+          }
+        })
+      }
+    });
+  });
+};
+
+//Checks if the messageTo id exists
+chat.checkPMIdExists = (messageTo) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT user_id FROM UserTable WHERE user_id = ?", [messageTo], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("userDoesNotExist");
+            }
+            else {
+              resolve();
+            }
+          }
+        });
+      }
+    });
+
+  });
+};
+
+//Gets the private messages
+chat.getPrivateMessages = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_message AS contents, UserTable.username FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject('serverError');
+          }
+          else {
+            resolve(data);
+          }
+        });
+      }
+    });
+  });
+};
+
+//Checks if the user is already typing
+chat.userAlreadyTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (chat.userTypingPMMap[obj.userFrom].has(obj.userTo)) {
+      reject("userAlreadyTyping");
+    }
+    else {
+      resolve();
+    }
+  });
+};
+
+//Checks if the user is not already typing
+chat.userAlreadyNotTypingPM = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (!chat.userTypingPMMap[obj.userFrom].has(obj.userTo)) {
+      reject("userAlreadyNotTyping");
+    }
+    else {
+      resolve();
+    }
+  });
+};
+
+
+//Adds the user to the pm map
+chat.addUserToPMMap = (obj) => {
+  return new Promise((resolve, reject) => {
+    chat.userTypingPMMap[obj.userFrom].add(obj.userTo);
+    resolve();
+  });
+};
+
+//Adds the user to the pm map
+chat.deleteUserToPMMap = (obj) => {
+  return new Promise((resolve, reject) => {
+    chat.userTypingPMMap[obj.userFrom].delete(obj.userTo);
+    resolve();
+  });
+};
 
 module.exports = chat;

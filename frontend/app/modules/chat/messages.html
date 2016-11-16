@@ -74,12 +74,12 @@ width: 75%;
         </ul>
       </div>
     </div>
-    <div id="channel-sidebar" class="col-md-2">
-      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="vm.showSpinner === true"></div>
 
+    <div id="channel-sidebar" class="col-md-2">
+      <a data-ui-sref="chat-app.landing"  class="navbar-brand" id="app-brand"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
       <div id="user-sections" ng-class="{'lowerMarginTop': vm.showSpinner === true}">
         <div class="user-section">
-          <div ng-class="{'user-offline': vm.userState === 'online'}"></div>
+          <div ng-class="{'user-online': userState === 'online'}"></div>
         </div>
         <div class="user-section">
           <div class="user-name">
@@ -89,21 +89,18 @@ width: 75%;
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
       </div>
 
-
       <div id="chanDiv"><h2 id="chanTitle">Channels  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
 
       <div id="channel-list">
         <ul>
-          <li ng-repeat="channel in vm.channels.slice(0,4)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
+          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
           <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
         </ul>
       </div>
       <div id="private-messages">
-        <h1 class="text-center">Private Messages</h1>
+        <h2 class="text-center">Private Messages <span id="numOfUsers">({{vm.users.length}})</span></h2>
         <ul>
-          <li><a href="#">Message 2</a></li>
-          <li><a href="#">Message 3</a></li>
-          <li><a href="#">Message 4</a></li>
+          <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
       </div>
     </div>
@@ -121,7 +118,7 @@ width: 75%;
     </div>
     <div class="form-group">
       <!--Input where the user types-->
-      <input
+      <textarea
       type="text"
       id="messageBox"
       class="form-control"
@@ -133,7 +130,7 @@ width: 75%;
       spellcheck="true"
       required
       maxlength="100"
-      />
+      ></textarea>
     </div>
   </div>
 </div>
