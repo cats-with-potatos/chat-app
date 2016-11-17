@@ -103,7 +103,7 @@ h1, p, a {
   /* left: 0; */
   left: 200px;
   @include not-collapsed-width();
-  height: 60px;
+  height: 65px;
   right: 15px;
   padding-bottom: 0px;
   background-color: #ffffff;
@@ -123,6 +123,7 @@ h1, p, a {
   -webkit-appearance: none;
   box-shadow: none;
   margin-left: 10px;
+  margin-bottom: 5px;
   outline: 0;
   bottom: 0;
   position: fixed;
@@ -573,10 +574,27 @@ ul {
 }
 
 #chanTitle {
-  color: #FFF;
+  color: #546E7A;
   font-size:20px;
+  font-weight: normal;
 }
 
+.chan-link, .pm-link {
+  color: #bdc3c7;
+  text-transform: uppercase;
+  font-size: initial;
+}
+
+#pmTitle a:hover, #chanTitle a:hover {
+  text-decoration: none;
+  color: #FFF;
+  font-weight: normal;
+}
+
+#pmTitle a:focus, #chanTitle a:focus{
+  color: #FFF;
+  text-decoration: none;
+}
 
 
 #numOfChannels {
@@ -655,6 +673,11 @@ ul {
 }
 
 //Modal Styling
+
+#chanModal, #pmModal {
+  border-bottom: 1px solid #546E7A;
+}
+
 .chan-modal .modal-content {
   border-radius: 0;
   background-clip: border-box;
@@ -666,8 +689,9 @@ ul {
   text-align: center;
 }
 .chan-modal .modal-content h2 {
-  margin: 0;
+  margin: 25px;
   font-size: 3em;
+  font-weight: bold;
 }
 .chan-modal .modal-content img {
   margin-bottom: 30px;
@@ -686,6 +710,12 @@ ul {
 }
 .chan-modal .close-modal:hover {
   opacity: 0.3;
+  background: #e8e8e8;
+  border-radius: 100%;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  user-select: none;
 }
 .chan-modal .close-modal .lr {
   height: 75px;
@@ -716,10 +746,70 @@ ul {
 }
 .modal-body ul {
   list-style: none;
+  margin-bottom: 50px;
 }
-.modal-body li {
-  // font-size: 2.5em;
+#chan-list a, #pm-list a {
+  font-size: 1.8em;
+  color: #0097A7;
+  text-decoration: none;
 }
-.modal-body a, a:hover, a:visited {
+#chan-list li:hover, #pm-list li:hover {
+  background-color: #CFD8DC;
+  text-decoration: none;
+}
+.active-channel-modal {
+  font-weight: bold;
+}
+.modal-body {
   color: #000;
+}
+.add-chan {
+  padding: 30px;
+}
+.btn-new-chan {
+  color: #fff;
+  background-color: #0097A7;
+  font-weight: bold;
+}
+.channel-search {
+  font-size: 2.5rem;
+  line-height: normal;
+  padding: .75rem;
+  border: 1px solid #C5C5C5;
+  border-radius: .50rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  color: #555459;
+  width: 100%;
+  max-width: 100%;
+    -webkit-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+    -moz-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+    transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  box-shadow: none;
+  height: auto;
+  padding-left: 3.75rem;
+  padding-right: 3rem;
+}
+
+#searchspan .fa {
+  font-size: .8em;
+}
+
+#searchspan {
+    float: left;
+    margin-right: 30px;
+    margin-top: -32px;
+    padding-left: 10px;
+    padding-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    color: lightgray;
+    font-size: 2.25rem;
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
 }
