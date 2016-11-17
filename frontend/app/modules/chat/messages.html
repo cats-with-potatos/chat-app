@@ -84,16 +84,16 @@
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
       </div>
 
-      <div id="chanDiv"><h2 id="chanTitle">Channels  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
+      <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
 
       <div id="channel-list">
         <ul>
           <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
-          <li><a href="#" ng-click="vm.createNewChannel($event)">+</a></li>
+          <li><a href="#" ng-click="vm.createNewChannel($event)"><i class="fa fa-plus"> </i></a></li>
         </ul>
       </div>
       <div id="private-messages">
-        <h2 class="text-center">Private Messages <span id="numOfUsers">({{vm.users.length}})</span></h2>
+        <h2 class="text-center" id="pmTitle"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">({{vm.users.length}})</span></h2>
         <ul>
           <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
         </ul>
@@ -130,4 +130,69 @@
   </div>
 </div>
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">
+</div>
+
+<!-- Channel Modal -->
+<div class="chan-modal modal fade" id="chanModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2" id="chanModal">
+                    <div class="modal-body">
+                      <div class="col-sm-8">
+                        <h2>Browse all {{vm.channels.length}} channels </h2>
+                      </div>
+                      <div class="col-sm-2 col-sm-offset-1 add-chan">
+                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
+                      </div>
+                      <div class="col-sm-12 col-sm-offset-1">
+                        <div class="col-sm-10 search-div">
+                          <form class="form-group">
+                            <input class="channel-search" type="text" name="channel-search" value="" placeholder="Search channels">
+                            <span id="searchspan" class="fa fa-search"></span>
+                          </form>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <ul id="chan-list">
+                          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
+                        </ul>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Private Messages Modal -->
+<div class="chan-modal modal fade" id="pmModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2" id="pmModal">
+                    <div class="modal-body">
+                        <h2>Private Messages ({{vm.users.length}})</h2>
+                        <ul id="pm-list">
+                          <li ng-repeat="user in vm.users" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
+                        </ul>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
