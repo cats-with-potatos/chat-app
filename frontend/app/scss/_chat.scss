@@ -666,12 +666,12 @@ ul {
 
 }
 
-.chan-link a:hover {
-  text-decoration: underline;
-  color: #fff;
+//Modal Styling
+
+#chanModal, #pmModal {
+  border-bottom: 1px solid #546E7A;
 }
 
-//Modal Styling
 .chan-modal .modal-content {
   border-radius: 0;
   background-clip: border-box;
@@ -751,7 +751,8 @@ ul {
   color: #0097A7;
 }
 #chan-list li:hover, #pm-list li:hover {
-  background-color: #e6e6e6;
+  background-color: #CFD8DC;
+  text-decoration: none;
 }
 .active-channel-modal {
   font-weight: bold;
