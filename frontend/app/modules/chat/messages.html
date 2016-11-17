@@ -154,14 +154,14 @@
                       <div class="col-sm-12 col-sm-offset-1">
                         <div class="col-sm-10 search-div">
                           <form class="form-group">
-                            <input class="channel-search" type="text" name="channel-search" value="" placeholder="Search channels">
+                            <input ng-model="query" class="channel-search" type="text" name="channel-search" value="" placeholder="Search channels">
                             <span id="searchspan" class="fa fa-search"></span>
                           </form>
                         </div>
                       </div>
                       <div class="col-sm-12">
                         <ul id="chan-list">
-                          <li ng-repeat="channel in vm.channels" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
+                          <li ng-repeat="channel in vm.channels | filter:query" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
                         </ul>
                         <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
                       </div>
