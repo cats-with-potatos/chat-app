@@ -553,8 +553,29 @@ ul {
 
 
 
+
+
 .getting-deleted {
   background-color: rgba(231,76,60, 0.5);
+
+    -moz-animation-name: changeHeightToNone;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-timing-function: ease-out;
+    -webkit-fill-mode: forwards;
+    -moz-animation-duration: 2s;
+
+    -webkit-animation-name: changeHeightToNone;
+    -webkit-fill-mode: forwards;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: ease-out;
+    -webkit-animation-duration: 2s;
+
+    animation-name: changeHeightToNone;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-out;
+    animation-duration: 2s;
+
 
   &:hover {
     background-color: rgba(231,76,60, 0.5) !important;
@@ -564,6 +585,42 @@ ul {
 .edit-styles {
   width: 70%;
 }
+
+
+
+@-moz-keyframes changeHeightToNone {
+    0% {
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        height: 0px;
+        opacity: 0;
+    }
+}
+@-webkit-keyframes changeHeightToNone {
+    0% {
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        height: 0px;
+        opacity: 0;
+    }
+}
+
+@keyframes changeHeightToNone {
+    0% {
+        opacity: 1;
+        height: auto;
+    }
+    100% {
+        height: 0px;
+        opacity: 0;
+    }
+}
+
+
 
 #chanDiv {
   width: 100%;
@@ -651,7 +708,6 @@ ul {
     position:absolute;
     left: calc(50% - 60px);
   }
-
 }
 
 //Modal Styling

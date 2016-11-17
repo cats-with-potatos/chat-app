@@ -147,6 +147,34 @@ Some of the things this module takes care of:
         });
       });
 
+      socket.on("newDeletedMessage", function(obj) {
+        $rootScope.$applyAsync(function() {
+          if (obj.channelId === channelOrUserId && channelorPrivate === "channel") {
+            var indexToDelete;
+
+            for (var i = 0; i < vm.messages.length ; i++) {
+              if (vm.messages[i].message_id === obj.messageId) {
+                vm.messages[i].gettingDeleted = true;
+                indexToDelete = i;
+
+                if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
+                  $rootScope.showSpinner = false;
+                }
+                break;
+
+              }
+            }
+
+            setTimeout(function() {
+                  $scope.$apply(function() {
+                    vm.messages.splice(indexToDelete, 1);
+                  });
+                }, 1000);
+          }
+        });
+      });
+
+
 
       //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
       socket.on("userIsNotTypingPM", function(user) {
@@ -231,20 +259,9 @@ Some of the things this module takes care of:
 
         vm.deleteMessage = function(messageId, messageIndex) {
           //A red background will appear showing that the message is in the process of being deleted
-          vm.messages[messageIndex].gettingDeleted = true;
           $rootScope.showSpinner = true;
 
-
-
-          ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId})
-          .then(function(res) {
-            if (res.data.response === "success") {
-              $rootScope.showSpinner = false;
-
-              //Deletes message
-              vm.messages.splice(messageIndex, 1);
-            }
-          });
+          ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId});
         }
 
 

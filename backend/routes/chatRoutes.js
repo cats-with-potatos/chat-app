@@ -416,6 +416,13 @@ chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
     });
   })
   .then(() => {
+    return chat.emitDeletedMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+    });
+  })
+  .then(() => {
     res.json({
       "response": "success",
     });
