@@ -103,7 +103,7 @@ h1, p, a {
   /* left: 0; */
   left: 200px;
   @include not-collapsed-width();
-  height: 60px;
+  height: 65px;
   right: 15px;
   padding-bottom: 0px;
   background-color: #ffffff;
@@ -748,13 +748,10 @@ ul {
   list-style: none;
   margin-bottom: 50px;
 }
-#chan-list a {
+#chan-list a, #pm-list a {
   font-size: 1.8em;
   color: #0097A7;
-}
-#pm-list a {
-  font-size: 1.8em;
-  color: #0097A7;
+  text-decoration: none;
 }
 #chan-list li:hover, #pm-list li:hover {
   background-color: #CFD8DC;
