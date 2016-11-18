@@ -748,6 +748,12 @@ ul {
   list-style: none;
   margin-bottom: 50px;
 }
+
+#chan-list {
+  height: 350px;
+  overflow: auto;
+}
+
 #chan-list a, #pm-list a {
   font-size: 1.8em;
   color: #0097A7;
