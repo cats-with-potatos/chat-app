@@ -562,19 +562,19 @@ ul {
     -moz-animation-iteration-count: 1;
     -moz-animation-timing-function: ease-out;
     -webkit-fill-mode: forwards;
-    -moz-animation-duration: 2s;
+    -moz-animation-duration: 1s;
 
     -webkit-animation-name: changeHeightToNone;
     -webkit-fill-mode: forwards;
     -webkit-animation-iteration-count: 1;
     -webkit-animation-timing-function: ease-out;
-    -webkit-animation-duration: 2s;
+    -webkit-animation-duration: 1s;
 
     animation-name: changeHeightToNone;
     animation-fill-mode: forwards;
     animation-iteration-count: 1;
     animation-timing-function: ease-out;
-    animation-duration: 2s;
+    animation-duration: 1s;
 
 
   &:hover {
@@ -613,6 +613,62 @@ ul {
         opacity: 0;
     }
 }
+
+.was-edited {
+  @include cyanOpaque(0.5);
+
+
+  -moz-animation-name: changeOpacityToZero;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-timing-function: ease-out;
+  -webkit-fill-mode: forwards;
+  -moz-animation-duration: 1s;
+
+  -webkit-animation-name: changeOpacityToZero;
+  -webkit-fill-mode: forwards;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: ease-out;
+  -webkit-animation-duration: 1s;
+
+  animation-name: changeOpacityToZero;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-out;
+  animation-duration: 1s;
+}
+
+
+
+@-moz-keyframes changeOpacityToZero {
+    0% {
+      @include cyanOpaque(0.5);
+    }
+
+    100% {
+      background-color: #FFF;
+    }
+}
+@-webkit-keyframes changeOpacityToZero {
+    0% {
+      @include cyanOpaque(0.5);
+    }
+    100% {
+        background-color: #FFF;
+    }
+}
+
+@keyframes changeOpacityToZero {
+    0% {
+      @include cyanOpaque(0.5);
+    }
+    100% {
+        background-color: #FFF;
+    }
+}
+
+
+
+
 
 
 #chanDiv {

@@ -381,6 +381,14 @@ chatRoutes.updateMessage = (req, res) => { // TYPE: PUT
     });
   })
   .then(() => {
+    return chat.emitUpdatedMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+      contents: contents,
+    });
+  })
+  .then(() => {
     res.json({"response": "success"});
   })
   .catch((e) => {
