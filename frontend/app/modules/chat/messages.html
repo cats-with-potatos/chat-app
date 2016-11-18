@@ -58,8 +58,8 @@
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                      <li ng-click="vm.editMessage(message.message_id, $index)"><a>Edit Message</a></li>
-                      <li ng-click="vm.deleteMessage(message.message_id, $index)"><a>Delete Message</a></li>
+                      <li ng-click="vm.editMessage(message.message_id, $index)"><span id="editMsg"><i class="fa fa-pencil"></i>  <a>Edit Message</a> </span></li>
+                      <li ng-click="vm.deleteMessage(message.message_id, $index)"><span id="delMsg"><i class="fa fa-times"></i> <a>Delete Message</a> </span></li>
                     </ul>
                   </div>
                 </div>

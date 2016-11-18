@@ -553,6 +553,15 @@ ul {
 }
 
 .dropdown-menu {
+  position: relative;
+}
+
+#editMsg i, #delMsg i {
+  padding-right: 5px;
+}
+
+#delMsg a {
+  text-decoration: none;
 }
 
 .getting-deleted {
