@@ -590,21 +590,17 @@ ul {
 
 @-moz-keyframes changeHeightToNone {
     0% {
-        height: auto;
         opacity: 1;
     }
     100% {
-        height: 0px;
         opacity: 0;
     }
 }
 @-webkit-keyframes changeHeightToNone {
     0% {
-        height: auto;
         opacity: 1;
     }
     100% {
-        height: 0px;
         opacity: 0;
     }
 }
@@ -612,14 +608,11 @@ ul {
 @keyframes changeHeightToNone {
     0% {
         opacity: 1;
-        height: auto;
     }
     100% {
-        height: 0px;
         opacity: 0;
     }
 }
-
 
 
 #chanDiv {
