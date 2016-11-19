@@ -381,6 +381,14 @@ chatRoutes.updateMessage = (req, res) => { // TYPE: PUT
     });
   })
   .then(() => {
+    return chat.emitUpdatedMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+      contents: contents,
+    });
+  })
+  .then(() => {
     res.json({"response": "success"});
   })
   .catch((e) => {
@@ -410,6 +418,13 @@ chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
   })
   .then(() => {
     return chat.deleteMessage({
+      userid: userid,
+      messageId: messageId,
+      channelId: channelId,
+    });
+  })
+  .then(() => {
+    return chat.emitDeletedMessage({
       userid: userid,
       messageId: messageId,
       channelId: channelId,

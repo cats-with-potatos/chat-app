@@ -8,3 +8,7 @@
 @mixin not-collapsed-width() {
   width: calc(100% - 220px);
 }
+
+@mixin cyanOpaque($amount) {
+  background-color: rgba(0,151,167, $amount);
+}

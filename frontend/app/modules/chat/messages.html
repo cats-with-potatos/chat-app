@@ -40,7 +40,7 @@
         <div ng-show="vm.messagesLoaded === true">
           <ul>
             <!--Messages are repeated here-->
-            <li ng-repeat="message in vm.messages" ng-class="{'getting-deleted': message.gettingDeleted === true}">
+            <li ng-repeat="message in vm.messages" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
               <div class="row">
                 <div id="avatarDiv">
                   <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
