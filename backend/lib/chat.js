@@ -671,4 +671,62 @@ chat.deleteUserToPMMap = (obj) => {
   });
 };
 
+//Emits to all the users that are on the channel that the message has been deleted
+chat.emitDeletedMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        console.log(err);
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ?", [obj.channelId] ,(err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            data.forEach((val) => {
+              if (clients[val.inchan_userid]) {
+                io.sockets.connected[clients[val.inchan_userid].socket].emit("newDeletedMessage", obj);
+              }
+            });
+
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+chat.emitUpdatedMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ?", [obj.channelId] ,(err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            data.forEach((val) => {
+              if (clients[val.inchan_userid]) {
+                io.sockets.connected[clients[val.inchan_userid].socket].emit("newUpdatedMessage", obj);
+              }
+            });
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+
+
 module.exports = chat;
