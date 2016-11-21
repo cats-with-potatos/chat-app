@@ -10,8 +10,9 @@
         <span class="icon-bar"></span>
       </button>
 
-      <i class="fa fa-bars" id="nav-collapse" aria-hidden="true" ng-click="vm.hello($event)"></i>
-      <div id="text-ellipsis"><span id="channel-name-header">{{channelName}}</span></div>
+    <i class="fa fa-bars" id="nav-collapse" aria-hidden="true" ng-click="vm.hello($event)"></i>
+    <div id="text-ellipsis"><span id="channel-name-header">{{channelName}}</span></div>
+
 
     </div>
     <div class="collapse navbar-collapse" id="nav">
@@ -19,6 +20,9 @@
         <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signin">Log In</a></li>
         <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
       </ul>
-    </div>
+      <ul id="nav-search" class="nav navbar-nav navbar-right" ng-show="loggedIn">
+        <li ui-sref-active="active-nav"><input class="form-control message-search" type="text" placeholder="Search messages..." ng-model="queryMsg"></li>
+      </ul>
+      </div>
     </div>
   </nav>
