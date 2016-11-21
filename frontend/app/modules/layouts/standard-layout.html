@@ -16,13 +16,18 @@
 
     </div>
     <div class="collapse navbar-collapse" id="nav">
-      <ul id="nav-links" class="nav navbar-nav navbar-right" ng-show="notLoggedIn">
-        <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signin">Log In</a></li>
-        <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
-      </ul>
-      <ul id="nav-search" class="nav navbar-nav navbar-right" ng-show="loggedIn">
-        <li ui-sref-active="active-nav"><input class="form-control message-search" type="text" placeholder="Search messages..." ng-model="queryMsg"></li>
-      </ul>
+        <ul id="nav-links" class="nav navbar-nav navbar-right" ng-show="notLoggedIn">
+          <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signin">Log In</a></li>
+          <li ui-sref-active="active-nav"><a data-ui-sref="chat-app.signup">Sign Up</a></li>
+        </ul>
+        <ul id="nav-search" class="nav navbar-nav navbar-right" ng-show="loggedIn">
+          <li ui-sref-active="active-nav">
+            <form class="form-group">
+              <input class="form-control message-search" type="text" placeholder="Search messages" ng-model="queryMsg">
+              <span id="msgspan" class="fa fa-search"></span>
+            </form>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>

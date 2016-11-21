@@ -458,6 +458,27 @@ ul {
 
 .message-search {
   font-size: 1.2em;
+  padding: .75rem;
+  padding-left: 3.25rem;
+}
+
+#msgspan .fa {
+  font-size: .8em;
+}
+
+#msgspan {
+    float: left;
+    margin-right: 30px;
+    margin-top: -27px;
+    padding-left: 10px;
+    padding-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    color: darkgray;
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
 }
 
 .noShow {
@@ -838,7 +859,7 @@ ul {
     padding-bottom: 2px;
     position: relative;
     z-index: 1;
-    color: lightgray;
+    color: darkgray;
     font-size: 2.25rem;
     font-style: normal;
     font-weight: 400;
