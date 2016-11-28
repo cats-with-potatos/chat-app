@@ -28,6 +28,8 @@ router.get("/getAllMessages", routes.chatRoutes.getAllMessages);
 router.get("/getChannelMessages", middleware.checkToken, routes.chatRoutes.getChannelMessages);
 router.get("/getPrivateMessages", middleware.checkToken, routes.chatRoutes.getPrivateMessages);
 router.get("/getIntialUsersTyping", middleware.checkToken, routes.chatRoutes.getIntialUsersTyping);
+router.get("/loadPartnerCurrentlyTyping", middleware.checkToken, routes.chatRoutes.loadPartnerCurrentlyTyping);
+
 router.post("/sendChatMessage", middleware.checkToken, routes.chatRoutes.sendChatMessage);
 router.post("/sendUserIsTyping", middleware.checkToken, routes.chatRoutes.sendUserIsTyping);
 router.post("/sendUserIsTypingPM", middleware.checkToken, routes.chatRoutes.sendUserIsTypingPM);
@@ -35,7 +37,9 @@ router.post("/sendUserStoppedTyping", middleware.checkToken, routes.chatRoutes.s
 router.post("/sendUserStoppedTypingPM", middleware.checkToken, routes.chatRoutes.sendUserStoppedTypingPM);
 router.post("/sendPrivateMessage", middleware.checkToken, routes.chatRoutes.sendPrivateMessage);
 router.put("/updateMessage", middleware.checkToken, routes.chatRoutes.updateMessage);
+router.put("/updatePrivateMessage", middleware.checkToken, routes.chatRoutes.updatePrivateMessage);
 router.delete("/deleteMessage", middleware.checkToken, routes.chatRoutes.deleteMessage);
+router.delete("/deletePrivateMessage", middleware.checkToken, routes.chatRoutes.deletePrivateMessage);
 
 
 //Channel Routes
