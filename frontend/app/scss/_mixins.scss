@@ -6,7 +6,7 @@
 }
 
 @mixin not-collapsed-width() {
-  width: calc(100% - 220px);
+  width: calc(100% - 200px);
 }
 
 @mixin cyanOpaque($amount) {

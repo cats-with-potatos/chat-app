@@ -45,9 +45,9 @@ h1, p, a {
 }
 
 #messagePanel {
-  top: 80px;
+  top: 55px;
   @include not-collapsed-width();
-  margin-left: 200px;
+  margin-left: 185px;
 
   /* left: 0; */
   /* top: 0; */
@@ -452,6 +452,34 @@ ul {
   }
 }
 
+#nav-search {
+  margin-top: 10px;
+}
+
+.message-search {
+  font-size: 1.2em;
+  padding: .75rem;
+  padding-left: 3.25rem;
+}
+
+#msgspan .fa {
+  font-size: .8em;
+}
+
+#msgspan {
+    float: left;
+    margin-right: 30px;
+    margin-top: -27px;
+    padding-left: 10px;
+    padding-bottom: 2px;
+    position: relative;
+    z-index: 1;
+    color: darkgray;
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 400;
+    display: inline-block;
+}
 
 .noShow {
   display: none;
@@ -572,29 +600,8 @@ ul {
   text-decoration: none;
 }
 
-
-
 .getting-deleted {
   background-color: rgba(231,76,60, 0.5);
-
-    -moz-animation-name: changeHeightToNone;
-    -moz-animation-iteration-count: 1;
-    -moz-animation-timing-function: ease-out;
-    -webkit-fill-mode: forwards;
-    -moz-animation-duration: 1s;
-
-    -webkit-animation-name: changeHeightToNone;
-    -webkit-fill-mode: forwards;
-    -webkit-animation-iteration-count: 1;
-    -webkit-animation-timing-function: ease-out;
-    -webkit-animation-duration: 1s;
-
-    animation-name: changeHeightToNone;
-    animation-fill-mode: forwards;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-out;
-    animation-duration: 1s;
-
 
   &:hover {
     background-color: rgba(231,76,60, 0.5) !important;
@@ -604,91 +611,6 @@ ul {
 .edit-styles {
   width: 70%;
 }
-
-
-
-@-moz-keyframes changeHeightToNone {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-@-webkit-keyframes changeHeightToNone {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-@keyframes changeHeightToNone {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
-}
-
-.was-edited {
-  @include cyanOpaque(0.5);
-
-
-  -moz-animation-name: changeOpacityToZero;
-  -moz-animation-iteration-count: 1;
-  -moz-animation-timing-function: ease-out;
-  -webkit-fill-mode: forwards;
-  -moz-animation-duration: 1s;
-
-  -webkit-animation-name: changeOpacityToZero;
-  -webkit-fill-mode: forwards;
-  -webkit-animation-iteration-count: 1;
-  -webkit-animation-timing-function: ease-out;
-  -webkit-animation-duration: 1s;
-
-  animation-name: changeOpacityToZero;
-  animation-fill-mode: forwards;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-out;
-  animation-duration: 1s;
-}
-
-
-
-@-moz-keyframes changeOpacityToZero {
-    0% {
-      @include cyanOpaque(0.5);
-    }
-
-    100% {
-      background-color: #FFF;
-    }
-}
-@-webkit-keyframes changeOpacityToZero {
-    0% {
-      @include cyanOpaque(0.5);
-    }
-    100% {
-        background-color: #FFF;
-    }
-}
-
-@keyframes changeOpacityToZero {
-    0% {
-      @include cyanOpaque(0.5);
-    }
-    100% {
-        background-color: #FFF;
-    }
-}
-
-
-
-
-
 
 #chanDiv {
   width: 100%;
@@ -793,6 +715,7 @@ ul {
     position:absolute;
     left: calc(50% - 60px);
   }
+
 }
 
 //Modal Styling
@@ -936,7 +859,7 @@ ul {
     padding-bottom: 2px;
     position: relative;
     z-index: 1;
-    color: lightgray;
+    color: darkgray;
     font-size: 2.25rem;
     font-style: normal;
     font-weight: 400;

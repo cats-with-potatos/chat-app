@@ -40,7 +40,7 @@
         <div ng-show="vm.messagesLoaded === true">
           <ul>
             <!--Messages are repeated here-->
-            <li ng-repeat="message in vm.messages" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
+            <li ng-repeat="message in vm.messages | filter:queryMsg" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
               <div class="row">
                 <div id="avatarDiv">
                   <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
@@ -154,7 +154,7 @@
                       <div class="col-sm-12 col-sm-offset-1">
                         <div class="col-sm-10 search-div">
                           <form class="form-group">
-                            <input ng-model="query" class="channel-search" type="text" name="channel-search" value="" placeholder="Search channels">
+                            <input ng-model="query" class="channel-search form-control" type="text" name="channel-search" value="" placeholder="Search channels">
                             <span id="searchspan" class="fa fa-search"></span>
                           </form>
                         </div>
