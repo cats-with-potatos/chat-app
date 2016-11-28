@@ -43,11 +43,11 @@
             <li ng-repeat="message in vm.messages | filter:queryMsg" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
               <div class="row">
                 <div id="avatarDiv">
-                  <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
+                  <a href="#userModal" class="user-link" data-toggle="modal"><i id="avatar" class="fa fa-user fa-3"></i></a>
                 </div>
                 <div id="contentDiv">
                   <div>
-                    <p id="msgUser"><a href="#"> {{message.username}}</a></p>
+                    <p id="msgUser"><a href="#userModal" class="user-link" data-toggle="modal"> {{message.username}}</a></p>
 
                     <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
                     <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
@@ -78,7 +78,7 @@
         </div>
         <div class="user-section">
           <div class="user-name">
-            {{ username }}
+            <a href="#userModal" class="user-link" data-toggle="modal"> {{ username }} </a>
           </div>
         </div>
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
@@ -188,6 +188,32 @@
                         <h2>Private Messages ({{vm.users.length}})</h2>
                         <ul id="pm-list">
                           <li ng-repeat="user in vm.users" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
+                        </ul>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- User Profile Modal -->
+<div class="chan-modal modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2" id="userModal">
+                    <div class="modal-body">
+                        <h2>{{ message.username }} Profile</h2>
+                        <ul id="pm-list">
+
                         </ul>
                         <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
                     </div>
