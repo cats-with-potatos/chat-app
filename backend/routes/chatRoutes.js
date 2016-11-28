@@ -444,6 +444,121 @@ chatRoutes.deleteMessage = (req, res) => { // TYPE: DELETE
   });
 };
 
+
+
+//Deletes a private message
+chatRoutes.updatePrivateMessage = (req, res) => {
+  const userid = req.decoded.id;
+  const messageId = Number(req.body.messageId);
+  const pm_to = Number(req.body.pm_to);
+  const contents = req.body.contents;
+
+
+  if (chat.checkParamError({
+    userid: userid,
+    messageTo: pm_to,
+    message: contents,
+    contents: contents,
+  }) || isNaN(messageId)) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+
+  chat.checkUserOwnsPrivateMessage(
+    {
+      userid: userid,
+      messageId: messageId,
+      messageTo: pm_to,
+    }
+  )
+  .then(() => {
+    console.log("I made it to updatePrivateMessage");
+    return chat.updatePrivateMessage({
+      userid: userid,
+      messageId: messageId,
+      pm_to: pm_to,
+      contents: contents,
+    });
+  })
+  .then(() => {
+    console.log("I have made it to emitUpdatedPrivateMessage");
+    return chat.emitUpdatedPrivateMessage({
+      userid: userid,
+      messageId: messageId,
+      pm_to: pm_to,
+      contents: contents,
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+};
+
+//Deletes a private message
+chatRoutes.deletePrivateMessage = (req, res) => {
+  const userid = req.decoded.id;
+  const messageId = Number(req.query.messageId);
+  const messageTo = Number(req.query.messageTo);
+
+  if (isNaN(messageId) || isNaN(messageTo)) {
+    res.json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+  chat.checkUserOwnsPrivateMessage(
+    {
+      userid: userid,
+      messageId: messageId,
+      messageTo: messageTo,
+    }
+  )
+  .then(() => {
+    return chat.deletePrivateMessage({
+      userid: userid,
+      messageId: messageId,
+      messageTo: messageTo,
+    });
+  })
+  .then(() => {
+    return chat.emitDeletedPrivateMessage({
+      userid: userid,
+      messageId: messageId,
+      messageTo: messageTo,
+    });
+  })
+  .then(() => {
+    res.json({
+      "response": "success",
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+    const status = e === "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+
+};
+
 //Sends a private message
 chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
   const userid = req.decoded.id;
@@ -470,11 +585,12 @@ chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
       message: message,
     });
   })
-  .then(() => {
+  .then((pm_id) => {
     return chat.sendPMToUser({
-      userid: userid,
-      messageTo: messageTo,
-      message: message,
+      user_id: userid,
+      pm_to: messageTo,
+      contents: message,
+      pm_id: pm_id,
     });
   })
   .then(() => {
@@ -528,6 +644,39 @@ chatRoutes.getPrivateMessages = (req, res) => { // TYPE: GET
       "errorType": e,
     });
   });
+};
+
+//Gets if the private message partner is currently typing
+chatRoutes.loadPartnerCurrentlyTyping = (req, res) => { //TYPE: GET
+  const userid = req.decoded.id;
+  const pm_to = Number(req.query.pm_to);
+
+  if (isNaN(pm_to) || userid === pm_to) {
+    res.status(400).json({
+      "response": "error",
+      "errorType": "paramError",
+    });
+    return;
+  }
+
+  chat.loadPartnerCurrentlyTyping({
+    userid: userid,
+    pm_to: pm_to,
+  })
+  .then((name) => {
+    res.json({
+      "response": "success",
+      "data": name,
+    });
+  })
+  .catch((e) => {
+    const status = "serverError" ? 500 : 400;
+    res.status(status).json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
+
 };
 
 module.exports = chatRoutes;

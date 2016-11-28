@@ -47,19 +47,19 @@
                 </div>
                 <div id="contentDiv">
                   <div>
-                    <p id="msgUser"><a href="#"> {{message.username}} </a></p>
+                    <p id="msgUser"><a href="#"> {{message.username}}</a></p>
 
                     <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
-                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, message.message_id, $index)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
+                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
                   </div>
 
-                  <div class="dropup dropup-menu" ng-show="userid === message.user_id">
+                  <div class="dropup dropup-menu" ng-show="(userid === message.user_id)">
                     <button class="btn btn-default dropdown-toggle" type="button" ng-disabled="message.gettingDeleted" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                      <li ng-click="vm.editMessage(message.message_id, $index)"><span id="editMsg"><i class="fa fa-pencil"></i>  <a>Edit Message</a> </span></li>
-                      <li ng-click="vm.deleteMessage(message.message_id, $index)"><span id="delMsg"><i class="fa fa-times"></i> <a>Delete Message</a> </span></li>
+                      <li ng-click="vm.editMessage(vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)"><span id="editMsg"><i class="fa fa-pencil"></i>  <a>Edit Message</a> </span></li>
+                      <li ng-click="vm.deleteMessage(vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)"><span id="delMsg"><i class="fa fa-times"></i> <a>Delete Message</a> </span></li>
                     </ul>
                   </div>
                 </div>

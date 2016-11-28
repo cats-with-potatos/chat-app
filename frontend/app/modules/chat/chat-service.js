@@ -165,6 +165,19 @@
         });
       };
 
+      service.editPrivateMessage = function(obj) {
+        return $http({
+          method: "PUT",
+          url: "/api/updatePrivateMessage",
+          data: $.param({messageId: obj.messageId, pm_to: obj.pm_to, contents: JSON.stringify(obj.contents)}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
+
       service.checkUserExists = function(username) {
         return $http({
           method: "GET",
@@ -268,6 +281,28 @@
         service.findNewActive(currentState, newParam);
         return;
       };
+
+      service.deletePrivateMessage = function(obj) {
+        return $http({
+          method: "DELETE",
+          url: "/api/deletePrivateMessage?messageId=" + obj.messageId + "&messageTo=" + obj.messageTo,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
+      service.loadPartnerCurrentlyTyping = function(obj) {
+        return $http({
+          method: "GET",
+          url: "/api/loadPartnerCurrentlyTyping?pm_to=" + obj.pm_to,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
       return service;
-    }
+    };
+
   })();
