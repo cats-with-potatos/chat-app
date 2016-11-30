@@ -31,12 +31,20 @@ Some of the things this module takes care of:
     //This is where the users are stored
     vm.users = [];
 
+    var messagesFitQuery = [];
+
+
+    var lastSearchTerm;
 
     //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
 
     //Used to show and hide spinner at top
     $rootScope.showSpinner = false;
+
+    $rootScope.showSearchCross = false;
+
+    var currentMessageIndex = 0;
 
     vm.message = "";
 
@@ -49,6 +57,8 @@ Some of the things this module takes care of:
     vm.channels = [];
 
     var messagePanel = $("#messagePanel");
+
+
 
     //Will keep track of the previous states
     var history = [];
@@ -231,41 +241,41 @@ Some of the things this module takes care of:
     });
 
 
-socket.on("newUpdatedPrivateMessage", function(obj) {
-  $rootScope.$applyAsync(function() {
-    console.log(obj);
-    if ((obj.userid === channelOrUserId || obj.userid === $rootScope.userid) && vm.channelorPrivate === "private") {
-      //Sets the contents of the updated message
-      var indexToChange;
+    socket.on("newUpdatedPrivateMessage", function(obj) {
+      $rootScope.$applyAsync(function() {
+        console.log(obj);
+        if ((obj.userid === channelOrUserId || obj.userid === $rootScope.userid) && vm.channelorPrivate === "private") {
+          //Sets the contents of the updated message
+          var indexToChange;
 
-      for (var i = 0;i < vm.messages.length;i++) {
-        if (vm.messages[i].pm_id === obj.messageId) {
-          indexToChange = i;
+          for (var i = 0;i < vm.messages.length;i++) {
+            if (vm.messages[i].pm_id === obj.messageId) {
+              indexToChange = i;
 
-          if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
-            $rootScope.showSpinner = false;
+              if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
+                $rootScope.showSpinner = false;
+              }
+              break;
+            }
           }
-          break;
+
+          try {
+            obj.contents = JSON.parse(obj.contents);
+          }
+          catch(e) {
+            console.log(e);
+          }
+
+          vm.messages[indexToChange].contents = obj.contents;
+          vm.messages[indexToChange].wasEdited = true;
+          delete vm.messages[indexToChange].gettingEdited;
+
+          $timeout(function() {
+            delete vm.messages[indexToChange].wasEdited;
+          }, 1000);
         }
-      }
-
-      try {
-        obj.contents = JSON.parse(obj.contents);
-      }
-      catch(e) {
-        console.log(e);
-      }
-
-      vm.messages[indexToChange].contents = obj.contents;
-      vm.messages[indexToChange].wasEdited = true;
-      delete vm.messages[indexToChange].gettingEdited;
-
-      $timeout(function() {
-        delete vm.messages[indexToChange].wasEdited;
-      }, 1000);
-    }
-  });
-});
+      });
+    });
 
 
 
@@ -784,6 +794,78 @@ socket.on("newUpdatedPrivateMessage", function(obj) {
             }
           }
         });
+      };
+
+
+
+      //Searches for all messages that fits the search criteria.
+      $rootScope.searchForMessage = function(event) {
+        if ((event.key === "Enter" || event.keyIdentifier === "Enter") && $rootScope.fields.messageSearchQuery !== "") {
+
+          if ($rootScope.showSearchCross === false) {
+            $rootScope.showSearchCross = true;
+          }
+
+
+          if ((lastSearchTerm && $rootScope.fields.messageSearchQuery !== lastSearchTerm) || !lastSearchTerm) {
+            currentMessageIndex = 0;
+
+            if (messagesFitQuery.length !== 0) {
+              messagesFitQuery.forEach(function(val) {
+                if (val.currentlySearched) {
+                  delete val.currentlySearched;
+                }
+              });
+
+              messagesFitQuery  = [];
+            }
+
+
+            vm.messages.forEach(function(val, index) {
+              if (val.contents.toLowerCase().indexOf($rootScope.fields.messageSearchQuery.toLowerCase()) !== -1) {
+                val.currentlySearched = true;
+                messagesFitQuery.push(val)  ;
+              }
+            });
+
+          }
+
+          if (messagesFitQuery.length === 0) {
+            return;
+          }
+
+          const typeOfId = vm.channelorPrivate === "channel" ? "message_id" : "pm_id";
+
+
+          const currentElement =$("#" + messagesFitQuery[currentMessageIndex][typeOfId] + "_messageid");
+          currentMessageIndex += 1;
+
+          const messagePanelJquery = $("#messagePanel");
+
+          messagePanelJquery.animate({
+            scrollTop: currentElement.offset().top - messagePanelJquery.offset().top + messagePanelJquery.scrollTop(),
+          }, 100);
+
+          lastSearchTerm = $rootScope.fields.messageSearchQuery;
+
+        }
+      };
+
+      $rootScope.clearSearchQuery = function(event) {
+        if (messagesFitQuery.length !== 0) {
+          messagesFitQuery.forEach(function(val) {
+            if (val.currentlySearched) {
+              delete val.currentlySearched;
+            }
+          });
+        }
+
+        messagesFitQuery = [];
+
+
+        $rootScope.fields.messageSearchQuery = "";
+        currentMessageIndex = 0;
+        $rootScope.showSearchCross = false;
       };
 
       $rootScope.showFixedTopNav = true;

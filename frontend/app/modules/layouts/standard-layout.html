@@ -23,9 +23,14 @@
         <ul id="nav-search" class="nav navbar-nav navbar-right" ng-show="loggedIn">
           <li ui-sref-active="active-nav">
             <form class="form-group">
-              <input class="form-control message-search" type="text" placeholder="Search messages" ng-model="queryMsg">
+              <input class="form-control message-search" type="text" placeholder="Enter to search" ng-keyup="searchForMessage($event)" ng-model="fields.messageSearchQuery">
               <span id="msgspan" class="fa fa-search"></span>
+
             </form>
+            <span id="crossspan" class="fa fa-times" ng-show="showSearchCross === true" ng-click="clearSearchQuery($event)"></span>
+
+
+
           </li>
         </ul>
       </div>

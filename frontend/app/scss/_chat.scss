@@ -865,3 +865,24 @@ ul {
     font-weight: 400;
     display: inline-block;
 }
+
+#crossspan {
+  display: inline-block;
+  float: right;
+  margin-top: -43px;
+  margin-left: 220px;
+  color: #e74c3c;
+  cursor:pointer;
+  position:absolute;
+  font-size: 2.25rem;
+
+  &:hover {
+    color: #c0392b;
+  }
+}
+
+.currently-searched {
+  background-color: rgba(241,196,15, 0.5) !important;
+
+
+}

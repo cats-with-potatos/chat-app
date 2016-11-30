@@ -32,6 +32,10 @@
     vm.loggedIn = false;
     vm.notLoggedIn = false;
 
+    $rootScope.fields = {
+      messageSearchQuery: "",
+    }
+
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("userState", function(typeOfState) {
