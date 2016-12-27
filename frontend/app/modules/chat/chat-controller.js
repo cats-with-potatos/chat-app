@@ -75,6 +75,7 @@ Some of the things this module takes care of:
 
           try {
             message.contents = JSON.parse(message.contents);
+            message.message_time = moment().format("h:mm a");
           }
           catch(e) {
             console.log(e);
@@ -101,6 +102,7 @@ Some of the things this module takes care of:
         if ((message.user_id === channelOrUserId || message.user_id === $rootScope.userid) && vm.channelorPrivate === "private") {
           try {
             message.contents = JSON.parse(message.contents);
+            message.message_time = moment().format("h:mm a");
           }
           catch(e) {
             console.log(e);
