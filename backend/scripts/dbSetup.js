@@ -30,6 +30,7 @@ message_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 contents VARCHAR(256) NOT NULL,
 sender VARCHAR(32) NOT NULL,
 chan_link_id INT UNSIGNED NOT NULL,
+message_date BIGINT(20) NOT NULL,
 PRIMARY KEY (message_id));`;
 
 const uic_create_query = `CREATE TABLE IF NOT EXISTS UserInChannel (
@@ -185,6 +186,7 @@ message_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 contents VARCHAR(256) NOT NULL,
 sender VARCHAR(32) NOT NULL,
 chan_link_id INT UNSIGNED NOT NULL,
+message_date BIGINT(20) UNSIGNED NOT NULL,
 PRIMARY KEY (message_id));`;
 
 const uic_create_query = `CREATE TABLE IF NOT EXISTS UserInChannel (
