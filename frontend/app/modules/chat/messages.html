@@ -211,15 +211,26 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2" id="userModal">
                     <div class="modal-body">
-                        <h2>{{ username }}'s Profile</h2>
-                        <ul id="user-prof" class="form-group">
-                          <li>Display name: {{ username }}</li>
-                          <input class="form-control" type="text" placeholder="New username">
-                          <li>Profile picture</li>
-                          <input class="form-control" type="text" placeholder="URL for new profile picture">
-                        </ul>
-                        <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="modal-title" id="myModalLabel">{{ username }}'s User Profile Page</h4>
+                        </div>
+                          <div class="modal-body">
+                              <center>
+                              <img src="http://placehold.it/140x140" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
+                              <h3 class="media-heading">{{ username }}</h3>
+                              </center>
+                              <hr>
+                              <form class="">
+                                <input type="text" name="" value="" placeholder="New Image URL">
+                                <input type="text" name="" value="" placeholder="New Profile Username">
+                                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
+                              </form>
+                          </div>
+                          <div class="modal-footer">
+                            <center>
+                              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                            </center>
                     </div>
                 </div>
             </div>
