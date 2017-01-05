@@ -438,6 +438,15 @@ ul {
   text-overflow: ellipsis;
 }
 
+.user-name a:hover {
+  text-decoration: none;
+  color: #fff;
+}
+
+.user-name a:visited a:link {
+  color: #fff;
+}
+
 #nav-collapse {
   display: none;
   font-size: 30px;
