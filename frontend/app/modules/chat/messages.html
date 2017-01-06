@@ -148,6 +148,7 @@
                       <div class="col-sm-8">
                         <h2>Browse all {{vm.channels.length}} channels </h2>
                       </div>
+
                       <div class="col-sm-2 col-sm-offset-1 add-chan">
                         <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
                       </div>
@@ -221,14 +222,25 @@
                               <h3 class="media-heading">{{ username }}</h3>
                               </center>
                               <hr>
-                              <form class="">
-                                <input type="text" name="" value="" placeholder="New Profile Image URL">
-                                <input type="text" name="" value="" placeholder="New Profile Username">
-                                <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
+                              <form class="form-horizontal">
+                                <div class="form-group">
+                                  <label class="control-label col-xs-2" for="">Image URL:</label>
+                                  <div class="col-xs-10">
+                                    <input class="form-control" type="text" name="" value="" placeholder="New Profile Image URL (ex: http://imgur/me/me.jpg)">
+                                  </div>
+                                </div>
+                              <br>
+                                <div class="form-group">
+                                  <label class="control-label col-xs-2" for="">New Username:</label>
+                                  <div class="col-xs-10">
+                                    <input class="form-control col-xs-10" type="text" name="" value="" placeholder="New Profile Username">
+                                  </div>
+                                </div>
                               </form>
                           </div>
                           <div class="modal-footer">
                             <center>
+                              <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
                               <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
                             </center>
                     </div>
