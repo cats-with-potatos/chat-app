@@ -730,7 +730,11 @@ ul {
 //Modal Styling
 
 #chanModal, #pmModal {
-  border-bottom: 1px solid #546E7A;
+  // border-bottom: 1px solid #546E7A;
+}
+
+.channel-search-div {
+  padding-top: 15px;
 }
 
 .chan-modal .modal-content {
@@ -740,7 +744,7 @@ ul {
   box-shadow: none;
   border: none;
   min-height: 100%;
-  padding: 100px 0;
+  padding: 100px 0px 0px 0px;
   text-align: center;
 }
 .chan-modal .modal-content h2 {
@@ -804,15 +808,18 @@ ul {
   margin-bottom: 50px;
 }
 
-#chan-list {
+#chan-list, #pm-list {
   height: 350px;
   overflow: auto;
+  padding-top: 25px;
+
 }
 
 #chan-list a, #pm-list a {
   font-size: 1.8em;
   color: #0097A7;
   text-decoration: none;
+
 }
 #chan-list li:hover, #pm-list li:hover {
   background-color: #CFD8DC;
