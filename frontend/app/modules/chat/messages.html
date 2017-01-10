@@ -166,7 +166,7 @@
                           </form>
                         </div>
                       </div>
-                      <div class="col-sm-12">
+                      <div class="col-xs-12">
                         <ul id="chan-list">
                           <li ng-repeat="channel in vm.channels | filter:query" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
                         </ul>
@@ -199,9 +199,19 @@
                       <div class="modal-header">
                         <h2>Private Messages ({{vm.users.length}})</h2>
                       </div>
-
+                      <div class="col-xs-12 col-xs-offset-1">
+                        <div class="col-sm-10 search-div">
+                          <form class="form-horizontal">
+                            <div class="form-group">
+                              <div class="channel-search-div">
+                                <input ng-model="query" class="channel-search form-control" type="text" name="pm-search" value="" placeholder="Search private messages">                                <span id="searchspan" class="fa fa-search"></span>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                         <ul id="pm-list">
-                          <li ng-repeat="user in vm.users" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
+                          <li ng-repeat="user in vm.users | filter:query" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
                         </ul>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
@@ -258,7 +268,7 @@
 
                               <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
                               <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-                          
+
                     </div>
                 </div>
             </div>
