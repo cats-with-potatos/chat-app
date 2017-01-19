@@ -43,11 +43,12 @@
             <li ng-repeat="message in vm.messages | filter:queryMsg" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
               <div class="row">
                 <div id="avatarDiv">
-                  <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
+                  <a href="#userModal" class="user-link" data-toggle="modal"><i id="avatar" class="fa fa-user fa-3"></i></a>
                 </div>
                 <div id="contentDiv">
                   <div>
-                    <p id="msgUser"><a href="#"> {{message.username}}</a>
+
+                    <p id="msgUser"><a href="#userModal" class="user-link" data-toggle="modal"> {{message.username}}</a></p>
 
                     <span style="font-weight: lighter; font-size: 14px; opacity: 0.6"> - {{ message.message_time }}</span>
 
@@ -82,7 +83,7 @@
         </div>
         <div class="user-section">
           <div class="user-name">
-            {{ username }}
+            <a href="#userModal" class="user-link" data-toggle="modal"> {{ username }} </a>
           </div>
         </div>
         <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
@@ -149,25 +150,36 @@
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2" id="chanModal">
                     <div class="modal-body">
-                      <div class="col-sm-8">
-                        <h2>Browse all {{vm.channels.length}} channels </h2>
+                      <div class="modal-header">
+                        <div class="col-xs-12">
+                          <h2>Browse all {{vm.channels.length}} channels </h2>
+                        </div>
+                        <!-- <div class="col-xs-2 add-chan">
+                          <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
+                        </div> -->
                       </div>
-                      <div class="col-sm-2 col-sm-offset-1 add-chan">
-                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
-                      </div>
-                      <div class="col-sm-12 col-sm-offset-1">
+
+                      <div class="col-xs-12 col-xs-offset-1">
                         <div class="col-sm-10 search-div">
-                          <form class="form-group">
-                            <input ng-model="query" class="channel-search form-control" type="text" name="channel-search" value="" placeholder="Search channels">
-                            <span id="searchspan" class="fa fa-search"></span>
+                          <form class="form-horizontal">
+                            <div class="form-group">
+                              <div class="channel-search-div">
+                                <input ng-model="query" class="channel-search form-control" type="text" name="channel-search" value="" placeholder="Search channels">
+                                <span id="searchspan" class="fa fa-search"></span>
+                              </div>
+                            </div>
                           </form>
                         </div>
                       </div>
-                      <div class="col-sm-12">
+                      <div class="col-xs-12">
                         <ul id="chan-list">
                           <li ng-repeat="channel in vm.channels | filter:query" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
                         </ul>
-                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
+                        <div class="modal-footer">
+                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+
                       </div>
                     </div>
                 </div>
@@ -189,11 +201,80 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2" id="pmModal">
                     <div class="modal-body">
+                      <div class="modal-header">
                         <h2>Private Messages ({{vm.users.length}})</h2>
+                      </div>
+                      <div class="col-xs-12 col-xs-offset-1">
+                        <div class="col-sm-10 search-div">
+                          <form class="form-horizontal">
+                            <div class="form-group">
+                              <div class="channel-search-div">
+                                <input ng-model="query" class="channel-search form-control" type="text" name="pm-search" value="" placeholder="Search users">
+                                <span id="searchspan" class="fa fa-search"></span>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                         <ul id="pm-list">
-                          <li ng-repeat="user in vm.users" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
+                          <li ng-repeat="user in vm.users | filter:query" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
                         </ul>
-                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- User Profile Modal -->
+<div class="chan-modal modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+        <div class="close-modal" data-dismiss="modal">
+            <div class="lr">
+                <div class="rl">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2" id="userModal">
+                    <div class="modal-body">
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h2 class="modal-title" id="myModalLabel">{{ username }}'s User Profile Page</h2>
+                        </div>
+                          <div class="modal-body">
+                              <center>
+                              <img src="http://placehold.it/140x140" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
+                              <h3 class="media-heading">{{ username }}</h3>
+                              </center>
+                              <hr>
+                              <form class="form-horizontal">
+                                <div class="form-group">
+                                  <label class="control-label col-xs-2" for="">Profile Image:</label>
+                                  <div class="col-xs-10">
+                                    <input class="form-control" type="file" name="" value="" placeholder="New Profile Image URL (ex: http://imgur/me/me.jpg)">
+                                  </div>
+                                </div>
+                              <br>
+                                <div class="form-group">
+                                  <label class="control-label col-xs-2" for="">New Username:</label>
+                                  <div class="col-xs-10">
+                                    <input class="form-control" type="text" name="" value="" placeholder="New Profile Username">
+                                  </div>
+                                </div>
+                              </form>
+                          </div>
+                          <div class="modal-footer">
+
+                              <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-pencil"></i> Change</button>
+                              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+
                     </div>
                 </div>
             </div>
