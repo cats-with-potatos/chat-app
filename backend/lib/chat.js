@@ -145,7 +145,7 @@ chat.insertMessageToDb = (messageDet) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id) VALUES (DEFAULT, ?, ?, ?)", [messageDet.message, messageDet.userid, messageDet.channelId], (err, results) => {
+        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id, message_date) VALUES (DEFAULT, ?, ?, ?, UNIX_TIMESTAMP())", [messageDet.message, messageDet.userid, messageDet.channelId], (err, results) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -212,16 +212,17 @@ chat.getMessagesInfo = (messageId) => {
 };
 
 //Gets all messages from channel
-chat.getAllChannelMessages = (channelId) => {
+chat.getAllChannelMessages = (channelId, timezoneOffset, date) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [channelId], (err, results) => {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [timezoneOffset, date, timezoneOffset, timezoneOffset, channelId], (err, results) => {
           mclient.release();
           if (err) {
+            console.log(err);
             reject("serverError");
           }
           else {
@@ -618,7 +619,8 @@ chat.insertPrivateMessageToDb = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+        console.log("I am inserting: " + Date.now());
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, UNIX_TIMESTAMP())", [obj.userid, obj.messageTo, obj.message], (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -724,7 +726,8 @@ chat.getPrivateMessages = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_from as user_id,PrivateMessages.pm_message AS contents, UserTable.username FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
+        console.log(obj);
+        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_from as user_id,PrivateMessages.pm_message AS contents, UserTable.username, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.timezoneOffset, obj.currentDate, obj.timezoneOffset, obj.timezoneOffset, obj.timezone, obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
           mclient.release();
           if (err) {
             console.log(err);

@@ -15,6 +15,8 @@ chatRoutes.getAllMessages = (req, res) => { // TYPE: GET
 chatRoutes.getChannelMessages = (req, res) => { // TYPE: "GET"
 const userId = req.decoded.id;
 const channelName = req.query.channelName;
+const timezoneOffset = req.query.timezoneOffset;
+const date = `${req.query.currentDay}-${req.query.currentMonth}-${req.query.currentYear}`;
 
 //Checks to see of the channel is not a number
 if (!channelName) {
@@ -34,7 +36,7 @@ channel.getIdFromName(channelName)
 .then((channelId) => {
   console.log(channelId);
   //Getting all the channels messages
-  return chat.getAllChannelMessages(channelId)
+  return chat.getAllChannelMessages(channelId, timezoneOffset, date)
 })
 .then((data) => {
   res.status(200).json({"response": "success", "data": data});
@@ -612,6 +614,10 @@ chatRoutes.sendPrivateMessage = (req, res) => { // TYPE: POST
 chatRoutes.getPrivateMessages = (req, res) => { // TYPE: GET
   const userid = req.decoded.id;
   const userTo = Number(req.query.userTo);
+  const date = `${req.query.currentDay}-${req.query.currentMonth}-${req.query.currentYear}`;
+
+
+  const timezoneOffset = req.query.timezoneOffset; // You need to do some checking later on to see if this is valid
 
   if (!userTo || userid === userTo) {
     res.status(400).json({
@@ -621,13 +627,14 @@ chatRoutes.getPrivateMessages = (req, res) => { // TYPE: GET
     return;
   }
 
-
   chat.checkPMIdExists(userTo)
   .then(() => {
     console.log("Did I make it to: checkPMIdExists");
     return chat.getPrivateMessages({
       userid: userid,
       userTo: userTo,
+      timezoneOffset: timezoneOffset,
+      currentDate: date,
     });
   })
   .then(function(messages) {

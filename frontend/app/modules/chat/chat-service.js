@@ -26,10 +26,13 @@
 
     //This will get all messages from the specific channel from the server
     service.getChatMessages = function(channel) {
+      const d = new Date();
+      const month = d.getMonth() + 1;
+      
       return $http(
         {
           method: "GET",
-          url: "/api/getChannelMessages?channelName=" + channel.channelName,
+          url: "/api/getChannelMessages?channelName=" + channel.channelName + "&timezoneOffset=" + encodeURIComponent(moment().format("Z")) + "&currentDay=" + d.getDate() + "&currentMonth=" + month + "&currentYear=" + d.getFullYear(),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           }
@@ -212,9 +215,12 @@
       };
 
       service.getPrivateMessages = function(userToId) {
+
+        const d = new Date();
+        const month = d.getMonth() + 1;
         return $http({
           method: "GET",
-          url: "/api/getPrivateMessages?userTo=" + userToId,
+          url: "/api/getPrivateMessages?userTo=" + userToId + "&timezoneOffset=" + encodeURIComponent(moment().format("Z")) + "&currentDay=" + d.getDate() + "&currentMonth=" + month + "&currentYear=" + d.getFullYear(),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           },
