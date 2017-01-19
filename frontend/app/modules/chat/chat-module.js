@@ -97,7 +97,7 @@
       })
       .then(function(res) {
         if (res.data.response === "success") {
-          defer.resolve(res.data.data.id);
+            defer.resolve(res.data.data.id);
         }
         else {
           $state.go("chat-app");

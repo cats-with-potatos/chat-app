@@ -26,10 +26,13 @@
 
     //This will get all messages from the specific channel from the server
     service.getChatMessages = function(channel) {
+      const d = new Date();
+      const month = d.getMonth() + 1;
+      
       return $http(
         {
           method: "GET",
-          url: "/api/getChannelMessages?channelName=" + channel.channelName,
+          url: "/api/getChannelMessages?channelName=" + channel.channelName + "&timezoneOffset=" + encodeURIComponent(moment().format("Z")) + "&currentDay=" + d.getDate() + "&currentMonth=" + month + "&currentYear=" + d.getFullYear(),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           }
@@ -165,6 +168,19 @@
         });
       };
 
+      service.editPrivateMessage = function(obj) {
+        return $http({
+          method: "PUT",
+          url: "/api/updatePrivateMessage",
+          data: $.param({messageId: obj.messageId, pm_to: obj.pm_to, contents: JSON.stringify(obj.contents)}),
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+            'Content-Type': "application/x-www-form-urlencoded",
+          },
+        });
+      };
+
+
       service.checkUserExists = function(username) {
         return $http({
           method: "GET",
@@ -199,9 +215,12 @@
       };
 
       service.getPrivateMessages = function(userToId) {
+
+        const d = new Date();
+        const month = d.getMonth() + 1;
         return $http({
           method: "GET",
-          url: "/api/getPrivateMessages?userTo=" + userToId,
+          url: "/api/getPrivateMessages?userTo=" + userToId + "&timezoneOffset=" + encodeURIComponent(moment().format("Z")) + "&currentDay=" + d.getDate() + "&currentMonth=" + month + "&currentYear=" + d.getFullYear(),
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           },
@@ -268,6 +287,28 @@
         service.findNewActive(currentState, newParam);
         return;
       };
+
+      service.deletePrivateMessage = function(obj) {
+        return $http({
+          method: "DELETE",
+          url: "/api/deletePrivateMessage?messageId=" + obj.messageId + "&messageTo=" + obj.messageTo,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
+      service.loadPartnerCurrentlyTyping = function(obj) {
+        return $http({
+          method: "GET",
+          url: "/api/loadPartnerCurrentlyTyping?pm_to=" + obj.pm_to,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+          },
+        });
+      };
+
       return service;
-    }
+    };
+
   })();

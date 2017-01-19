@@ -40,7 +40,7 @@ Some of the things this module takes care of:
 
     vm.message = "";
 
-    var channelorPrivate = $location.path().indexOf("/messages") === 0 ? "channel" : "private";
+    vm.channelorPrivate = $location.path().indexOf("/messages") === 0 ? "channel" : "private";
 
     //This boolean indicates whether the user is already typing or not
     var sendTypingRequest = false;
@@ -61,22 +61,21 @@ Some of the things this module takes care of:
       history.push(fromState.name);
 
       if (vm.message) {
-        ChatService.sendUserStoppedTyping()
-        .then(function(message) {
-          console.log("the user stopped typing");
-        });
+        ChatService.sendUserStoppedTyping(channelOrUserId);
+        ChatService.sendUserStoppedTypingPM(channelOrUserId);
       }
-    });
 
+    });
 
 
     //Listens for new messages in realtime and add's it to the vm.messages list
     socket.on("newChannelMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        if (message.chan_id === channelOrUserId && channelorPrivate === "channel") {
+        if (message.chan_id === channelOrUserId && vm.channelorPrivate === "channel") {
 
           try {
             message.contents = JSON.parse(message.contents);
+            message.message_time = moment().format("h:mm a");
           }
           catch(e) {
             console.log(e);
@@ -100,9 +99,10 @@ Some of the things this module takes care of:
     //Listens for new private messages in realtime and add's it to the vm.messages list
     socket.on("newPrivateMessage", function(message) {
       $rootScope.$applyAsync(function() {
-        if ((message.userid === channelOrUserId || message.userid === $rootScope.userid) && channelorPrivate === "private") {
+        if ((message.user_id === channelOrUserId || message.user_id === $rootScope.userid) && vm.channelorPrivate === "private") {
           try {
             message.contents = JSON.parse(message.contents);
+            message.message_time = moment().format("h:mm a");
           }
           catch(e) {
             console.log(e);
@@ -113,7 +113,6 @@ Some of the things this module takes care of:
             messagePanel.stop().animate({
               scrollTop: messagePanel[0].scrollHeight
             }, 200);
-
           }
         }
       });
@@ -123,7 +122,7 @@ Some of the things this module takes care of:
     //Listens for people typing in realtime and adding it to vm.userTypingArray
     socket.on("userIsTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
+        if (user.channelId === channelOrUserId && vm.channelorPrivate === "channel") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
           if (vm.userTypingArray.length === 1) {
@@ -139,7 +138,7 @@ Some of the things this module takes care of:
     socket.on("userIsTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
         console.log("HI");
-        if (user.id === channelOrUserId && channelorPrivate === "private") {
+        if (user.id === channelOrUserId && vm.channelorPrivate === "private") {
           vm.userTypingArray.push(user);
           //If one user is typing, set text to "is typing", else set to "are typing"
           vm.typeOfTyping = "is typing";
@@ -149,7 +148,7 @@ Some of the things this module takes care of:
 
     socket.on("newDeletedMessage", function(obj) {
       $rootScope.$applyAsync(function() {
-        if (obj.channelId === channelOrUserId && channelorPrivate === "channel") {
+        if (obj.channelId === channelOrUserId && vm.channelorPrivate === "channel") {
           var indexToDelete;
 
           for (var i = 0; i < vm.messages.length ; i++) {
@@ -165,7 +164,31 @@ Some of the things this module takes care of:
             }
           }
           $timeout(function() {
-              vm.messages.splice(indexToDelete, 1);
+            vm.messages.splice(indexToDelete, 1);
+          }, 1000);
+        }
+      });
+    });
+
+    socket.on("newDeletedPrivateMessage", function(obj) {
+      $rootScope.$applyAsync(function() {
+        if ((obj.userid === channelOrUserId || obj.userid === $rootScope.userid) && vm.channelorPrivate === "private") {
+          var indexToDelete;
+
+          for (var i = 0; i < vm.messages.length ; i++) {
+            if (vm.messages[i].pm_id === obj.messageId) {
+              vm.messages[i].gettingDeleted = true;
+              indexToDelete = i;
+
+              if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
+                $rootScope.showSpinner = false;
+              }
+              break;
+
+            }
+          }
+          $timeout(function() {
+            vm.messages.splice(indexToDelete, 1);
           }, 1000);
         }
       });
@@ -174,7 +197,7 @@ Some of the things this module takes care of:
 
     socket.on("newUpdatedMessage", function(obj) {
       $rootScope.$applyAsync(function() {
-        if (obj.channelId === channelOrUserId && channelorPrivate === "channel") {
+        if (obj.channelId === channelOrUserId && vm.channelorPrivate === "channel") {
           //Sets the contents of the updated message
 
 
@@ -187,6 +210,7 @@ Some of the things this module takes care of:
               if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
                 $rootScope.showSpinner = false;
               }
+              break;
             }
           }
 
@@ -209,6 +233,41 @@ Some of the things this module takes care of:
     });
 
 
+socket.on("newUpdatedPrivateMessage", function(obj) {
+  $rootScope.$applyAsync(function() {
+    console.log(obj);
+    if ((obj.userid === channelOrUserId || obj.userid === $rootScope.userid) && vm.channelorPrivate === "private") {
+      //Sets the contents of the updated message
+      var indexToChange;
+
+      for (var i = 0;i < vm.messages.length;i++) {
+        if (vm.messages[i].pm_id === obj.messageId) {
+          indexToChange = i;
+
+          if ($rootScope.userid === obj.userid && $rootScope.showSpinner === true) {
+            $rootScope.showSpinner = false;
+          }
+          break;
+        }
+      }
+
+      try {
+        obj.contents = JSON.parse(obj.contents);
+      }
+      catch(e) {
+        console.log(e);
+      }
+
+      vm.messages[indexToChange].contents = obj.contents;
+      vm.messages[indexToChange].wasEdited = true;
+      delete vm.messages[indexToChange].gettingEdited;
+
+      $timeout(function() {
+        delete vm.messages[indexToChange].wasEdited;
+      }, 1000);
+    }
+  });
+});
 
 
 
@@ -216,7 +275,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.id=== channelOrUserId && channelorPrivate === "private") {
+        if (user.id=== channelOrUserId && vm.channelorPrivate === "private") {
           console.log("hehexd");
           var index = -1;
 
@@ -237,7 +296,7 @@ Some of the things this module takes care of:
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTyping", function(user) {
       $rootScope.$applyAsync(function() {
-        if (user.channelId === channelOrUserId && channelorPrivate === "channel") {
+        if (user.channelId === channelOrUserId && vm.channelorPrivate === "channel") {
           var index = -1;
 
           for (var i = 0;i<vm.userTypingArray.length;i++) {
@@ -262,37 +321,57 @@ Some of the things this module takes care of:
     });
 
     //This actually edits the current message
-    vm.editMessageInput = function(event, messageId, messageIndex) {
+    vm.editMessageInput = function(event, messageId, messageIndex, pm_to) {
       if (event.key === "Enter" && event.shiftKey === false) {
         $rootScope.showSpinner = true;
 
         //Prevents the Enter event
         event.preventDefault();
-        ChatService.editMessage(
-          {
-            messageId: messageId,
-            channelId: channelOrUserId,
-            contents: event.target.value
-          })
-          .then(function(res) {
-            if (res.data.response === "success") {
-              $rootScope.showSpinner = false;
-            }
-          });
+
+        if (vm.channelorPrivate === "channel") {
+          ChatService.editMessage(
+            {
+              messageId: messageId,
+              channelId: channelOrUserId,
+              contents: event.target.value
+            })
+            .then(function(res) {
+              if (res.data.response === "success") {
+                $rootScope.showSpinner = false;
+              }
+            });
+
+          }
+          else {
+            ChatService.editPrivateMessage({
+              messageId: messageId,
+              pm_to: pm_to,
+              contents: event.target.value,
+            })
+            .then((res) => {
+              if (res.data.response === "success") {
+                $rootScope.showSpinner = false;
+              }
+            });
+          }
         }
       };
 
 
-      vm.editMessage = function(messageId, messageIndex) {
+      vm.editMessage = function(messageId, messageIndex, pm_to) {
         //A textbox will be displayed with the message contents
         vm.messages[messageIndex].gettingEdited = true;
       }
 
-      vm.deleteMessage = function(messageId, messageIndex) {
-        //A red background will appear showing that the message is in the process of being deleted
+      vm.deleteMessage = function(messageId, messageIndex, messageTo) {
         $rootScope.showSpinner = true;
 
-        ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId});
+        if (vm.channelorPrivate === "channel") {
+          ChatService.deleteMessage({messageId: messageId, channelId: channelOrUserId});
+        }
+        else {
+          ChatService.deletePrivateMessage({messageId: messageId, messageTo: messageTo});
+        }
       }
 
 
@@ -321,6 +400,10 @@ Some of the things this module takes care of:
             }
             else if (res.data.data.length > 1) {
               vm.typeOfTyping = "are typing";
+            }
+
+            for (var i = 0;i < res.data.data.length;i++) {
+              res.data.data[i] = {name: res.data.data[i]};
             }
             vm.userTypingArray = res.data.data;
           }
@@ -672,6 +755,8 @@ Some of the things this module takes care of:
               res.data.data[i].contents = JSON.parse(res.data.data[i].contents);
             }
 
+            console.log(res.data.data[0]);
+
             vm.messages = res.data.data;
 
             vm.messagesLoaded = true;
@@ -688,12 +773,29 @@ Some of the things this module takes care of:
 
       };
 
+      vm.loadPartnerCurrentlyTyping = function() {
+        ChatService.loadPartnerCurrentlyTyping({
+          pm_to: channelOrUserId,
+        })
+        .then((res) => {
+          if (res.data.response === "success") {
+            vm.userTypingArray = res.data.data;
+
+            if (res.data.data.length === 1) {
+              vm.typeOfTyping = "is typing";
+            }
+          }
+        });
+      };
+
       $rootScope.showFixedTopNav = true;
 
       //Gets the users state if they were previously on the website
       if (ChatService.userState) {
         vm.userState = ChatService.userState;
       }
+
+
 
       //Pushes the scrollbar to bottom on page resize
       vm.pushScrollbarToBottom();
@@ -717,7 +819,7 @@ Some of the things this module takes care of:
 
 
       //If the url contains /messages, then run described functions
-      if (channelorPrivate === "channel") {
+      if (vm.channelorPrivate === "channel") {
         var channelName = $stateParams.channelName;
         $rootScope.channelName = channelName;
 
@@ -727,12 +829,14 @@ Some of the things this module takes care of:
         //Loads the Users that are currently typing
         vm.loadUsersCurrentlyTyping();
       }
-      else if (channelorPrivate === "private") {
+      else if (vm.channelorPrivate === "private") {
         $rootScope.channelName = $stateParams.username;
         //Loads all the private messages
         vm.getPrivateMessages();
 
 
+        //Gets if the partner is typing
+        vm.loadPartnerCurrentlyTyping();
       }
     }
   }());

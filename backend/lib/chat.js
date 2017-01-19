@@ -145,7 +145,7 @@ chat.insertMessageToDb = (messageDet) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id) VALUES (DEFAULT, ?, ?, ?)", [messageDet.message, messageDet.userid, messageDet.channelId], (err, results) => {
+        mclient.query("INSERT INTO MessagesTable (message_id, contents, sender, chan_link_id, message_date) VALUES (DEFAULT, ?, ?, ?, UNIX_TIMESTAMP())", [messageDet.message, messageDet.userid, messageDet.channelId], (err, results) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -212,16 +212,17 @@ chat.getMessagesInfo = (messageId) => {
 };
 
 //Gets all messages from channel
-chat.getAllChannelMessages = (channelId) => {
+chat.getAllChannelMessages = (channelId, timezoneOffset, date) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
       if (err) {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [channelId], (err, results) => {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [timezoneOffset, date, timezoneOffset, timezoneOffset, channelId], (err, results) => {
           mclient.release();
           if (err) {
+            console.log(err);
             reject("serverError");
           }
           else {
@@ -251,42 +252,42 @@ chat.emitUserTyping = (obj) => {
   return new Promise((resolve, reject) => {
     const peopleInChannel = [];
 
-      mysqlWrap.getConnection((err, mclient) => {
-        if (err) {
-          reject("serverError");
-        }
-        else {
-          mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ? AND inchan_userid != ?", [obj.channelId, obj.userid], (err, data) => {
-            mclient.release();
-            if (err) {
-              reject("serverError");
-            }
-            else {
-              const usersInChannel = Object.keys(clients).filter((val) => {
-                for (let i = 0;i<data.length;i++) {
-                  if (data[i].inchan_userid === Number(val)) {
-                    return true;
-                  }
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT inchan_userid FROM UserInChannel WHERE inchan_channel_id = ? AND inchan_userid != ?", [obj.channelId, obj.userid], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            const usersInChannel = Object.keys(clients).filter((val) => {
+              for (let i = 0;i<data.length;i++) {
+                if (data[i].inchan_userid === Number(val)) {
+                  return true;
                 }
-                return false;
-              });
-              usersInChannel.forEach((val) => {
+              }
+              return false;
+            });
+            usersInChannel.forEach((val) => {
 
-                io.sockets.connected[clients[val].socket].emit(obj.eventname, {name: obj.name, id: Number(obj.userid), channelId: Number(obj.channelId)});
-              });
+              io.sockets.connected[clients[val].socket].emit(obj.eventname, {name: obj.name, id: Number(obj.userid), channelId: Number(obj.channelId)});
+            });
 
-              resolve();
-            }
-          });
-        }
+            resolve();
+          }
+        });
+      }
 
-    /*
-    if (val !== String(obj.userid)) {
-    console.log("I am typing to "val);
-    io.sockets.connected[clients[val].socket].emit(obj.eventname, obj.name);
-  }
-  */
-});
+      /*
+      if (val !== String(obj.userid)) {
+      console.log("I am typing to "val);
+      io.sockets.connected[clients[val].socket].emit(obj.eventname, obj.name);
+    }
+    */
+  });
 });
 };
 
@@ -389,38 +390,75 @@ io.on('connection', (socket) => {
 
     for (let i = 0;i<keys.length;i++) {
       //To make sure that only properties of the clients object are iterated over
-        if (clients[keys[i]].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
-        const isUserTyping = chat.checkUserIsTyping(keys[i]);
+      if (clients[keys[i]].socket === socket.id) { //Checks to see if the user's id matches the disconnected id
+      const isUserTyping = chat.checkUserIsTyping(keys[i]);
 
 
 
-        if (isUserTyping) { //Checks to see if the user is already typing
-          chat.deleteUserFromMap({userid: Number(keys[i]), channelId: isUserTyping}) //Deletes a user from the map
+      if (isUserTyping) { //Checks to see if the user is already typing
+        //Channel User Typing Stuff
+        chat.deleteUserFromMap({userid: Number(keys[i]), channelId: isUserTyping}) //Deletes a user from the map
+        console.log("The key should still be 4: " + keys[i]);
+
+        chat.getNameFromId(Number(keys[i]))
+        .then((name) => {
           console.log("The key should still be 4: " + keys[i]);
-
-          chat.getNameFromId(Number(keys[i]))
-          .then((name) => {
-            console.log("The key should still be 4: " + keys[i]);
-            //Emits that the user has stopped typing if they are currently typing
-            return chat.emitUserTyping({
-              channelId: isUserTyping,
-              userid: Number(keys[i]),
-              eventname: "userIsNotTyping",
-              name: name,
-            });
-          })
-          .then(() => {
-            delete clients[keys[i]];
+          //Emits that the user has stopped typing if they are currently typing
+          return chat.emitUserTyping({
+            channelId: isUserTyping,
+            userid: Number(keys[i]),
+            eventname: "userIsNotTyping",
+            name: name,
           });
-        }
-        else {
+        })
+        .then(() => {
           delete clients[keys[i]];
-          break;
-        }
+        });
       }
+      else {
+        delete clients[keys[i]];
+      }
+
+
+
+      //Private Message User Typing stuff
+      const isUserTypingPM = chat.checkUserIsTypingPM(Number(keys[i]));
+      const emitPMArray = [];
+
+      if (isUserTypingPM) {
+
+        chat.getNameFromId(Number(keys[i]))
+        .then((name) => {
+          Array.from(chat.userTypingPMMap[keys[i]]).forEach((val) => {
+            emitPMArray.push(chat.emitUserTypingPM({
+              name: name,
+              userid: Number(keys[i]),
+              userTo: val,
+              eventname: "userIsNotTypingPM",
+            }));
+          });
+
+          return Promise.all(emitPMArray);
+
+        })
+        .then(() => {
+          chat.userTypingPMMap[keys[i]] = new Set();
+          delete clients[keys[i]];
+        });
+      }
+      else {
+        delete clients[keys[i]];
+      }
+    }
   }
 });
 });
+
+
+//Checks if the current PM user is typing
+chat.checkUserIsTypingPM = (userid) => {
+  return Array.from(chat.userTypingPMMap[userid]) !== 0;
+};
 
 //Checks if the user owns a specific message
 chat.checkUserOwnsMessage = (obj) => {
@@ -451,6 +489,36 @@ chat.checkUserOwnsMessage = (obj) => {
   });
 };
 
+//Checks if the user owns a specific private message
+chat.checkUserOwnsPrivateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        console.log(err);
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT * FROM PrivateMessages WHERE pm_id = ? AND pm_from = ? AND pm_to = ?", [obj.messageId, obj.userid, obj.messageTo], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("paramError");
+            }
+            else {
+              resolve();
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
+
 //Updates a specific message
 chat.updateMessage = (obj) => {
   return new Promise((resolve, reject) => {
@@ -474,6 +542,30 @@ chat.updateMessage = (obj) => {
   });
 };
 
+//Updates a specific private message
+chat.updatePrivateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("UPDATE PrivateMessages SET pm_message = ? WHERE pm_id = ? AND pm_from = ? AND  pm_to = ?", [obj.contents, obj.messageId, obj.userid, obj.pm_to], (err, data) => {
+          mclient.release();
+          if (err) {
+            console.log(err);
+            reject("serverError");
+          }
+          else {
+            resolve();
+          }
+        })
+      }
+    });
+  });
+};
+
+
 //Deletes a specific message
 chat.deleteMessage = (obj) => {
   return new Promise((resolve, reject) => {
@@ -496,6 +588,29 @@ chat.deleteMessage = (obj) => {
   });
 };
 
+//Deletes a specific message
+chat.deletePrivateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("DELETE FROM PrivateMessages WHERE pm_id = ? AND pm_from = ? AND pm_to = ?", [obj.messageId, obj.userid, obj.messageTo], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError")
+          }
+          else {
+            resolve();
+          }
+        });
+      }
+    });
+  });
+};
+
+
 //Inserted the private message in to the db
 chat.insertPrivateMessageToDb = (obj) => {
   return new Promise((resolve, reject) => {
@@ -504,13 +619,14 @@ chat.insertPrivateMessageToDb = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?,   ?, ?, ?)", [obj.userid, obj.messageTo, obj.message, new Date().getTime()], (err, data) => {
+        console.log("I am inserting: " + Date.now());
+        mclient.query("INSERT INTO PrivateMessages (pm_id, pm_from, pm_to, pm_message, pm_date) VALUES (DEFAULT, ?, ?, ?, UNIX_TIMESTAMP())", [obj.userid, obj.messageTo, obj.message], (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
           }
           else {
-            resolve();
+            resolve(data.insertId );
           }
         });
       }
@@ -524,7 +640,6 @@ chat.checkParamError = (obj) => {
   if (!obj.messageTo || !obj.message || obj.userid === obj.messageTo) {
     return "paramError";
   }
-
 
   //Will check that the message is JSON stringified. If it is not, the request has obviously been automated
   try {
@@ -547,33 +662,29 @@ chat.sendPMToUser = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT username FROM UserTable WHERE user_id = ?", [obj.userid], (err, data) => {
+        mclient.query("SELECT username FROM UserTable WHERE user_id = ?", [obj.user_id], (err, data) => {
           mclient.release();
           if (err) {
             reject("serverError");
           }
           else {
-            obj.username = data[0].username;
-            obj.contents = obj.message;
-            delete obj.message;
-
-
-            console.log("messageTo is: " + obj.messageTo);
-            console.log("clients is");
-            console.log(clients);
-
-            if (clients[obj.messageTo]) {
-              console.log("I have emitted to : " + obj.messageTo);
-              io.sockets.connected[clients[obj.messageTo].socket].emit("newPrivateMessage", obj);
+            if (data.length === 0) {
+              reject("userDoesNotExist");
             }
-            console.log(obj.userid);
-            if (clients[obj.userid]) {
-              console.log("I am sending the message to : " + obj.userid);
-              io.sockets.connected[clients[obj.userid].socket].emit("newPrivateMessage", obj);
+            else {
+              obj.username = data[0].username;
+
+
+              if (clients[obj.pm_to]) {
+                io.sockets.connected[clients[obj.pm_to].socket].emit("newPrivateMessage", obj);
+              }
+              if (clients[obj.user_id]) {
+                io.sockets.connected[clients[obj.user_id].socket].emit("newPrivateMessage", obj);
+              }
+              resolve();
             }
-            resolve();
           }
-        })
+        });
       }
     });
   });
@@ -615,7 +726,8 @@ chat.getPrivateMessages = (obj) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_message AS contents, UserTable.username FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
+        console.log(obj);
+        mclient.query("SELECT PrivateMessages.pm_id, PrivateMessages.pm_to, PrivateMessages.pm_from as user_id,PrivateMessages.pm_message AS contents, UserTable.username, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(PrivateMessages.pm_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM PrivateMessages INNER JOIN UserTable ON PrivateMessages.pm_from = UserTable.user_id WHERE (PrivateMessages.pm_from = ? || PrivateMessages.pm_from = ?) AND (PrivateMessages.pm_to = ? || PrivateMessages.pm_to = ?)", [obj.timezoneOffset, obj.currentDate, obj.timezoneOffset, obj.timezoneOffset, obj.timezone, obj.userid, obj.userTo, obj.userid, obj.userTo], (err, data) => {
           mclient.release();
           if (err) {
             console.log(err);
@@ -701,6 +813,23 @@ chat.emitDeletedMessage = (obj) => {
   });
 };
 
+
+//Emits to all the users that are on the channel that the message has been deleted
+chat.emitDeletedPrivateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (clients[obj.messageTo]) {
+      io.sockets.connected[clients[obj.messageTo].socket].emit("newDeletedPrivateMessage", obj);
+    }
+
+    if (clients[obj.userid]) {
+      io.sockets.connected[clients[obj.userid].socket].emit("newDeletedPrivateMessage", obj);
+    }
+
+    resolve();
+  });
+};
+
+
 chat.emitUpdatedMessage = (obj) => {
   return new Promise((resolve, reject) => {
     mysqlWrap.getConnection((err, mclient) => {
@@ -725,6 +854,37 @@ chat.emitUpdatedMessage = (obj) => {
       }
     });
   });
+};
+
+chat.emitUpdatedPrivateMessage = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (clients[obj.userid]) {
+      io.sockets.connected[clients[obj.userid].socket].emit("newUpdatedPrivateMessage", obj);
+    }
+
+    if (clients[obj.pm_to]) {
+      io.sockets.connected[clients[obj.pm_to].socket].emit("newUpdatedPrivateMessage", obj);
+    }
+    resolve();
+  });
+};
+
+//Checks and gets if the users PM partner is currently typing
+chat.loadPartnerCurrentlyTyping = (obj) => {
+  return new Promise((resolve, reject) => {
+    if (!chat.userTypingPMMap[obj.pm_to].has(obj.userid)) {
+      resolve([]);
+    }
+    else {
+      chat.getNameFromId(obj.pm_to)
+      .then((name) => {
+        resolve([{name: name}]);
+      })
+      .catch((e) => {
+        reject(e);
+      });
+    }
+  })
 };
 
 
