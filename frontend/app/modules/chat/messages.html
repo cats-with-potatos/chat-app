@@ -47,8 +47,13 @@
                 </div>
                 <div id="contentDiv">
                   <div>
+
                     <p id="msgUser"><a href="#userModal" class="user-link" data-toggle="modal"> {{message.username}}</a></p>
 
+                    <span style="font-weight: lighter; font-size: 14px; opacity: 0.6"> - {{ message.message_time }}</span>
+
+
+                    </p>
                     <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
                     <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
                   </div>
