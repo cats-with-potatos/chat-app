@@ -464,12 +464,26 @@ socket.on("newUpdatedPrivateMessage", function(obj) {
 
 
         ChatService.changeUserProfile({formData: formData})
-        .then(function() {
+        .then(function(res) {
 
-          console.log(document.querySelector("#newProfileImage"));
+
           vm.showUserProfileSpinner = false;
+
+          if (vm.newUserName !== $rootScope.username) {
+            for (let i = 0; i < vm.messages.length; i++) {
+              vm.messages[i].username = vm.newUserName;
+            }
+          }
+
+          if ($("#newProfileImage").val()) {
+              for (let i = 0; i < vm.messages.length; i++) {
+              vm.messages[i].image = res.data.data.image;
+              }
+          }
+
           $rootScope.username = vm.newUserName;
           vm.userProfileSuccess = true;
+
 
           $timeout(function() {
               vm.userProfileSuccess = false;

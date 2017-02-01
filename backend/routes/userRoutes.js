@@ -145,7 +145,10 @@ userRoutes.changeUserProfile = (req, res) => {
       })
       .then(() => {
         res.json({
-          response: "success"
+          response: "success",
+          data: {
+            image: `/api/userimages/${req.file.filename}`,
+          }
         });
       })
       .catch((e) => {
