@@ -476,9 +476,10 @@ socket.on("newUpdatedPrivateMessage", function(obj) {
           }
 
           if ($("#newProfileImage").val()) {
-              for (let i = 0; i < vm.messages.length; i++) {
-              vm.messages[i].image = res.data.data.image;
-              }
+            $rootScope.profilepic = res.data.data.image;
+            for (let i = 0; i < vm.messages.length; i++) {
+            vm.messages[i].image = res.data.data.image;
+            }
           }
 
           $rootScope.username = vm.newUserName;
