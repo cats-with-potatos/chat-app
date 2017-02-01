@@ -4,6 +4,7 @@ const express = require("express")
 , bodyParser = require("body-parser")
 , server = require("http").Server(app)
 , io = require('./lib/socketio.js').listen(server)
+, upload = require("./lib/multerSetup.js")
 , routes = require("./routes/routes.js")
 , middleware = require("./lib/middleware.js");
 
@@ -17,6 +18,8 @@ app.use('/api', router);
 router.get("/checkUserExists", middleware.checkToken, routes.userRoutes.checkUserExists);
 router.get("/getFiveUsers", middleware.checkToken, routes.userRoutes.getFiveUsers);
 router.get("/getAllUsers", middleware.checkToken, routes.userRoutes.getAllUsers);
+router.post("/changeUserProfile", middleware.checkToken, routes.userRoutes.changeUserProfile);
+
 
 //Auth Routes
 router.get("/checkUserLoggedIn", middleware.checkToken, routes.authRoutes.checkUserLoggedIn);

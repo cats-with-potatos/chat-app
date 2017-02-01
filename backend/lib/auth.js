@@ -3,7 +3,8 @@ const bluebird = require("bluebird")
 , jwt = require("jsonwebtoken")
 , config = require("../config.js")
 , mysqlWrap = require("./db.js")
-, auth = {};
+, auth = {}
+, DEFAULT_IMAGE = "/api/userimages/default.png";
 
 
 /*
@@ -88,13 +89,15 @@ auth.insertUserToDb = (fullCreds) => {
         reject("serverError");
       }
       else {
-        mclient.query("INSERT INTO UserTable (user_id, username, password, salt) VALUES (DEFAULT, ?, ?, ?)", [
+        mclient.query("INSERT INTO UserTable (user_id, username, password, salt, image) VALUES (DEFAULT, ?, ?, ?, ?)", [
           fullCreds.username,
           fullCreds.hash,
           fullCreds.salt,
+          DEFAULT_IMAGE,
         ], (err, results) => {
           mclient.release();
           if (err) {
+            console.log(err);
             reject("serverError");
           }
           else {
@@ -122,6 +125,7 @@ auth.createJwt = (user) => {
           reject("serverError");
         }
         else {
+          console.log(user);
           resolve({token: token, payload: user});
         }
       });
@@ -182,7 +186,6 @@ auth.checkPass = (cred) => {
     if (newHash === cred.hash) {
       resolve({
         id: cred.id,
-        username: cred.username
       });
     }
     else {
@@ -212,6 +215,63 @@ auth.addToGenChannel = (id) => {
     })
   });
 };
+
+//Gets the users image from their id
+auth.getUserImage = (obj) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT image FROM UserTable WHERE user_id = ?", [obj.id], (err, data) => {
+          mclient.release();
+
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length === 0) {
+              reject("userDoesNotExist");
+            }
+            else {
+
+              resolve({jwt: obj.jwt, userdata: {id: obj.jwt.payload.id, username: obj.username, image: data[0].image}});
+            }
+          }
+        });
+      }
+    });
+  });
+};
+
+//Gets the users username and image from their id
+auth.getUserInfo = (id) => {
+  return new Promise((resolve, reject) => {
+    mysqlWrap.getConnection((err, mclient) => {
+      if (err) {
+        reject("serverError");
+      }
+      else {
+        mclient.query("SELECT username, image FROM userTable WHERE user_id = ?", [id], (err, data) => {
+          mclient.release();
+          if (err) {
+            reject("serverError");
+          }
+          else {
+            if (data.length !== 1) {
+              reject("userDoesNotExist");
+            }
+            else {
+              resolve(data[0]);
+            }
+          }
+        });
+      }
+    })
+  });
+};
+
 
 
 module.exports = auth;

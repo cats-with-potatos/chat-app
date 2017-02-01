@@ -60,7 +60,9 @@
 
           $rootScope.username = res.data.data.username;
           $rootScope.userid = res.data.data.id;
+          $rootScope.profilepic = res.data.data.image;
           $rootScope.loggedIn = true;
+          $rootScope.$broadcast("detailsRetrieved");
         }
         else {
           $rootScope.notLoggedIn = true;

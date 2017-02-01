@@ -28,7 +28,7 @@
     service.getChatMessages = function(channel) {
       const d = new Date();
       const month = d.getMonth() + 1;
-      
+
       return $http(
         {
           method: "GET",
@@ -305,6 +305,19 @@
           headers: {
             Authorization: "Bearer " + Cookies.get("auth"),
           },
+        });
+      };
+
+      service.changeUserProfile = function(obj) {
+        return $http({
+          method: "POST",
+          url: "/api/changeUserProfile",
+          data: obj.formData,
+          headers: {
+            Authorization: "Bearer " + Cookies.get("auth"),
+           'Content-Type': undefined  ,
+          },
+          transformRequest: angular.identity,
         });
       };
 

@@ -196,7 +196,7 @@ chat.getMessagesInfo = (messageId) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.message_id = ?", [messageId], (err, results) => {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, UserTable.image, ChannelsTable.chan_id, ChannelsTable.chan_name FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.message_id = ?", [messageId], (err, results) => {
           mclient.release();
           if (err) {
             reject("serverError");
@@ -219,7 +219,7 @@ chat.getAllChannelMessages = (channelId, timezoneOffset, date) => {
         reject("serverError");
       }
       else {
-        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, ChannelsTable.chan_id, ChannelsTable.chan_name, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [timezoneOffset, date, timezoneOffset, timezoneOffset, channelId], (err, results) => {
+        mclient.query("SELECT MessagesTable.message_id, MessagesTable.contents, UserTable.user_id, UserTable.username, UserTable.image, ChannelsTable.chan_id, ChannelsTable.chan_name, IF(DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d-%m-%Y') = ?, DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%h:%i %p'), DATE_FORMAT(CONVERT_TZ(FROM_UNIXTIME(MessagesTable.message_date), 'UTC', ?), '%d %b %Y %h:%i %p')) AS message_time FROM MessagesTable INNER JOIN UserTable ON MessagesTable.sender = UserTable.user_id INNER JOIN ChannelsTable ON MessagesTable.chan_link_id = ChannelsTable.chan_id WHERE MessagesTable.chan_link_id = ?", [timezoneOffset, date, timezoneOffset, timezoneOffset, channelId], (err, results) => {
           mclient.release();
           if (err) {
             console.log(err);

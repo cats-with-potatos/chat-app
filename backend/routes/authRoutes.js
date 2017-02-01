@@ -25,14 +25,17 @@ authRoutes.signin = (req, res) => { // TYPE: POST
     return authFunctions.createJwt(jwtPayload);
   })
   .then((jwt) => {
+    return authFunctions.getUserImage({id: jwt.payload.id, jwt: jwt, username: username});
+  })
+  .then((data) => {
     if (checkbox === "true") {
-      res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
+      res.cookie("auth", data.jwt.token, {maxAge: 604800000, httpOnly: false});
     }
     else {
-      res.cookie("auth", jwt.token, {httpOnly: false});
+      res.cookie("auth", data.jwt.token, {httpOnly: false});
     }
 
-    res.status(200).json({"response": "success", data: jwt.payload});
+    res.status(200).json({"response": "success", data: data.userdata});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
@@ -76,18 +79,22 @@ authRoutes.signup = (req, res) => { //TYPE: POST
     };
 
     //Insert user to db since user does not exist
+    console.log("did I get here");
     return authFunctions.insertUserToDb(fullCredentials);
   })
   .then((id) => {
+    console.log("did I get here");
     return authFunctions.addToGenChannel(id);
   })
   .then((id) => {
-    return authFunctions.createJwt({username: username, id: id});
+    console.log("did I get here");
+    return authFunctions.createJwt({id: id});
   })
   .then((jwt) => {
+    console.log("did I get here");
     res.cookie("auth", jwt.token, {maxAge: 604800000, httpOnly: false});
 
-    res.status(200).json({"response": "success", data: jwt.payload});
+    res.status(200).json({"response": "success", data: {id: jwt.payload.id, username: username, image: "/api/userimages/default.png"}});
   })
   .catch((e) => {
     const status = e === "serverError" ? 500 : 400; //If error is server error set to 500, else set to 400
@@ -96,10 +103,20 @@ authRoutes.signup = (req, res) => { //TYPE: POST
 };
 
 authRoutes.checkUserLoggedIn = (req, res) => {
-  res.json({
-    "response": "success",
-    "data": req.decoded,
-  });
+  authFunctions.getUserInfo(req.decoded.id)
+  .then((userInfo) => {
+    res.json({
+      "response": "success",
+      "data": userInfo,
+    });
+  })
+  .catch((e) => {
+    console.log(e);
+    res.status(500).json({
+      "response": "error",
+      "errorType": e,
+    });
+  })
 }
 
 

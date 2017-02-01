@@ -37,6 +37,7 @@
             $rootScope.loggedIn = true;;
             $rootScope.username = res.data.data.username;
             $rootScope.userid = res.data.data.id;
+            $rootScope.profilepic = res.data.data.image;
             $state.go('chat-app.messages');
           }
           else {
@@ -105,6 +106,8 @@
             $rootScope.notLoggedIn = false;
             $rootScope.username = res.data.data.username;
             $rootScope.userid = res.data.data.id;
+            $rootScope.profilepic = res.data.data.image;
+
 
             $state.go('chat-app.messages');
           }

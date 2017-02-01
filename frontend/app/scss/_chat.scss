@@ -147,6 +147,8 @@ h1, p, a {
   // border: 2px solid #999;
   font-size: 40px;
   color: #546E7A;
+  width: 40px;
+  height: 40px;
 }
 
 #avatarDiv {
@@ -476,18 +478,18 @@ ul {
 }
 
 #msgspan {
-    float: left;
-    margin-right: 30px;
-    margin-top: -27px;
-    padding-left: 10px;
-    padding-bottom: 2px;
-    position: relative;
-    z-index: 1;
-    color: darkgray;
-    font-size: 1.8rem;
-    font-style: normal;
-    font-weight: 400;
-    display: inline-block;
+  float: left;
+  margin-right: 30px;
+  margin-top: -27px;
+  padding-left: 10px;
+  padding-bottom: 2px;
+  position: relative;
+  z-index: 1;
+  color: darkgray;
+  font-size: 1.8rem;
+  font-style: normal;
+  font-weight: 400;
+  display: inline-block;
 }
 
 .noShow {
@@ -563,7 +565,7 @@ ul {
             background-color: $cyanish-color !important;
             color: #FFF !important;
           }
-                }
+        }
 
         &:hover {
           color: #FFF;
@@ -729,53 +731,58 @@ ul {
 
 //Modal Styling
 
-#chanModal, #pmModal {
-  // border-bottom: 1px solid #546E7A;
-}
 
 .channel-search-div {
   padding-top: 15px;
 }
 
-.chan-modal .modal-content {
-  border-radius: 0;
-  background-clip: border-box;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  border: none;
-  min-height: 100%;
-  padding: 100px 0px 0px 0px;
-  text-align: center;
+.chan-modal {
+  .modal-content {
+    border-radius: 0;
+    background-clip: border-box;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: none;
+    min-height: 100%;
+    padding: 100px 0px 0px 0px;
+    text-align: center;
+  }
+
+  h2 {
+    margin: 25px;
+    font-size: 3em;
+    font-weight: bold;
+  }
+
+  img {
+    margin-bottom: 30px;
+  }
+
+  .item-details {
+    margin: 30px 0;
+  }
+
+  .close-modal {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    background-color: transparent;
+    top: 25px;
+    right: 25px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.3;
+      background: #e8e8e8;
+      border-radius: 100%;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+  }
 }
-.chan-modal .modal-content h2 {
-  margin: 25px;
-  font-size: 3em;
-  font-weight: bold;
-}
-.chan-modal .modal-content img {
-  margin-bottom: 30px;
-}
-.chan-modal .modal-content .item-details {
-  margin: 30px 0;
-}
-.chan-modal .close-modal {
-  position: absolute;
-  width: 75px;
-  height: 75px;
-  background-color: transparent;
-  top: 25px;
-  right: 25px;
-  cursor: pointer;
-}
-.chan-modal .close-modal:hover {
-  opacity: 0.3;
-  background: #e8e8e8;
-  border-radius: 100%;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  user-select: none;
-}
+
 .chan-modal .close-modal .lr {
   height: 75px;
   width: 1px;
@@ -799,13 +806,19 @@ ul {
   /* Safari and Chrome */
   z-index: 1052;
 }
-.chan-modal .modal-backdrop {
-  opacity: 0;
-  display: none;
+
+.chan-modal {
+  .modal-backdrop {
+    opacity: 0;
+    display: none;
+  }
 }
-.modal-body ul {
-  list-style: none;
-  margin-bottom: 50px;
+
+.modal-body {
+  ul {
+    list-style: none;
+    margin-bottom: 50px;
+  }
 }
 
 #chan-list, #pm-list {
@@ -852,11 +865,11 @@ ul {
   color: #555459;
   width: 100%;
   max-width: 100%;
-    -webkit-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
-    -moz-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
-    transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  -webkit-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+  -moz-transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+  transition: box-shadow 70ms ease-out,border-color 70ms ease-out;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   box-shadow: none;
   height: auto;
   padding-left: 3.75rem;
@@ -868,16 +881,25 @@ ul {
 }
 
 #searchspan {
-    float: left;
-    margin-right: 30px;
-    margin-top: -32px;
-    padding-left: 10px;
-    padding-bottom: 2px;
-    position: relative;
-    z-index: 1;
-    color: darkgray;
-    font-size: 2.25rem;
-    font-style: normal;
-    font-weight: 400;
-    display: inline-block;
+  float: left;
+  margin-right: 30px;
+  margin-top: -32px;
+  padding-left: 10px;
+  padding-bottom: 2px;
+  position: relative;
+  z-index: 1;
+  color: darkgray;
+  font-size: 2.25rem;
+  font-style: normal;
+  font-weight: 400;
+  display: inline-block;
+}
+
+#userProfileErrors {
+  margin-bottom: 0px !important;
+}
+
+.changeUserProfileButton {
+  float: right;
+  margin-top: 8px;
 }

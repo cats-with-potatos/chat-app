@@ -40,159 +40,259 @@
         <div ng-show="vm.messagesLoaded === true">
           <ul>
             <!--Messages are repeated here-->
-            <li ng-repeat="message in vm.messages" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
+            <li ng-repeat="message in vm.messages | filter:queryMsg" ng-class="{'getting-deleted': message.gettingDeleted === true, 'was-edited': message.wasEdited === true}">
               <div class="row">
                 <div id="avatarDiv">
-                  <a href="#"><i id="avatar" class="fa fa-user fa-3"></i></a>
+                  <a href="#userModal" class="user-link" data-toggle="modal"><img id="avatar" src="{{ message.image }}"/></a>
                 </div>
                 <div id="contentDiv">
                   <div>
-                    <p id="msgUser"><a href="#"> {{message.username}} </a></p>
 
-                    <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
-                    <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, message.message_id, $index)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
-                  </div>
+                    <p id="msgUser"><a href="#userModal" class="user-link" data-toggle="modal"> {{message.username}}</a></p>
 
-                  <div class="dropup dropup-menu" ng-show="userid === message.user_id">
-                    <button class="btn btn-default dropdown-toggle" type="button" ng-disabled="message.gettingDeleted" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span style="font-weight: lighter; font-size: 14px; opacity: 0.6"> - {{ message.message_time }}</span>
+
+
+                  </p>
+                  <p id="chatMsg" ng-show="message.gettingEdited !== true"> {{message.contents}} </p>
+                  <div ng-show="message.gettingEdited === true"> <textarea ng-keypress="vm.editMessageInput($event, vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)" class="form-control edit-styles" maxlength="100">{{message.contents}}</textarea> </div>
+                </div>
+
+                <div class="dropup dropup-menu" ng-show="(userid === message.user_id)">
+                  <button class="btn btn-default dropdown-toggle" type="button" ng-disabled="message.gettingDeleted" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                      <li ng-click="vm.editMessage(message.message_id, $index)"><span id="editMsg"><i class="fa fa-pencil"></i>  <a>Edit Message</a> </span></li>
-                      <li ng-click="vm.deleteMessage(message.message_id, $index)"><span id="delMsg"><i class="fa fa-times"></i> <a>Delete Message</a> </span></li>
-                    </ul>
-                  </div>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li ng-click="vm.editMessage(vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)"><span id="editMsg"><i class="fa fa-pencil"></i>  <a>Edit Message</a> </span></li>
+                    <li ng-click="vm.deleteMessage(vm.channelorPrivate === 'channel' ? message.message_id : message.pm_id, $index, message.pm_to)"><span id="delMsg"><i class="fa fa-times"></i> <a>Delete Message</a> </span></li>
+                  </ul>
                 </div>
               </div>
             </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <div id="channel-sidebar" class="col-md-2">
-      <a ng-click="vm.goToHome()" class="navbar-brand" id="app-brand" style="cursor: pointer;"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
-      <div id="user-sections" ng-class="{'lowerMarginTop': showSpinner === true}">
-        <div class="user-section">
-          <div ng-class="{'user-online': userState === 'online'}"></div>
-        </div>
-        <div class="user-section">
-          <div class="user-name">
-            {{ username }}
           </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="channel-sidebar" class="col-md-2">
+    <a ng-click="vm.goToHome()" class="navbar-brand" id="app-brand" style="cursor: pointer;"><i class="fa fa-comments-o fa-3"></i> chat-app</a> <div class="loading" id="spinnerAtTop" ng-show="showSpinner === true"></div>
+    <div id="user-sections" ng-class="{'lowerMarginTop': showSpinner === true}">
+      <div class="user-section">
+        <div ng-class="{'user-online': userState === 'online'}"></div>
+      </div>
+      <div class="user-section">
+        <div class="user-name">
+          <a href="#userModal" class="user-link" data-toggle="modal"> {{ username }} </a>
         </div>
-        <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
       </div>
+      <div class="user-section"><i class="fa fa-sign-out" aria-hidden="true" ng-click="vm.logUserOut($event)"></i></div>
+    </div>
 
-      <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
+    <div id="chanDiv"><h2 id="chanTitle"><a href="#chanModal" class="chan-link" data-toggle="modal">Channels</a>  <span id="numOfChannels">({{vm.channels.length}})</span></h2></div>
 
-      <div id="channel-list">
-        <ul>
-          <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
-          <li><a href="#" ng-click="vm.createNewChannel($event)"><i class="fa fa-plus"> </i></a></li>
-        </ul>
-      </div>
-      <div id="private-messages">
-        <h2 class="text-center" id="pmTitle"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">({{vm.users.length}})</span></h2>
-        <ul>
-          <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
-        </ul>
-      </div>
+    <div id="channel-list">
+      <ul>
+        <li ng-repeat="channel in vm.channels.slice(0,5)" ng-class="{'active-channel': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" > {{channel.chan_name}} </a></li>
+        <li><a href="#" ng-click="vm.createNewChannel($event)"><i class="fa fa-plus"> </i></a></li>
+      </ul>
+    </div>
+    <div id="private-messages">
+      <h2 class="text-center" id="pmTitle"><a href="#pmModal" class="pm-link" data-toggle="modal">Private Messages</a> <span id="numOfUsers">({{vm.users.length}})</span></h2>
+      <ul>
+        <li ng-repeat="user in vm.users.slice(0, 5)" ng-class="{'active-user': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#">{{ user.username }}</a></li>
+      </ul>
     </div>
   </div>
-  <div id="footer">
-    <div id="userTyping">
-      <!--This will show if the user is currently typing or not-->
-      <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
-      <span ng-show="vm.userTypingArray.length !== 0">
-        <!--The dot animation which will show if at least another user is typing-->
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </span>
-    </div>
-    <div class="form-group">
-      <!--Input where the user types-->
-      <textarea
-      type="text"
-      id="messageBox"
-      class="form-control"
-      placeholder="Chat away and press enter"
-      ng-model="vm.message"
-      autofocus
-      ng-keydown="vm.sendMessage($event)"
-      ng-keyup="vm.sendUserIsTyping($event)"
-      spellcheck="true"
-      required
-      maxlength="100"
-      ></textarea>
-    </div>
+</div>
+<div id="footer">
+  <div id="userTyping">
+    <!--This will show if the user is currently typing or not-->
+    <span ng-repeat="message in vm.userTypingArray"> {{message.name}} </span>  {{vm.typeOfTyping}}
+    <span ng-show="vm.userTypingArray.length !== 0">
+      <!--The dot animation which will show if at least another user is typing-->
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </span>
   </div>
+  <div class="form-group">
+    <!--Input where the user types-->
+    <textarea
+    type="text"
+    id="messageBox"
+    class="form-control"
+    placeholder="Chat away and press enter"
+    ng-model="vm.message"
+    autofocus
+    ng-keydown="vm.sendMessage($event)"
+    ng-keyup="vm.sendUserIsTyping($event)"
+    spellcheck="true"
+    required
+    maxlength="100"
+    ></textarea>
+  </div>
+</div>
 </div>
 <div class="dark-overlay" ng-show="vm.showDarkOverlay">
 </div>
 
 <!-- Channel Modal -->
 <div class="chan-modal modal fade" id="chanModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-            <div class="lr">
-                <div class="rl">
-                </div>
-            </div>
+  <div class="modal-content">
+    <div class="close-modal" data-dismiss="modal">
+      <div class="lr">
+        <div class="rl">
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-8 col-sm-offset-2" id="chanModal">
-                    <div class="modal-body">
-                      <div class="col-sm-8">
-                        <h2>Browse all {{vm.channels.length}} channels </h2>
-                      </div>
-                      <div class="col-sm-2 col-sm-offset-1 add-chan">
-                        <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
-                      </div>
-                      <div class="col-sm-12 col-sm-offset-1">
-                        <div class="col-sm-10 search-div">
-                          <form class="form-group">
-                            <input ng-model="query" class="channel-search" type="text" name="channel-search" value="" placeholder="Search channels">
-                            <span id="searchspan" class="fa fa-search"></span>
-                          </form>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <ul id="chan-list">
-                          <li ng-repeat="channel in vm.channels | filter:query" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
-                        </ul>
-                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2" id="chanModal">
+          <div class="modal-body">
+            <div class="modal-header">
+              <div class="col-xs-12">
+                <h2>Browse all {{vm.channels.length}} channels </h2>
+              </div>
+              <!-- <div class="col-xs-2 add-chan">
+              <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
+            </div> -->
+          </div>
+
+          <div class="col-xs-12 col-xs-offset-1">
+            <div class="col-sm-10 search-div">
+              <form class="form-horizontal">
+                <div class="form-group">
+                  <div class="channel-search-div">
+                    <input ng-model="query" class="channel-search form-control" type="text" name="channel-search" value="" placeholder="Search channels">
+                    <span id="searchspan" class="fa fa-search"></span>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <ul id="chan-list">
+              <li ng-repeat="channel in vm.channels | filter:query" ng-class="{'active-channel-modal': channel.activeChannel === true}"><a href="#" ng-click="vm.goToAnotherChannel(channel.chan_name, $event)" data-dismiss="modal"> {{channel.chan_name}} </a></li>
+            </ul>
+            <div class="modal-footer">
+              <button href="#" ng-click="vm.createNewChannel($event)" type="button" class="btn btn-default btn-new-chan" data-dismiss="modal"><i class="fa fa-plus"> </i> New Channel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- Private Messages Modal -->
 <div class="chan-modal modal fade" id="pmModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-content">
-        <div class="close-modal" data-dismiss="modal">
-            <div class="lr">
-                <div class="rl">
-                </div>
-            </div>
+  <div class="modal-content">
+    <div class="close-modal" data-dismiss="modal">
+      <div class="lr">
+        <div class="rl">
         </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2" id="pmModal">
-                    <div class="modal-body">
-                        <h2>Private Messages ({{vm.users.length}})</h2>
-                        <ul id="pm-list">
-                          <li ng-repeat="user in vm.users" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
-                        </ul>
-                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> -->
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2" id="pmModal">
+          <div class="modal-body">
+            <div class="modal-header">
+              <h2>Private Messages ({{vm.users.length}})</h2>
+            </div>
+            <div class="col-xs-12 col-xs-offset-1">
+              <div class="col-sm-10 search-div">
+                <form class="form-horizontal">
+                  <div class="form-group">
+                    <div class="channel-search-div">
+                      <input ng-model="query" class="channel-search form-control" type="text" name="pm-search" value="" placeholder="Search users">
+                      <span id="searchspan" class="fa fa-search"></span>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <ul id="pm-list">
+              <li ng-repeat="user in vm.users | filter:query" ng-class="{'active-user-modal': user.activeUser === true}"><a ng-click="vm.goToPrivateMessage(user.user_id, user.username, $event)"  href="#" data-dismiss="modal">{{ user.username }}</a></li>
+            </ul>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+<!-- User Profile Modal -->
+<div class="chan-modal modal fade" id="userModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-content">
+    <div class="close-modal" data-dismiss="modal">
+      <div class="lr">
+        <div class="rl">
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2" id="userModal">
+          <div class="modal-body">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+              <h2 class="modal-title" id="myModalLabel">{{ username }}'s User Profile Page</h2>
+            </div>
+            <div class="modal-body">
+              <center>
+
+                <img src="{{ profilepic }}" name="aboutme" width="140" height="140" border="0" class="img-circle"></a>
+                <h3 class="media-heading">{{ username }}</h3>
+              </center>
+              <hr>
+              <form class="form-horizontal" method="POST" enctype="multipart/form-data" action="/changeUserProfile" id="userProfileForm">
+                <div class="alert alert-success" ng-show="vm.userProfileSuccess">You have successfully changed your settings!</div>
+                <div class="alert alert-danger" ng-show="vm.userProfileErrors.length !== 0">
+                  <ul id="userProfileErrors">
+                    <li ng-repeat="error in vm.userProfileErrors">{{ error }}</li>
+                  </ul>
+                </div>
+
+
+                <div class="form-group">
+                  <label class="control-label col-xs-2" for="">New Username:</label>
+                  <div class="col-xs-10">
+                    <input class="form-control" type="text" name="username" value="" placeholder="New Profile Username" ng-model="vm.newUserName" maxlength="30">
+                  </div>
+                </div>
+
+
+                <div class="form-group">
+                  <label class="control-label col-xs-2" for="">Profile Image:</label>
+                  <div class="col-xs-10">
+                    <input class="form-control" type="file" id="newProfileImage" name="image" placeholder="New Profile Image URL (ex: http://imgur/me/me.jpg)" accept="image/*">
+                  </div>
+                </div>
+                <br>
+              </div>
+              <div class="modal-footer">
+
+                <div style="float: right;">
+                  <button type="submit" class="btn btn-warning" ng-click="vm.changeUserProfile($event)" ng-disabled="vm.showUserProfileSpinner"><i class="fa fa-pencil"></i>Change</button>
+                  <button  type="button" class="btn btn-default" data-dismiss="modal" ng-disabled="vm.showUserProfileSpinner"><i class="fa fa-times"></i> Close</button>
+                </div>
+
+                <div class="loading" id="userProfileSpinner" ng-show="vm.showUserProfileSpinner"></div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

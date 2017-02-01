@@ -31,14 +31,40 @@ Some of the things this module takes care of:
     //This is where the users are stored
     vm.users = [];
 
-
     //If this is set to true, a dark overlay appears
     vm.showDarkOverlay = false;
 
     //Used to show and hide spinner at top
     $rootScope.showSpinner = false;
 
+    //The message that is currently being typed
     vm.message = "";
+
+    //User Profile errors
+    vm.userProfileErrors = [];
+
+    vm.userProfileSuccess = false;
+
+    vm.newProfileImage = null;
+
+    if ($rootScope.username) {
+      vm.newUserName = $rootScope.username;
+    }
+    else {
+      vm.newUserName = ""
+    }
+
+    //Spinner that is shown when the user changes their profile details
+    vm.showUserProfileSpinner = false;
+
+
+
+    $scope.$on("detailsRetrieved", function() {
+      vm.newUserName = $rootScope.username;
+    });
+
+
+
 
     vm.channelorPrivate = $location.path().indexOf("/messages") === 0 ? "channel" : "private";
 
@@ -49,6 +75,9 @@ Some of the things this module takes care of:
     vm.channels = [];
 
     var messagePanel = $("#messagePanel");
+
+    //File upload in profile settings
+    var newProfileImage = document.querySelector("#newProfileImage");
 
     //Will keep track of the previous states
     var history = [];
@@ -270,8 +299,6 @@ socket.on("newUpdatedPrivateMessage", function(obj) {
 });
 
 
-
-
     //Listens for people that have stopped typing in realtime and removing them from vm.userTypingArray
     socket.on("userIsNotTypingPM", function(user) {
       $rootScope.$applyAsync(function() {
@@ -409,6 +436,72 @@ socket.on("newUpdatedPrivateMessage", function(obj) {
           }
         })
       };
+
+      vm.changeUserProfile = function(event) {
+        console.log(event);
+        event.preventDefault();
+        vm.userProfileErrors = [];
+
+        console.log(vm.newUserName === "");
+        console.log(newProfileImage.value === "");
+
+        if (vm.newUserName === "" && newProfileImage.value === "") {
+          vm.userProfileErrors.push("Please make sure you either input a username or an image");
+        }
+
+        var extension = newProfileImage.value.split(".").pop().toLowerCase();
+
+        if (newProfileImage.value !== "" && ["jpg", "jpeg", "png", "gif"].indexOf(extension) === -1) {
+          vm.userProfileErrors.push("Please make sure that you upload an image");
+          return;
+        }
+
+        vm.showUserProfileSpinner = true;
+
+
+        var formData = new FormData(document.querySelector("#userProfileForm"));
+        console.log(formData);
+
+
+        ChatService.changeUserProfile({formData: formData})
+        .then(function() {
+
+          console.log(document.querySelector("#newProfileImage"));
+          vm.showUserProfileSpinner = false;
+          $rootScope.username = vm.newUserName;
+          vm.userProfileSuccess = true;
+
+          $timeout(function() {
+              vm.userProfileSuccess = false;
+          }, 2000);
+        })
+        .catch((e) => {
+        vm.showUserProfileSpinner = false;
+          e.data.data.forEach(function(val) {
+            switch(val) {
+              case "paramUndefined":
+                vm.userProfileErrors.push("Please make sure you input a username");
+                break;
+              case "tooLong":
+                vm.userProfileErrors.push("Your username is too long");
+                break;
+              case "badUsername":
+                vm.userProfileErrors.push("Please make sure your username only contains letters, numbers, hyphens and underscores");
+                break;
+              case "wrongMimeType":
+                vm.userProfileErrors.push("Please make sure you only upload a png, jpg, jpeg or gif");
+                break;
+              case "imgError":
+                vm.userProfileErrors.push("The server could not process your image");
+                break;
+              case "userAlreadyExists":
+                vm.userProfileErrors.push("Sorry, that username already exists");
+              default:
+                vm.userProfileErrors.push("Sorry there was an unexpected server error");
+            }
+          });
+        });
+      }
 
       //Listens on keyup events and if the key is enter, then send the message to the server
       vm.sendMessage = function(event) {
