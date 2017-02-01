@@ -9,3 +9,6 @@ grunt_temp
 bower_components
 *.swp
 *.swo
+backend/public/api/userimages/*
+!backend/public/api/userimages/default.png
+ 
