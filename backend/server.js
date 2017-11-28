@@ -5,8 +5,9 @@ const express = require("express")
 , server = require("http").Server(app)
 , io = require('./lib/socketio.js').listen(server)
 , upload = require("./lib/multerSetup.js")
-, routes = require("./routes/routes.js")
-, middleware = require("./lib/middleware.js");
+, routes = require("./routes/routes.js") , middleware = require("./lib/middleware.js");
+
+const PORT = process.env.NODE_ENV === "production" ? 8082 : 8080;
 
 //Middleware
 app.use('/', express.static('public'));
@@ -57,4 +58,6 @@ router.use(middleware.NotFoundApiRoute);
 //Serve the angular app when request url is not prefied with /api
 app.get('/*', routes.angularRoutes.serveIndex);
 
-server.listen(8080);
+server.listen(PORT, () => {
+	console.log(`Listening on port ${PORT}`)
+});
