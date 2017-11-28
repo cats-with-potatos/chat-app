@@ -11,4 +11,5 @@ bower_components
 *.swo
 backend/public/api/userimages/*
 !backend/public/api/userimages/default.png
+deploy.sh
  
