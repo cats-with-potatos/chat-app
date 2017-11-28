@@ -49,9 +49,6 @@ h1, p, a {
   @include not-collapsed-width();
   margin-left: 185px;
 
-  /* left: 0; */
-  /* top: 0; */
-
   overflow: auto;
   overflow-x: hidden;
   position: fixed;
@@ -902,4 +899,13 @@ ul {
 .changeUserProfileButton {
   float: right;
   margin-top: 8px;
+}
+
+// Timestamp text
+.message-time {
+  font-weight: lighter;
+  color: rgba(0, 0, 0, 0.50);
+  font-size: 14px;
+  opacity: 0.6;
+  padding-left: 5px;
 }
